@@ -1,10 +1,10 @@
 # Overview
 
-This is a simple blockchain implementation in Node.js that demonstrates core blockchain concepts including block creation, proof-of-work mining, and chain validation. The system creates a linked chain of blocks where each block contains data, a timestamp, a reference to the previous block's hash, and uses SHA-256 cryptographic hashing.
+ProofChain is a blockchain-based digital notary service for creators. It provides a simple web interface where users can register copyright proofs for their creative works, storing them permanently in a blockchain. Each registration costs 100 rubles and creates an immutable proof of authorship with a timestamp.
 
 # Recent Changes
 
-**September 30, 2025**: Complete blockchain prototype implementation with all requested features including Block class, Blockchain class, proof-of-work mining, SHA-256 hashing, and validation testing. Fixed nonce initialization order in Block constructor to ensure hash consistency.
+**September 30, 2025**: Complete ProofChain implementation with blockchain backend, Express API server, and web frontend. Fixed blockchain integrity issue where hash recalculation ensures proper chain linkage after previousHash assignment. System includes user balance management, proof registration API, and proof history tracking.
 
 # User Preferences
 
@@ -12,46 +12,104 @@ Preferred communication style: Simple, everyday language.
 
 # System Architecture
 
-## Core Components
+## Application Components
+
+### Web Interface (index.html)
+- **User Account Management**: Shows user ID, balance display, and balance top-up functionality
+- **Copyright Registration**: Form to submit creative work name and description (100 rubles per registration)
+- **Proof History**: Displays all registered proofs for a user with timestamps and block hashes
+- **Design**: Clean card-based layout with blue gradient background, responsive interface
+
+### Backend Server (server.js)
+- **Framework**: Express.js running on port 5000
+- **Static File Serving**: Serves frontend HTML/CSS/JS from root directory
+- **In-Memory Storage**: Users, proofs, and blockchain stored in server memory (resets on restart)
+
+## Blockchain Implementation
 
 ### Block Structure
-- **Design Decision**: Each block contains timestamp, data payload, previous hash reference, nonce for mining, and calculated hash
-- **Rationale**: This structure ensures immutability and cryptographic linking between blocks, making tampering detectable
-- **Hashing Algorithm**: SHA-256 chosen for its security properties and wide adoption in blockchain applications
+- **Properties**: timestamp, data, previousHash, nonce, hash
+- **Hashing**: SHA-256 with proper nonce initialization before hash calculation
+- **Chain Linkage**: Hash includes previousHash, timestamp, data, and nonce
+- **Critical Fix**: addBlock method recalculates hash after setting previousHash to ensure proper chain integrity
 
 ### Proof-of-Work Mining
-- **Design Decision**: Implements a difficulty-based mining system where blocks must have a hash starting with a specific number of zeros
-- **Implementation**: Iterative nonce incrementing until hash meets difficulty requirements
-- **Rationale**: Prevents spam and ensures computational cost for adding blocks, though at a simplified level compared to production blockchains
-- **Current Difficulty**: Set to 2 (configurable)
+- **Difficulty**: Set to 2 (requires hash to start with "00")
+- **Mining Process**: Iteratively increments nonce until hash meets difficulty target
+- **Purpose**: Adds computational cost to block creation, preventing spam
 
-### Chain Management
-- **Design Decision**: Array-based chain storage with genesis block initialization
-- **Genesis Block**: Hardcoded first block with "Genesis Block" data and '0' as previous hash
-- **Validation**: Complete chain integrity verification through hash recalculation and previous hash comparison in isChainValid() method
-- **Rationale**: Simple in-memory storage suitable for demonstration and learning purposes
+### Chain Validation
+- **Method**: isChainValid() verifies each block's hash matches recalculation and previousHash links correctly
+- **Immutability**: Tampering with any block invalidates subsequent blocks
 
-### Immutability Mechanism
-- **Design Decision**: Each block's hash incorporates the previous block's hash
-- **Rationale**: Creates a cryptographic chain where modifying any block invalidates all subsequent blocks
+### Genesis Block
+- **Initialization**: Created on server startup with timestamp "01/01/2024" and data "Genesis Block"
+- **Previous Hash**: Set to "0" as it has no predecessor
+
+## API Endpoints
+
+### GET /api/chain
+- **Purpose**: Returns complete blockchain and chain length
+- **Response**: JSON with chain array and length
+
+### POST /api/register-proof
+- **Purpose**: Registers copyright proof in blockchain
+- **Parameters**: userId, creativeWork, description
+- **Validation**: Checks sufficient balance (100 rubles required)
+- **Process**: Deducts 100 from balance, creates block with proof data, mines block, adds to chain
+- **Response**: Success message, remaining balance, and block hash
+
+### POST /api/add-balance
+- **Purpose**: Adds funds to user account
+- **Parameters**: userId, amount
+- **Process**: Creates user if doesn't exist, adds amount to balance
+- **Response**: Success message and new balance
+
+### GET /api/proofs/:userId
+- **Purpose**: Retrieves all proofs registered by a specific user
+- **Response**: Array of proof objects with creative work details and block hashes
+
+## Business Model
+
+### Pricing
+- **Copyright Registration**: 100 rubles per proof
+- **Initial Balance**: Demo user starts with 1000 rubles
+- **Balance Top-up**: Users can add funds through the interface
+
+### User Management
+- **Demo Account**: Pre-configured "demo-user" with 1000 ruble balance
+- **Account Creation**: New users created automatically when adding balance
+- **Storage**: In-memory (resets when server restarts)
 
 ## Technical Stack
 
-- **Runtime**: Node.js
-- **Cryptography**: Native `crypto` module for SHA-256 hashing
-- **Language**: JavaScript (ES6 classes)
+- **Runtime**: Node.js 20
+- **Backend Framework**: Express.js 4.18.2
+- **Cryptography**: Node.js native crypto module for SHA-256
+- **Frontend**: Vanilla JavaScript with async/await for API calls
+- **Language**: JavaScript (ES6 classes, template literals)
 
 ## Design Patterns
 
-- **Object-Oriented Design**: Separation of concerns between Block and Blockchain classes
-- **Encapsulation**: Block hashing logic contained within Block class
+- **MVC-like Structure**: Separation between frontend view, backend controllers (API), and model (blockchain/data)
+- **RESTful API**: Clear endpoint design with appropriate HTTP methods
+- **Object-Oriented**: Block and Blockchain classes encapsulate blockchain logic
 - **Chain of Responsibility**: Each block maintains reference to previous block
 
-# External Dependencies
+## Security Considerations
 
-## Native Node.js Modules
-- **crypto**: Provides cryptographic functionality for SHA-256 hash generation
-- **Purpose**: Core security mechanism for block hashing and chain integrity
+- **Hash Integrity**: SHA-256 ensures cryptographic security
+- **Chain Validation**: isChainValid() method detects tampering
+- **Balance Validation**: API checks sufficient funds before registration
+- **Immutability**: Blockchain structure makes historical records tamper-evident
 
-## No External Packages
-This implementation uses only Node.js built-in modules with no third-party npm dependencies, making it lightweight and suitable for educational purposes.
+## External Dependencies
+
+- **express (^4.18.2)**: Web server framework for API and static file serving
+- **crypto (Node.js native)**: SHA-256 hashing for blockchain integrity
+
+## Deployment Notes
+
+- **Port**: Server runs on port 5000 (Replit requirement)
+- **Workflow**: "ProofChain Server" workflow runs `node server.js`
+- **Output**: Webview for user interface access
