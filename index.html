@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ProofChain - Цифровой нотариус</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #1e3c72;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .proof-card {
+            background: #e8f5e8;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .balance {
+            background: gold;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ ProofChain</h1>
+            <p>Цифровой нотариус для творцов • 100 рублей за фиксацию</p>
+        </header>
+
+        <div class="card">
+            <h2>👤 Ваш аккаунт</h2>
+            <input type="text" id="userId" value="demo-user" placeholder="Ваш ID">
+            <div class="balance" id="balanceDisplay">Баланс: 1000 руб</div>
+            <input type="number" id="addAmount" placeholder="Сумма пополнения">
+            <button onclick="addBalance()">💳 Пополнить баланс</button>
+        </div>
+
+        <div class="card">
+            <h2>📝 Зафиксировать авторство - 100 руб</h2>
+            <input type="text" id="creativeWork" placeholder="Название произведения">
+            <textarea id="description" placeholder="Описание" rows="3"></textarea>
+            <button onclick="registerProof()">📌 Зафиксировать в блокчейне</button>
+        </div>
+
+        <div class="card">
+            <h2>🔗 Ваши доказательства</h2>
+            <button onclick="loadMyProofs()">🔄 Обновить</button>
+            <div id="proofsList"></div>
+        </div>
+    </div>
+
+    <script>
+        async function addBalance() {
+            const userId = document.getElementById('userId').value;
+            const amount = document.getElementById('addAmount').value;
+            
+            if (!amount) {
+                alert('Введите сумму');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/add-balance', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ userId: userId, amount: amount })
+                });
+                
+                const result = await response.json();
+                alert(result.message);
+                document.getElementById('balanceDisplay').textContent = `Баланс: ${result.newBalance} руб`;
+                document.getElementById('addAmount').value = '';
+            } catch (error) {
+                alert('Ошибка: ' + error);
+            }
+        }
+
+        async function registerProof() {
+            const userId = document.getElementById('userId').value;
+            const work = document.getElementById('creativeWork').value;
+            
+            if (!work) {
+                alert('Введите название произведения');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register-proof', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        userId: userId,
+                        creativeWork: work,
+                        description: document.getElementById('description').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message + '\nОстаток: ' + result.balance + ' руб');
+                    document.getElementById('creativeWork').value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('balanceDisplay').textContent = `Баланс: ${result.balance} руб`;
+                    loadMyProofs();
+                } else {
+                    alert('Ошибка: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error);
+            }
+        }
+
+        async function loadMyProofs() {
+            const userId = document.getElementById('userId').value;
+            
+            try {
+                const response = await fetch('/api/proofs/' + userId);
+                const data = await response.json();
+                
+                let html = '';
+                data.proofs.forEach(proof => {
+                    html += `<div class="proof-card">
+                        <strong>${proof.creativeWork}</strong><br>
+                        ${proof.description || ''}<br>
+                        ⏰ ${new Date(proof.timestamp).toLocaleString()}<br>
+                        💰 ${proof.cost} руб<br>
+                        🔗 ${proof.blockHash.substr(0, 20)}...
+                    </div>`;
+                });
+                
+                document.getElementById('proofsList').innerHTML = html || 'Пока нет доказательств';
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        loadMyProofs();
+    </script>
+</body>
+</html>
