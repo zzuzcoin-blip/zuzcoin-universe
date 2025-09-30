@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ProofChain - Цифровой нотариус</title>
+    <title>ProofChain PRO - Международные платежи</title>
     <style>
         body {
             font-family: Arial;
-            background: #1e3c72;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             margin: 0;
             padding: 20px;
             color: #333;
+            min-height: 100vh;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
         }
         header {
@@ -20,26 +21,54 @@
             margin-bottom: 30px;
         }
         h1 {
-            font-size: 2em;
+            font-size: 2.5em;
+            margin-bottom: 10px;
         }
         .card {
             background: white;
-            padding: 20px;
+            padding: 25px;
             margin: 20px 0;
             border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        input, textarea, button {
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .payment-method {
+            border: 2px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover {
+            border-color: #4CAF50;
+        }
+        .payment-method.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+        input, textarea, button, select {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
+            padding: 12px;
+            margin: 8px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 16px;
         }
         button {
             background: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #45a049;
         }
         .proof-card {
             background: #e8f5e8;
@@ -49,64 +78,153 @@
         }
         .balance {
             background: gold;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
             font-weight: bold;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: #f0f8ff;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #b3d9ff;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>⚖️ ProofChain</h1>
-            <p>Цифровой нотариус для творцов • 100 рублей за фиксацию</p>
+            <h1>⚖️ ProofChain PRO</h1>
+            <p>Цифровой нотариус • Принимаем RUB, USD, EUR, USDT, BTC, ETH</p>
         </header>
+
+        <div class="card">
+            <h2>📊 Статистика блокчейна</h2>
+            <div class="stats" id="blockchainStats">
+                <div class="stat-card">Блоки: <span id="blocksCount">0</span></div>
+                <div class="stat-card">Транзакции: <span id="txCount">0</span></div>
+                <div class="stat-card">Статус: <span id="chainStatus">Проверка...</span></div>
+            </div>
+        </div>
 
         <div class="card">
             <h2>👤 Ваш аккаунт</h2>
             <input type="text" id="userId" value="demo-user" placeholder="Ваш ID">
-            <div class="balance" id="balanceDisplay">Баланс: 1000 руб</div>
-            <input type="number" id="addAmount" placeholder="Сумма пополнения">
-            <button onclick="addBalance()">💳 Пополнить баланс</button>
+            <div class="balance" id="balanceDisplay">Баланс: 1000 RUB</div>
         </div>
 
         <div class="card">
-            <h2>📝 Зафиксировать авторство - 100 руб</h2>
+            <h2>💳 Пополнить баланс (любая валюта)</h2>
+            <select id="currency">
+                <option value="RUB">RUB - Российский рубль</option>
+                <option value="USD">USD - Доллар США</option>
+                <option value="EUR">EUR - Евро</option>
+                <option value="USDT">USDT - Tether</option>
+                <option value="BTC">BTC - Bitcoin</option>
+                <option value="ETH">ETH - Ethereum</option>
+            </select>
+            <input type="number" id="amount" placeholder="Сумма" value="100">
+            
+            <div class="payment-methods">
+                <div class="payment-method" data-method="rub" onclick="selectPaymentMethod('rub')">
+                    💳 Банковская карта
+                </div>
+                <div class="payment-method" data-method="usd" onclick="selectPaymentMethod('usd')">
+                    💳 Stripe (USD/EUR)
+                </div>
+                <div class="payment-method" data-method="usdt" onclick="selectPaymentMethod('usdt')">
+                    ₿ USDT (TRC20)
+                </div>
+                <div class="payment-method" data-method="btc" onclick="selectPaymentMethod('btc')">
+                    ₿ Bitcoin
+                </div>
+            </div>
+
+            <button onclick="processPayment()">💳 Оплатить</button>
+        </div>
+
+        <div class="card">
+            <h2>📝 Зафиксировать авторство - 100 RUB</h2>
             <input type="text" id="creativeWork" placeholder="Название произведения">
             <textarea id="description" placeholder="Описание" rows="3"></textarea>
             <button onclick="registerProof()">📌 Зафиксировать в блокчейне</button>
         </div>
 
         <div class="card">
-            <h2>🔗 Ваши доказательства</h2>
-            <button onclick="loadMyProofs()">🔄 Обновить</button>
-            <div id="proofsList"></div>
+            <h2>🔗 Ваши доказательства и платежи</h2>
+            <button onclick="loadUserData()">🔄 Обновить все</button>
+            <div id="userData"></div>
         </div>
     </div>
 
     <script>
-        async function addBalance() {
+        let selectedPaymentMethod = 'rub';
+
+        async function loadBlockchainStats() {
+            try {
+                const response = await fetch('/api/blockchain-stats');
+                const data = await response.json();
+                
+                document.getElementById('blocksCount').textContent = data.blocks;
+                document.getElementById('txCount').textContent = data.totalTransactions;
+                document.getElementById('chainStatus').textContent = data.isValid ? '✅ Валиден' : '❌ Ошибка';
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+        }
+
+        async function processPayment() {
             const userId = document.getElementById('userId').value;
-            const amount = document.getElementById('addAmount').value;
-            
-            if (!amount) {
+            const amount = document.getElementById('amount').value;
+            const currency = document.getElementById('currency').value;
+
+            if (!amount || amount < 1) {
                 alert('Введите сумму');
                 return;
             }
 
             try {
-                const response = await fetch('/api/add-balance', {
+                const response = await fetch('/api/process-payment', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ userId: userId, amount: amount })
+                    body: JSON.stringify({
+                        userId: userId,
+                        amount: parseFloat(amount),
+                        currency: currency,
+                        method: selectedPaymentMethod
+                    })
                 });
-                
+
                 const result = await response.json();
-                alert(result.message);
-                document.getElementById('balanceDisplay').textContent = `Баланс: ${result.newBalance} руб`;
-                document.getElementById('addAmount').value = '';
+                
+                if (result.success) {
+                    alert(result.message);
+                    updateUserBalance();
+                    loadUserData();
+                } else {
+                    alert('Ошибка оплаты: ' + result.error);
+                }
             } catch (error) {
-                alert('Ошибка: ' + error);
+                alert('Ошибка сети: ' + error);
             }
         }
 
@@ -136,8 +254,9 @@
                     alert(result.message + '\nОстаток: ' + result.balance + ' руб');
                     document.getElementById('creativeWork').value = '';
                     document.getElementById('description').value = '';
-                    document.getElementById('balanceDisplay').textContent = `Баланс: ${result.balance} руб`;
-                    loadMyProofs();
+                    updateUserBalance();
+                    loadUserData();
+                    loadBlockchainStats();
                 } else {
                     alert('Ошибка: ' + result.error);
                 }
@@ -146,31 +265,66 @@
             }
         }
 
-        async function loadMyProofs() {
+        async function updateUserBalance() {
+            const userId = document.getElementById('userId').value;
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const data = await response.json();
+                
+                if (data.user) {
+                    document.getElementById('balanceDisplay').textContent = 
+                        `Баланс: ${data.user.balance} RUB`;
+                }
+            } catch (error) {
+                console.error('Ошибка обновления баланса:', error);
+            }
+        }
+
+        async function loadUserData() {
             const userId = document.getElementById('userId').value;
             
             try {
-                const response = await fetch('/api/proofs/' + userId);
-                const data = await response.json();
-                
-                let html = '';
-                data.proofs.forEach(proof => {
+                const [proofsRes, paymentsRes] = await Promise.all([
+                    fetch(`/api/proofs/${userId}`),
+                    fetch(`/api/payments/${userId}`)
+                ]);
+
+                const proofsData = await proofsRes.json();
+                const paymentsData = await paymentsRes.json();
+
+                let html = '<h3>📄 Ваши доказательства:</h3>';
+                proofsData.proofs.forEach(proof => {
                     html += `<div class="proof-card">
                         <strong>${proof.creativeWork}</strong><br>
                         ${proof.description || ''}<br>
                         ⏰ ${new Date(proof.timestamp).toLocaleString()}<br>
-                        💰 ${proof.cost} руб<br>
-                        🔗 ${proof.blockHash.substr(0, 20)}...
+                        💰 ${proof.cost} ${proof.currency}<br>
+                        🔗 ${proof.blockHash?.substr(0, 20) || 'Нет хеша'}...
                     </div>`;
                 });
-                
-                document.getElementById('proofsList').innerHTML = html || 'Пока нет доказательств';
+
+                html += '<h3>💳 История платежей:</h3>';
+                paymentsData.payments.forEach(payment => {
+                    html += `<div class="proof-card" style="background: #f0f8ff;">
+                        <strong>${payment.method}</strong><br>
+                        💰 ${payment.amount} RUB<br>
+                        ⏰ ${new Date(payment.timestamp).toLocaleString()}<br>
+                        📊 Комиссия: ${payment.fee} RUB<br>
+                        ✅ ${payment.status}
+                    </div>`;
+                });
+
+                document.getElementById('userData').innerHTML = html || 'Нет данных';
             } catch (error) {
-                console.error('Ошибка:', error);
+                console.error('Ошибка загрузки данных:', error);
             }
         }
 
-        loadMyProofs();
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBlockchainStats();
+            loadUserData();
+            selectPaymentMethod('rub');
+        });
     </script>
 </body>
 </html>

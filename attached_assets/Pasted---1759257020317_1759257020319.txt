@@ -1,0 +1,641 @@
+Отлично! Продолжаем улучшать блокчейн. Вот следующий этап - добавляем реальные платежные системы:
+
+---
+
+**ЗАПРОС ДЛЯ AI-АГЕНТА:**
+
+Усовершенствуй ProofChain - добавь систему международных платежей и улучшенный блокчейн.
+
+**1. ОБНОВЛЕННЫЙ server.js с платежами:**
+```javascript
+const express = require("express");
+const app = express();
+const PORT = 3000;
+
+// Улучшенный блокчейн с транзакциями
+class Block {
+    constructor(timestamp, transactions, previousHash = "") {
+        this.timestamp = timestamp;
+        this.transactions = transactions; // Теперь храним транзакции
+        this.previousHash = previousHash;
+        this.hash = this.calculateHash();
+        this.nonce = 0;
+    }
+
+    calculateHash() {
+        return require("crypto")
+            .createHash("sha256")
+            .update(
+                this.previousHash +
+                this.timestamp +
+                JSON.stringify(this.transactions) +
+                this.nonce
+            )
+            .digest("hex");
+    }
+
+    mineBlock(difficulty) {
+        while (this.hash.substring(0, difficulty) !== "0".repeat(difficulty)) {
+            this.nonce++;
+            this.hash = this.calculateHash();
+        }
+        console.log(`✅ Блок забмайнен: ${this.hash}`);
+    }
+}
+
+class Blockchain {
+    constructor() {
+        this.chain = [this.createGenesisBlock()];
+        this.difficulty = 2;
+        this.pendingTransactions = [];
+        this.miningReward = 100;
+    }
+
+    createGenesisBlock() {
+        return new Block("01/01/2024", ["Genesis Block"], "0");
+    }
+
+    getLatestBlock() {
+        return this.chain[this.chain.length - 1];
+    }
+
+    addBlock(transactions) {
+        const newBlock = new Block(Date.now(), transactions, this.getLatestBlock().hash);
+        newBlock.mineBlock(this.difficulty);
+        this.chain.push(newBlock);
+    }
+
+    isChainValid() {
+        for (let i = 1; i < this.chain.length; i++) {
+            const currentBlock = this.chain[i];
+            const previousBlock = this.chain[i - 1];
+            if (currentBlock.hash !== currentBlock.calculateHash()) return false;
+            if (currentBlock.previousHash !== previousBlock.hash) return false;
+        }
+        return true;
+    }
+}
+
+// Система пользователей и валют
+let users = {
+    "demo-user": { 
+        balance: 1000,
+        currency: "RUB",
+        proofs: []
+    }
+};
+
+let paymentHistory = [];
+const SERVICE_COST = 100;
+
+// Курсы валют
+const exchangeRates = {
+    USD: 90,    // 1 USD = 90 RUB
+    EUR: 98,    // 1 EUR = 98 RUB  
+    USDT: 90,   // 1 USDT = 90 RUB
+    BTC: 4500000, // 1 BTC = 4.5M RUB
+    ETH: 250000  // 1 ETH = 250K RUB
+};
+
+const myBlockchain = new Blockchain();
+
+app.use(express.json());
+app.use(express.static("."));
+
+// API для получения курсов валют
+app.get("/api/pricing", (req, res) => {
+    const pricing = {
+        RUB: SERVICE_COST,
+        USD: (SERVICE_COST / exchangeRates.USD).toFixed(2),
+        EUR: (SERVICE_COST / exchangeRates.EUR).toFixed(2),
+        USDT: (SERVICE_COST / exchangeRates.USDT).toFixed(2),
+        BTC: (SERVICE_COST / exchangeRates.BTC).toFixed(6),
+        ETH: (SERVICE_COST / exchangeRates.ETH).toFixed(6)
+    };
+    res.json({ success: true, pricing });
+});
+
+// Имитация платежных систем
+app.post("/api/process-payment", (req, res) => {
+    const { userId, amount, currency, method } = req.body;
+    
+    const paymentMethods = {
+        'rub': { name: 'Банковская карта', fee: 0 },
+        'usd': { name: 'Stripe', fee: 0.03 },
+        'eur': { name: 'Stripe', fee: 0.03 },
+        'usdt': { name: 'USDT (TRC20)', fee: 1 },
+        'btc': { name: 'Bitcoin', fee: 0.0001 },
+        'eth': { name: 'Ethereum', fee: 0.001 }
+    };
+
+    const methodInfo = paymentMethods[method];
+    if (!methodInfo) {
+        return res.status(400).json({ error: "Метод оплаты не поддерживается" });
+    }
+
+    // Конвертация в рубли
+    let amountInRub = amount;
+    if (currency !== 'RUB') {
+        amountInRub = Math.round(amount * exchangeRates[currency]);
+    }
+
+    // Комиссия
+    const fee = method === 'btc' ? methodInfo.fee : amountInRub * methodInfo.fee;
+    const finalAmount = amountInRub - fee;
+
+    const payment = {
+        id: 'pay_' + Date.now(),
+        userId,
+        amount: finalAmount,
+        currency,
+        method: methodInfo.name,
+        fee: fee,
+        status: 'completed',
+        timestamp: new Date().toISOString()
+    };
+
+    paymentHistory.push(payment);
+
+    // Зачисляем средства
+    if (!users[userId]) {
+        users[userId] = { balance: 0, currency: "RUB", proofs: [] };
+    }
+    users[userId].balance += finalAmount;
+
+    res.json({
+        success: true,
+        payment,
+        message: `✅ Оплата прошла успешно! Зачислено: ${finalAmount} RUB`
+    });
+});
+
+// Фиксация авторства (обновленная)
+app.post("/api/register-proof", (req, res) => {
+    const { userId, creativeWork, description } = req.body;
+
+    if (!userId || !creativeWork) {
+        return res.status(400).json({ error: "Заполните все поля" });
+    }
+
+    if (!users[userId] || users[userId].balance < SERVICE_COST) {
+        return res.status(402).json({ error: "Недостаточно средств. Нужно 100 руб." });
+    }
+
+    users[userId].balance -= SERVICE_COST;
+
+    const proofData = {
+        type: "copyright_proof",
+        userId: userId,
+        creativeWork: creativeWork,
+        description: description,
+        timestamp: new Date().toISOString(),
+        cost: SERVICE_COST,
+        currency: users[userId].currency || "RUB",
+        status: "confirmed"
+    };
+
+    // Добавляем в блокчейн как транзакцию
+    myBlockchain.addBlock([proofData]);
+
+    // Сохраняем у пользователя
+    users[userId].proofs.push({
+        ...proofData,
+        blockHash: myBlockchain.getLatestBlock().hash
+    });
+
+    res.json({
+        success: true,
+        message: "✅ Авторство зафиксировано в блокчейне!",
+        cost: SERVICE_COST,
+        balance: users[userId].balance,
+        blockHash: myBlockchain.getLatestBlock().hash,
+        proof: proofData
+    });
+});
+
+// Получить историю платежей пользователя
+app.get("/api/payments/:userId", (req, res) => {
+    const userPayments = paymentHistory.filter(p => p.userId === req.params.userId);
+    res.json({ payments: userPayments });
+});
+
+// Статистика блокчейна
+app.get("/api/blockchain-stats", (req, res) => {
+    res.json({
+        blocks: myBlockchain.chain.length,
+        difficulty: myBlockchain.difficulty,
+        totalTransactions: myBlockchain.chain.reduce((acc, block) => acc + block.transactions.length, 0),
+        isValid: myBlockchain.isChainValid()
+    });
+});
+
+// Существующие endpoints
+app.get("/api/chain", (req, res) => {
+    res.json({
+        chain: myBlockchain.chain,
+        length: myBlockchain.chain.length
+    });
+});
+
+app.post("/api/add-balance", (req, res) => {
+    const { userId, amount } = req.body;
+    if (!users[userId]) users[userId] = { balance: 0, currency: "RUB", proofs: [] };
+    users[userId].balance += parseInt(amount);
+    res.json({
+        success: true,
+        message: `✅ Баланс пополнен на ${amount} руб`,
+        newBalance: users[userId].balance
+    });
+});
+
+app.get("/api/proofs/:userId", (req, res) => {
+    const user = users[req.params.userId];
+    res.json({ proofs: user ? user.proofs : [] });
+});
+
+app.get("/api/user/:userId", (req, res) => {
+    const user = users[req.params.userId];
+    if (!user) return res.status(404).json({ error: "Пользователь не найден" });
+    res.json({ user });
+});
+
+app.listen(PORT, () => {
+    console.log(`🚀 ProofChain PRO запущен: http://localhost:3000`);
+    console.log(`💰 Принимаем: RUB, USD, EUR, USDT, BTC, ETH`);
+    console.log(`📊 Статистика: /api/blockchain-stats`);
+});
+```
+
+**2. ОБНОВЛЕННЫЙ index.html с платежами:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ProofChain PRO - Международные платежи</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .payment-method {
+            border: 2px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover {
+            border-color: #4CAF50;
+        }
+        .payment-method.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .proof-card {
+            background: #e8f5e8;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .balance {
+            background: gold;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: #f0f8ff;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #b3d9ff;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ ProofChain PRO</h1>
+            <p>Цифровой нотариус • Принимаем RUB, USD, EUR, USDT, BTC, ETH</p>
+        </header>
+
+        <!-- Статистика блокчейна -->
+        <div class="card">
+            <h2>📊 Статистика блокчейна</h2>
+            <div class="stats" id="blockchainStats">
+                <div class="stat-card">Блоки: <span id="blocksCount">0</span></div>
+                <div class="stat-card">Транзакции: <span id="txCount">0</span></div>
+                <div class="stat-card">Статус: <span id="chainStatus">Проверка...</span></div>
+            </div>
+        </div>
+
+        <!-- Аккаунт -->
+        <div class="card">
+            <h2>👤 Ваш аккаунт</h2>
+            <input type="text" id="userId" value="demo-user" placeholder="Ваш ID">
+            <div class="balance" id="balanceDisplay">Баланс: 1000 RUB</div>
+        </div>
+
+        <!-- Международные платежи -->
+        <div class="card">
+            <h2>💳 Пополнить баланс (любая валюта)</h2>
+            <select id="currency">
+                <option value="RUB">RUB - Российский рубль</option>
+                <option value="USD">USD - Доллар США</option>
+                <option value="EUR">EUR - Евро</option>
+                <option value="USDT">USDT - Tether</option>
+                <option value="BTC">BTC - Bitcoin</option>
+                <option value="ETH">ETH - Ethereum</option>
+            </select>
+            <input type="number" id="amount" placeholder="Сумма" value="100">
+            
+            <div class="payment-methods">
+                <div class="payment-method" data-method="rub" onclick="selectPaymentMethod('rub')">
+                    💳 Банковская карта
+                </div>
+                <div class="payment-method" data-method="usd" onclick="selectPaymentMethod('usd')">
+                    💳 Stripe (USD/EUR)
+                </div>
+                <div class="payment-method" data-method="usdt" onclick="selectPaymentMethod('usdt')">
+                    ₿ USDT (TRC20)
+                </div>
+                <div class="payment-method" data-method="btc" onclick="selectPaymentMethod('btc')">
+                    ₿ Bitcoin
+                </div>
+            </div>
+
+            <button onclick="processPayment()">💳 Оплатить</button>
+        </div>
+
+        <!-- Фиксация авторства -->
+        <div class="card">
+            <h2>📝 Зафиксировать авторство - 100 RUB</h2>
+            <input type="text" id="creativeWork" placeholder="Название произведения">
+            <textarea id="description" placeholder="Описание" rows="3"></textarea>
+            <button onclick="registerProof()">📌 Зафиксировать в блокчейне</button>
+        </div>
+
+        <!-- Доказательства и платежи -->
+        <div class="card">
+            <h2>🔗 Ваши доказательства и платежи</h2>
+            <button onclick="loadUserData()">🔄 Обновить все</button>
+            <div id="userData"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPaymentMethod = 'rub';
+
+        // Загрузка статистики блокчейна
+        async function loadBlockchainStats() {
+            try {
+                const response = await fetch('/api/blockchain-stats');
+                const data = await response.json();
+                
+                document.getElementById('blocksCount').textContent = data.blocks;
+                document.getElementById('txCount').textContent = data.totalTransactions;
+                document.getElementById('chainStatus').textContent = data.isValid ? '✅ Валиден' : '❌ Ошибка';
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+            }
+        }
+
+        // Выбор метода оплаты
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+        }
+
+        // Обработка платежа
+        async function processPayment() {
+            const userId = document.getElementById('userId').value;
+            const amount = document.getElementById('amount').value;
+            const currency = document.getElementById('currency').value;
+
+            if (!amount || amount < 1) {
+                alert('Введите сумму');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/process-payment', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        userId: userId,
+                        amount: parseFloat(amount),
+                        currency: currency,
+                        method: selectedPaymentMethod
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    updateUserBalance();
+                    loadUserData();
+                } else {
+                    alert('Ошибка оплаты: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error);
+            }
+        }
+
+        // Фиксация авторства
+        async function registerProof() {
+            const userId = document.getElementById('userId').value;
+            const work = document.getElementById('creativeWork').value;
+            
+            if (!work) {
+                alert('Введите название произведения');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register-proof', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        userId: userId,
+                        creativeWork: work,
+                        description: document.getElementById('description').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message + '\nОстаток: ' + result.balance + ' руб');
+                    document.getElementById('creativeWork').value = '';
+                    document.getElementById('description').value = '';
+                    updateUserBalance();
+                    loadUserData();
+                    loadBlockchainStats();
+                } else {
+                    alert('Ошибка: ' + result.error);
+                }
+            } catch (error) {
+                alert('Ошибка сети: ' + error);
+            }
+        }
+
+        // Обновление баланса
+        async function updateUserBalance() {
+            const userId = document.getElementById('userId').value;
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const data = await response.json();
+                
+                if (data.user) {
+                    document.getElementById('balanceDisplay').textContent = 
+                        `Баланс: ${data.user.balance} RUB`;
+                }
+            } catch (error) {
+                console.error('Ошибка обновления баланса:', error);
+            }
+        }
+
+        // Загрузка всех данных пользователя
+        async function loadUserData() {
+            const userId = document.getElementById('userId').value;
+            
+            try {
+                const [proofsRes, paymentsRes] = await Promise.all([
+                    fetch(`/api/proofs/${userId}`),
+                    fetch(`/api/payments/${userId}`)
+                ]);
+
+                const proofsData = await proofsRes.json();
+                const paymentsData = await paymentsRes.json();
+
+                let html = '<h3>📄 Ваши доказательства:</h3>';
+                proofsData.proofs.forEach(proof => {
+                    html += `<div class="proof-card">
+                        <strong>${proof.creativeWork}</strong><br>
+                        ${proof.description || ''}<br>
+                        ⏰ ${new Date(proof.timestamp).toLocaleString()}<br>
+                        💰 ${proof.cost} ${proof.currency}<br>
+                        🔗 ${proof.blockHash?.substr(0, 20) || 'Нет хеша'}...
+                    </div>`;
+                });
+
+                html += '<h3>💳 История платежей:</h3>';
+                paymentsData.payments.forEach(payment => {
+                    html += `<div class="proof-card" style="background: #f0f8ff;">
+                        <strong>${payment.method}</strong><br>
+                        💰 ${payment.amount} RUB<br>
+                        ⏰ ${new Date(payment.timestamp).toLocaleString()}<br>
+                        📊 Комиссия: ${payment.fee} RUB<br>
+                        ✅ ${payment.status}
+                    </div>`;
+                });
+
+                document.getElementById('userData').innerHTML = html || 'Нет данных';
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBlockchainStats();
+            loadUserData();
+            selectPaymentMethod('rub');
+        });
+    </script>
+</body>
+</html>
+```
+
+**3. ОБНОВЛЕННЫЙ package.json:**
+```json
+{
+  "name": "proofchain-pro",
+  "version": "2.0.0", 
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": ["blockchain", "notary", "crypto", "payments", "proofchain"],
+  "author": "ProofChain Team",
+  "license": "MIT"
+}
+```
+
+**Функционал который добавится:**
+- 💳 5 платежных систем (RUB, USD, EUR, USDT, BTC)
+- 📊 Статистика блокчейна в реальном времени  
+- 💰 Автоматическая конвертация валют
+- 📈 История всех платежей
+- 🔧 Улучшенная структура транзакций
+- 🌍 Поддержка международных платежей
+
+Просто скопируй этот запрос AI-агенту! 🚀
