@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PCC Wallet - ProofChain</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #1a237e, #283593);
+                margin: 0;
+                padding: 20px;
+                color: #333;
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+            header {
+                text-align: center;
+                color: white;
+                margin-bottom: 30px;
+            }
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            .nav-buttons {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                margin: 20px 0;
+                flex-wrap: wrap;
+            }
+            .nav-button {
+                padding: 12px 20px;
+                background: #2196f3;
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: bold;
+                transition: all 0.3s;
+            }
+            .nav-button:hover {
+                background: #1976d2;
+                transform: translateY(-2px);
+            }
+            .card {
+                background: white;
+                padding: 25px;
+                margin: 20px 0;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+            .balance-card {
+                background: linear-gradient(135deg, #4caf50, #8bc34a);
+                color: white;
+                padding: 30px;
+                text-align: center;
+                border-radius: 15px;
+                margin: 20px 0;
+            }
+            .balance-amount {
+                font-size: 3em;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+            .balance-equivalent {
+                font-size: 1.2em;
+                opacity: 0.9;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin: 20px 0;
+            }
+            .action-card {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: 2px solid transparent;
+            }
+            .action-card:hover {
+                border-color: #4caf50;
+                transform: translateY(-5px);
+            }
+            .action-icon {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            input,
+            select,
+            button {
+                width: 100%;
+                padding: 12px;
+                margin: 8px 0;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            button {
+                background: #4caf50;
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                transition: all 0.3s;
+            }
+            button:hover {
+                background: #45a049;
+                transform: translateY(-2px);
+            }
+            .transaction-list {
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .transaction-item {
+                background: #f8f9fa;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+                border-left: 4px solid #2196f3;
+            }
+            .transaction-in {
+                border-left-color: #4caf50;
+            }
+            .transaction-out {
+                border-left-color: #f44336;
+            }
+            .hidden {
+                display: none;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            .modal-content {
+                background-color: white;
+                margin: 10% auto;
+                padding: 20px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 500px;
+                position: relative;
+            }
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .close:hover {
+                color: black;
+            }
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 15px 0;
+            }
+            .stat-item {
+                background: #e8f5e8;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+            }
+            .user-id-input {
+                background: #fff3cd;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 15px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>👛 PCC Кошелек</h1>
+                <p>Управление нативным токеном ProofChain Network</p>
+
+                <div class="nav-buttons">
+                    <a href="/" class="nav-button">🏠 Главная</a>
+                    <a href="/network-status" class="nav-button"
+                        >🌐 Статус сети</a
+                    >
+                    <a href="/coin-creator" class="nav-button"
+                        >🪙 Создать монету</a
+                    >
+                    <a href="/status" class="nav-button">📊 Общий статус</a>
+                </div>
+            </header>
+
+            <!-- Ввод ID пользователя -->
+            <div class="card user-id-input">
+                <h3>👤 Идентификация</h3>
+                <p>Введите ваш ID пользователя для доступа к кошельку:</p>
+                <input
+                    type="text"
+                    id="userId"
+                    placeholder="Например: myproject, cryptodream, startup2024..."
+                    value=""
+                />
+                <button onclick="loadWallet()">🔓 Загрузить кошелек</button>
+            </div>
+
+            <!-- Основной баланс -->
+            <div class="balance-card" id="balanceSection" style="display: none">
+                <h2>Ваш баланс PCC</h2>
+                <div class="balance-amount" id="pccBalance">0 PCC</div>
+                <div class="balance-equivalent" id="balanceEquivalent">
+                    ~ $0.00
+                </div>
+                <div class="nav-buttons" style="margin-top: 20px">
+                    <button
+                        onclick="showSendModal()"
+                        style="
+                            background: rgba(255, 255, 255, 0.2);
+                            border: 2px solid white;
+                        "
+                    >
+                        💸 Отправить
+                    </button>
+                    <button
+                        onclick="minePCC()"
+                        style="
+                            background: rgba(255, 255, 255, 0.2);
+                            border: 2px solid white;
+                        "
+                    >
+                        ⛏️ Майнинг
+                    </button>
+                    <button
+                        onclick="showReceiveModal()"
+                        style="
+                            background: rgba(255, 255, 255, 0.2);
+                            border: 2px solid white;
+                        "
+                    >
+                        📥 Получить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="card" id="actionsSection" style="display: none">
+                <h2>⚡ Быстрые действия</h2>
+                <div class="grid">
+                    <div class="action-card" onclick="showSendModal()">
+                        <div class="action-icon">💸</div>
+                        <h3>Отправить PCC</h3>
+                        <p>Перевод токенов другому пользователю</p>
+                    </div>
+                    <div class="action-card" onclick="showReceiveModal()">
+                        <div class="action-icon">📥</div>
+                        <h3>Получить PCC</h3>
+                        <p>Ваш адрес для получения токенов</p>
+                    </div>
+                    <div class="action-card" onclick="minePCC()">
+                        <div class="action-icon">⛏️</div>
+                        <h3>Майнинг</h3>
+                        <p>Заработать PCC за поддержку сети</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="card" id="statsSection" style="display: none">
+                <h2>📈 Статистика PCC</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3>💰 Всего PCC</h3>
+                        <p id="totalPCC">0</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>📊 Стоимость</h3>
+                        <p id="pccPrice">$0.15</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>🎯 Стейкинг</h3>
+                        <p id="stakingAPY">8% годовых</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>🔥 Сожжено</h3>
+                        <p id="burnedPCC">0 PCC</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- История транзакций -->
+            <div class="card" id="historySection" style="display: none">
+                <h2>📋 История транзакций</h2>
+                <div class="transaction-list" id="transactionHistory">
+                    <!-- Транзакции будут здесь -->
+                </div>
+            </div>
+
+            <!-- Информация о токене -->
+            <div class="card">
+                <h2>💰 О токене PCC</h2>
+                <div class="grid">
+                    <div class="action-card">
+                        <h3>🌐 Нативный токен</h3>
+                        <p>PCC - основной токен сети ProofChain</p>
+                        <p><strong>Стандарт:</strong> PRC-20</p>
+                        <p><strong>Сеть:</strong> ProofChain Mainnet</p>
+                    </div>
+                    <div class="action-card">
+                        <h3>💡 Использование</h3>
+                        <p>• Создание монет</p>
+                        <p>• Фиксация авторства</p>
+                        <p>• Комиссии сети</p>
+                        <p>• Голосование</p>
+                    </div>
+                    <div class="action-card">
+                        <h3>🚀 Перспективы</h3>
+                        <p>• Листинг на биржах</p>
+                        <p>• DeFi экосистема</p>
+                        <p>• NFT маркетплейс</p>
+                        <p>• DAO управление</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно отправки -->
+        <div id="sendModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeSendModal()">&times;</span>
+                <h2>💸 Отправить PCC</h2>
+                <input
+                    type="text"
+                    id="sendToUserId"
+                    placeholder="ID получателя"
+                />
+                <input
+                    type="number"
+                    id="sendAmount"
+                    placeholder="Количество PCC"
+                />
+                <button onclick="sendPCC()">📤 Отправить</button>
+                <p><small>Комиссия сети: 0.1%</small></p>
+            </div>
+        </div>
+
+        <!-- Модальное окно получения -->
+        <div id="receiveModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeReceiveModal()">&times;</span>
+                <h2>📥 Получить PCC</h2>
+                <div style="text-align: center">
+                    <p>
+                        <strong>Ваш ID:</strong>
+                        <span id="receiveUserId"></span>
+                    </p>
+                    <p>Сообщите этот ID отправителю</p>
+                    <div
+                        style="
+                            background: #f8f9fa;
+                            padding: 15px;
+                            border-radius: 8px;
+                            margin: 15px 0;
+                        "
+                    >
+                        <p><strong>Сеть:</strong> ProofChain Mainnet</p>
+                        <p><strong>Токен:</strong> PCC (PRC-20)</p>
+                    </div>
+                    <button onclick="copyUserId()">📋 Скопировать ID</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentUserId = "";
+            let refreshInterval;
+
+            // Загрузка кошелька
+            async function loadWallet() {
+                const userId = document.getElementById("userId").value;
+
+                if (!userId) {
+                    alert("❌ Введите ID пользователя");
+                    return;
+                }
+
+                currentUserId = userId;
+
+                try {
+                    const response = await fetch(
+                        `/api/wallet/pcc-balance/${userId}`,
+                    );
+                    const data = await response.json();
+
+                    if (data.pcc_balance !== undefined) {
+                        showWalletSections();
+                        updateBalance(data.pcc_balance);
+                        loadTransactionHistory();
+                        loadPCCStats();
+                    } else {
+                        alert("❌ Пользователь не найден");
+                    }
+                } catch (error) {
+                    console.error("Ошибка загрузки кошелька:", error);
+                    alert("❌ Ошибка загрузки кошелька");
+                }
+            }
+
+            // Показать секции кошелька
+            function showWalletSections() {
+                document.getElementById("balanceSection").style.display =
+                    "block";
+                document.getElementById("actionsSection").style.display =
+                    "block";
+                document.getElementById("statsSection").style.display = "block";
+                document.getElementById("historySection").style.display =
+                    "block";
+            }
+
+            // Обновление баланса
+            function updateBalance(balance) {
+                document.getElementById("pccBalance").textContent =
+                    balance + " PCC";
+
+                // Расчет эквивалента в USD (демо курс $0.15 за PCC)
+                const usdEquivalent = (balance * 0.15).toFixed(2);
+                document.getElementById("balanceEquivalent").textContent =
+                    `~ $${usdEquivalent}`;
+            }
+
+            // Загрузка статистики PCC
+            async function loadPCCStats() {
+                // Демо данные
+                document.getElementById("totalPCC").textContent =
+                    "1,000,000,000 PCC";
+                document.getElementById("pccPrice").textContent = "$0.15";
+                document.getElementById("stakingAPY").textContent =
+                    "8% годовых";
+                document.getElementById("burnedPCC").textContent = "50,000 PCC";
+            }
+
+            // Загрузка истории транзакций
+            async function loadTransactionHistory() {
+                const historyContainer =
+                    document.getElementById("transactionHistory");
+
+                // Демо транзакции
+                const demoTransactions = [
+                    {
+                        type: "in",
+                        amount: 100,
+                        from: "network",
+                        description: "Майнинг",
+                        timestamp: new Date().toISOString(),
+                    },
+                    {
+                        type: "out",
+                        amount: 50,
+                        to: "user2",
+                        description: "Перевод",
+                        timestamp: new Date(
+                            Date.now() - 86400000,
+                        ).toISOString(),
+                    },
+                    {
+                        type: "in",
+                        amount: 200,
+                        from: "user3",
+                        description: "Получение",
+                        timestamp: new Date(
+                            Date.now() - 172800000,
+                        ).toISOString(),
+                    },
+                    {
+                        type: "out",
+                        amount: 25,
+                        to: "coin_creation",
+                        description: "Создание монеты",
+                        timestamp: new Date(
+                            Date.now() - 259200000,
+                        ).toISOString(),
+                    },
+                ];
+
+                historyContainer.innerHTML = "";
+
+                demoTransactions.forEach((tx) => {
+                    const txElement = document.createElement("div");
+                    txElement.className = `transaction-item ${tx.type === "in" ? "transaction-in" : "transaction-out"}`;
+
+                    let txHtml = "";
+                    if (tx.type === "in") {
+                        txHtml = `
+                        <div style="display: flex; justify-content: between; align-items: center;">
+                            <div>
+                                <strong>📥 +${tx.amount} PCC</strong>
+                                <div>От: ${tx.from}</div>
+                                <div><small>${tx.description}</small></div>
+                            </div>
+                            <div style="color: #4caf50; font-weight: bold;">+${tx.amount}</div>
+                        </div>
+                    `;
+                    } else {
+                        txHtml = `
+                        <div style="display: flex; justify-content: between; align-items: center;">
+                            <div>
+                                <strong>📤 -${tx.amount} PCC</strong>
+                                <div>Кому: ${tx.to}</div>
+                                <div><small>${tx.description}</small></div>
+                            </div>
+                            <div style="color: #f44336; font-weight: bold;">-${tx.amount}</div>
+                        </div>
+                    `;
+                    }
+
+                    txHtml += `<small>${new Date(tx.timestamp).toLocaleString()}</small>`;
+                    txElement.innerHTML = txHtml;
+                    historyContainer.appendChild(txElement);
+                });
+            }
+
+            // Показать модальное окно отправки
+            function showSendModal() {
+                document.getElementById("sendModal").style.display = "block";
+            }
+
+            // Закрыть модальное окно отправки
+            function closeSendModal() {
+                document.getElementById("sendModal").style.display = "none";
+            }
+
+            // Показать модальное окно получения
+            function showReceiveModal() {
+                document.getElementById("receiveUserId").textContent =
+                    currentUserId;
+                document.getElementById("receiveModal").style.display = "block";
+            }
+
+            // Закрыть модальное окно получения
+            function closeReceiveModal() {
+                document.getElementById("receiveModal").style.display = "none";
+            }
+
+            // Копировать ID пользователя
+            function copyUserId() {
+                navigator.clipboard.writeText(currentUserId);
+                alert("✅ ID скопирован в буфер обмена");
+            }
+
+            // Отправка PCC
+            async function sendPCC() {
+                const toUserId = document.getElementById("sendToUserId").value;
+                const amount = parseFloat(
+                    document.getElementById("sendAmount").value,
+                );
+
+                if (!toUserId || !amount || amount <= 0) {
+                    alert("❌ Заполните все поля корректно");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/wallet/transfer-pcc", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            fromUserId: currentUserId,
+                            toUserId: toUserId,
+                            amount: amount,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert("✅ " + data.message);
+                        closeSendModal();
+                        // Обновляем баланс и историю
+                        loadWallet();
+                    } else {
+                        alert("❌ Ошибка: " + data.error);
+                    }
+                } catch (error) {
+                    alert("❌ Ошибка сети: " + error);
+                }
+            }
+
+            // Майнинг PCC
+            async function minePCC() {
+                try {
+                    const response = await fetch("/api/wallet/mine-pcc", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            userId: currentUserId,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert("✅ " + data.message);
+                        // Обновляем баланс
+                        loadWallet();
+                    } else {
+                        alert("❌ Ошибка: " + data.error);
+                    }
+                } catch (error) {
+                    alert("❌ Ошибка сети: " + error);
+                }
+            }
+
+            // Инициализация
+            document.addEventListener("DOMContentLoaded", function () {
+                // Авто-обновление баланса каждые 30 секунд
+                refreshInterval = setInterval(() => {
+                    if (currentUserId) {
+                        loadWallet();
+                    }
+                }, 30000);
+            });
+
+            // Очистка интервалов
+            window.addEventListener("beforeunload", function () {
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                }
+            });
+
+            // Закрытие модальных окон при клике вне их
+            window.onclick = function (event) {
+                const sendModal = document.getElementById("sendModal");
+                const receiveModal = document.getElementById("receiveModal");
+
+                if (event.target === sendModal) {
+                    closeSendModal();
+                }
+                if (event.target === receiveModal) {
+                    closeReceiveModal();
+                }
+            };
+        </script>
+    </body>
+</html>

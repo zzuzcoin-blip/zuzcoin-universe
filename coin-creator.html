@@ -1,0 +1,1394 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ProofChain - Создание Монеты</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                margin: 0;
+                padding: 20px;
+                color: #333;
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+            header {
+                text-align: center;
+                color: white;
+                margin-bottom: 30px;
+            }
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+            .card {
+                background: white;
+                padding: 25px;
+                margin: 20px 0;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+            input,
+            textarea,
+            button,
+            select {
+                width: 100%;
+                padding: 12px;
+                margin: 8px 0;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            button {
+                background: #4caf50;
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            button:hover {
+                background: #45a049;
+            }
+            .coin-card {
+                background: #e8f5e8;
+                padding: 15px;
+                margin: 10px 0;
+                border-left: 4px solid #4caf50;
+            }
+            .balance {
+                background: gold;
+                padding: 15px;
+                text-align: center;
+                font-weight: bold;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .hidden {
+                display: none;
+            }
+            .step-indicator {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+            }
+            .step {
+                text-align: center;
+                flex: 1;
+                padding: 10px;
+                background: #f0f0f0;
+                border-radius: 5px;
+                margin: 0 5px;
+            }
+            .step.active {
+                background: #4caf50;
+                color: white;
+            }
+            .coin-preview {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border-left: 4px solid #ffc107;
+            }
+            .nav-button {
+                display: inline-block;
+                padding: 10px 20px;
+                background: #2196f3;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .marketplace-item {
+                background: #e8f4ff;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 5px;
+                border-left: 4px solid #2196f3;
+            }
+            .success-message {
+                background: #d4edda;
+                color: #155724;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border-left: 4px solid #28a745;
+            }
+            .project-name-examples {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+                border-left: 4px solid #17a2b8;
+            }
+            .quick-start-guide {
+                background: #d4edda;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                border-left: 4px solid #28a745;
+            }
+            .warning-message {
+                background: #fff3cd;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border-left: 4px solid #ffc107;
+            }
+            .guide-section {
+                background: #e7f3ff;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                border-left: 4px solid #2196f3;
+            }
+            .budget-card {
+                background: #fff3cd;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+                border-left: 4px solid #ffc107;
+            }
+            .resource-list {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+            .timeline {
+                position: relative;
+                padding-left: 30px;
+            }
+            .timeline-item {
+                margin-bottom: 20px;
+                padding-left: 20px;
+                border-left: 3px solid #4caf50;
+            }
+            .timeline-item:before {
+                content: "✓";
+                position: absolute;
+                left: 10px;
+                background: #4caf50;
+                color: white;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 20px;
+            }
+            .code-block {
+                background: #2d2d2d;
+                color: #f8f8f2;
+                padding: 15px;
+                border-radius: 5px;
+                font-family: "Courier New", monospace;
+                margin: 10px 0;
+                overflow-x: auto;
+            }
+            .guide-button {
+                background: #9c27b0;
+                color: white;
+                padding: 15px;
+                text-align: center;
+                border-radius: 8px;
+                margin: 15px 0;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .guide-button:hover {
+                background: #7b1fa2;
+            }
+            .payment-methods {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin: 20px 0;
+            }
+            .payment-method {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                cursor: pointer;
+                border: 2px solid transparent;
+                transition: all 0.3s;
+            }
+            .payment-method:hover {
+                border-color: #4caf50;
+                transform: translateY(-2px);
+            }
+            .payment-method.selected {
+                border-color: #4caf50;
+                background: #e8f5e8;
+            }
+            .crypto-modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            .crypto-modal-content {
+                background-color: white;
+                margin: 10% auto;
+                padding: 20px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 500px;
+                position: relative;
+            }
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .close:hover {
+                color: black;
+            }
+            .crypto-instructions {
+                background: #e7f3ff;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border-left: 4px solid #2196f3;
+            }
+            .payment-info {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>🪙 ProofChain Coin Factory</h1>
+                <p>
+                    Создайте свою криптовалюту и получите полное руководство по
+                    продвижению
+                </p>
+                <a href="/" class="nav-button">← Назад к основному блокчейну</a>
+            </header>
+
+            <!-- Быстрый старт -->
+            <div class="quick-start-guide">
+                <h2>🚀 Быстрый старт - создайте свою монету за 5 минут!</h2>
+                <ol>
+                    <li>
+                        <strong>Введите название вашего проекта</strong> (это
+                        будет ваш аккаунт)
+                    </li>
+                    <li><strong>Пополните баланс</strong> на 500+ рублей</li>
+                    <li>
+                        <strong>Заполните данные монеты</strong> в 3 простых
+                        шага
+                    </li>
+                    <li>
+                        <strong
+                            >Получите готовую монету + полное
+                            руководство</strong
+                        >
+                        от создания до листинга!
+                    </li>
+                </ol>
+
+                <!-- КНОПКА ДЛЯ ПРОСМОТРА РУКОВОДСТВА -->
+                <div class="guide-button" onclick="showFullGuide()">
+                    📚 ПОСМОТРЕТЬ РУКОВОДСТВО БЕЗ СОЗДАНИЯ МОНЕТЫ
+                </div>
+            </div>
+
+            <!-- Аккаунт -->
+            <div class="card">
+                <h2>👤 Ваш проект / аккаунт</h2>
+                <p><strong>Введите название вашего проекта:</strong></p>
+                <input
+                    type="text"
+                    id="userId"
+                    placeholder="Например: CryptoDream, StarToken, FutureCoin..."
+                    value=""
+                />
+
+                <div class="project-name-examples">
+                    <p>
+                        <strong>💡 Примеры хороших названий для монет:</strong>
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Для стартапов:</strong> TechStart,
+                            InnovateCoin, FutureToken
+                        </li>
+                        <li>
+                            <strong>Для сообществ:</strong> CommunityCoin,
+                            GroupToken, SocialCrypto
+                        </li>
+                        <li>
+                            <strong>Для бизнеса:</strong> BusinessToken,
+                            EnterpriseCoin, CorpCrypto
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="balance" id="balanceDisplay">Баланс: 0 руб</div>
+
+                <!-- Новый блок пополнения баланса -->
+                <div class="payment-section">
+                    <h3>💳 Пополнить баланс</h3>
+                    <div class="payment-methods">
+                        <div
+                            class="payment-method"
+                            onclick="selectPaymentMethod('crypto')"
+                        >
+                            <h3>₿ Криптовалюты</h3>
+                            <p>BTC, ETH, USDT • NowPayments</p>
+                            <small>Мгновенное зачисление</small>
+                        </div>
+                        <div
+                            class="payment-method"
+                            onclick="selectPaymentMethod('bank')"
+                        >
+                            <h3>🏦 Банковские карты</h3>
+                            <p>Visa, Mastercard, МИР</p>
+                            <small>Скоро будет доступно</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Создание монеты -->
+            <div class="card">
+                <h2>🚀 Создать новую монету - 500 руб</h2>
+
+                <div class="warning-message" id="projectWarning">
+                    <p>
+                        ⚠️
+                        <strong
+                            >Сначала введите название вашего проекта
+                            выше</strong
+                        >
+                    </p>
+                </div>
+
+                <div class="step-indicator">
+                    <div class="step active">1. Основные данные</div>
+                    <div class="step">2. Дополнительно</div>
+                    <div class="step">3. Подтверждение</div>
+                </div>
+
+                <div id="step1">
+                    <h3>📝 Шаг 1: Основные данные монеты</h3>
+
+                    <input
+                        type="text"
+                        id="coinName"
+                        placeholder="Название монеты (например: MyAwesomeCoin)"
+                    />
+                    <input
+                        type="text"
+                        id="coinSymbol"
+                        placeholder="Символ (например: MAC)"
+                        maxlength="10"
+                    />
+                    <input
+                        type="number"
+                        id="totalSupply"
+                        placeholder="Общее предложение (например: 1000000)"
+                    />
+                    <textarea
+                        id="coinDescription"
+                        placeholder="Описание монеты, её цели и миссия..."
+                        rows="3"
+                    ></textarea>
+
+                    <button onclick="showStep2()">Далее →</button>
+                </div>
+
+                <div id="step2" class="hidden">
+                    <h3>🎯 Шаг 2: Дополнительные параметры</h3>
+
+                    <select id="coinCategory">
+                        <option value="utility">Утилитарный токен</option>
+                        <option value="governance">Токен управления</option>
+                        <option value="meme">Мем-токен</option>
+                        <option value="nft">NFT токен</option>
+                        <option value="defi">DeFi токен</option>
+                    </select>
+
+                    <textarea
+                        id="coinUtilities"
+                        placeholder="Утилиты токена (что можно делать с этой монетой?)"
+                        rows="3"
+                    ></textarea>
+                    <textarea
+                        id="coinRoadmap"
+                        placeholder="Дорожная карта (планы на ближайшие месяцы)"
+                        rows="3"
+                    ></textarea>
+                    <input
+                        type="url"
+                        id="coinWebsite"
+                        placeholder="Вебсайт проекта (необязательно)"
+                    />
+
+                    <div style="display: flex; gap: 10px">
+                        <button onclick="showStep1()">← Назад</button>
+                        <button onclick="showStep3()">Далее →</button>
+                    </div>
+                </div>
+
+                <div id="step3" class="hidden">
+                    <h3>✅ Шаг 3: Подтверждение создания</h3>
+
+                    <div class="coin-preview" id="coinPreview"></div>
+
+                    <div
+                        style="
+                            background: #e7f3ff;
+                            padding: 15px;
+                            border-radius: 5px;
+                            margin: 15px 0;
+                        "
+                    >
+                        <p><strong>💰 Стоимость создания: 500 руб</strong></p>
+                        <p>✅ Монета будет запатентована в блокчейне</p>
+                        <p>📚 Вы получите ПОЛНОЕ руководство по продвижению</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px">
+                        <button onclick="showStep2()">← Назад</button>
+                        <button onclick="createCoin()" id="createCoinButton">
+                            🪙 Создать монету за 500 руб
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Результат создания -->
+            <div id="creationResult" class="hidden"></div>
+
+            <!-- Модальное окно для крипто-платежей -->
+            <div id="cryptoModal" class="crypto-modal">
+                <div class="crypto-modal-content">
+                    <span class="close" onclick="closeCryptoModal()"
+                        >&times;</span
+                    >
+                    <h3>₿ Пополнение баланса криптовалютой</h3>
+
+                    <div class="crypto-form">
+                        <label>Сумма в USD:</label>
+                        <input
+                            type="number"
+                            id="cryptoAmount"
+                            placeholder="10.00"
+                            step="0.01"
+                            min="1"
+                        />
+
+                        <label>Криптовалюта:</label>
+                        <select id="cryptoCurrency">
+                            <option value="btc">Bitcoin (BTC)</option>
+                            <option value="eth">Ethereum (ETH)</option>
+                            <option value="usdt">Tether (USDT)</option>
+                            <option value="usdc">USD Coin (USDC)</option>
+                            <option value="doge">Dogecoin (DOGE)</option>
+                        </select>
+
+                        <button
+                            onclick="createCryptoPayment()"
+                            style="background: #ff6b00"
+                        >
+                            Создать платеж
+                        </button>
+                    </div>
+
+                    <div
+                        id="cryptoInstructions"
+                        class="crypto-instructions hidden"
+                    >
+                        <h4>📋 Инструкция по оплате:</h4>
+                        <div class="payment-info">
+                            <p>
+                                <strong>Адрес кошелька:</strong>
+                                <span
+                                    id="payAddress"
+                                    style="font-family: monospace"
+                                ></span>
+                            </p>
+                            <p>
+                                <strong>Сумма к оплате:</strong>
+                                <span
+                                    id="payAmount"
+                                    style="font-weight: bold"
+                                ></span>
+                                <span
+                                    id="payCurrency"
+                                    style="font-weight: bold"
+                                ></span>
+                            </p>
+                            <p><strong>Срок действия:</strong> 30 минут</p>
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 10px;
+                                    margin-top: 15px;
+                                "
+                            >
+                                <button
+                                    onclick="copyPaymentDetails()"
+                                    style="background: #2196f3"
+                                >
+                                    📋 Скопировать данные
+                                </button>
+                                <a
+                                    id="paymentLink"
+                                    href="#"
+                                    target="_blank"
+                                    style="
+                                        padding: 10px 15px;
+                                        background: #4caf50;
+                                        color: white;
+                                        text-decoration: none;
+                                        border-radius: 5px;
+                                    "
+                                    >💳 Оплатить через NowPayments</a
+                                >
+                            </div>
+                        </div>
+                        <p
+                            style="
+                                color: #666;
+                                font-size: 12px;
+                                margin-top: 10px;
+                            "
+                        >
+                            💡 После отправки платежа закройте это окно. Баланс
+                            обновится автоматически после 1 подтверждения в
+                            сети.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПОЛНОЕ РУКОВОДСТВО -->
+            <div class="guide-section" id="fullGuide" style="display: none">
+                <h2>📚 ПОЛНОЕ РУКОВОДСТВО: Что делать с вашей монетой</h2>
+
+                <div class="card">
+                    <h3>🎯 Ваша монета создана! Вот что у вас есть:</h3>
+                    <div class="resource-list">
+                        <p><strong>✅ Ваши активы:</strong></p>
+                        <ul>
+                            <li>
+                                🔤 <strong>Название и символ</strong> - ваша
+                                уникальная идентификация
+                            </li>
+                            <li>
+                                📝 <strong>Контракт PRC-20</strong> -
+                                техническая основа монеты
+                            </li>
+                            <li>
+                                💰 <strong>Общее предложение</strong> - все
+                                токены принадлежат вам
+                            </li>
+                            <li>
+                                🔗 <strong>Хеш в блокчейне</strong> -
+                                юридическое доказательство создания
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Остальная часть руководства остается без изменений -->
+                <div class="card">
+                    <h3>🚀 ДОРОЖНАЯ КАРТА: От создания до листинга</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <h4>📋 НЕМЕДЛЕННЫЕ ДЕЙСТВИЯ (День 1-7)</h4>
+                            <p><strong>Бюджет: $0-500</strong></p>
+                            <ul>
+                                <li>
+                                    ✅ <strong>Создайте сообщество</strong> -
+                                    Telegram/Discord канал
+                                </li>
+                                <li>
+                                    ✅
+                                    <strong
+                                        >Зарегистрируйтесь на
+                                        агрегаторах</strong
+                                    >:
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                • CoinMarketCap (бесплатно)<br />
+                                • CoinGecko (бесплатно)<br />
+                                • DexTools (бесплатно)<br />
+                                • DeFiPulse (бесплатно)
+                            </div>
+                            <ul>
+                                <li>
+                                    ✅ <strong>Создайте соцсети</strong> -
+                                    Twitter, Reddit, Medium
+                                </li>
+                                <li>
+                                    ✅ <strong>Напишите White Paper</strong> -
+                                    используйте наш шаблон
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="timeline-item">
+                            <h4>💼 РАЗВИТИЕ (Неделя 2-4)</h4>
+                            <p><strong>Бюджет: $500-2000</strong></p>
+                            <ul>
+                                <li>
+                                    🎯 <strong>Создайте ликвидность</strong> на
+                                    DEX биржах:
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                • PancakeSwap (BSC сеть) - комиссия ~$50<br />
+                                • Uniswap (Ethereum) - комиссия ~$200+<br />
+                                • 1inch (мульти-чейн) - комиссия зависит от сети
+                            </div>
+                            <ul>
+                                <li>
+                                    🎯 <strong>Наймите маркетолога</strong> -
+                                    стоимость $300-1000/мес
+                                </li>
+                                <li>
+                                    🎯 <strong>Запустите аирдроп</strong> -
+                                    раздача токенов за подписки
+                                </li>
+                                <li>
+                                    🎯 <strong>Найдите партнеров</strong> -
+                                    другие проекты для коллабов
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="timeline-item">
+                            <h4>📈 ПОДГОТОВКА К ЛИСТИНГУ (Месяц 1-2)</h4>
+                            <p><strong>Бюджет: $2000-10000</strong></p>
+                            <ul>
+                                <li>
+                                    📊 <strong>Контактируйте с биржами</strong>:
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                • Gate.io - листинг от $5000<br />
+                                • KuCoin - листинг от $10000<br />
+                                • MEXC - листинг от $3000<br />
+                                • Bybit - листинг от $15000
+                            </div>
+                            <ul>
+                                <li>
+                                    📊 <strong>Подготовьте документы</strong>:
+                                </li>
+                                <ul>
+                                    <li>White Paper (техническое описание)</li>
+                                    <li>Light Paper (упрощенная версия)</li>
+                                    <li>
+                                        Pitch Deck (презентация для инвесторов)
+                                    </li>
+                                    <li>Tokenomics (экономика токена)</li>
+                                </ul>
+                                <li>
+                                    📊 <strong>Соберите комьюнити</strong> -
+                                    5000+ участников минимум
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="timeline-item">
+                            <h4>🏪 ЛИСТИНГ И ПОСЛЕ (Месяц 2-6)</h4>
+                            <p><strong>Бюджет: $5000-50000+</strong></p>
+                            <ul>
+                                <li>
+                                    🏪 <strong>Топ биржи</strong> - переговоры и
+                                    листинг:
+                                </li>
+                            </ul>
+                            <div class="code-block">
+                                • Binance - от $50000 + объем торгов<br />
+                                • Coinbase - от $100000 + юридические
+                                проверки<br />
+                                • Kraken - от $50000 + технический аудит<br />
+                                • OKX - от $30000 + маркетинг бюджет
+                            </div>
+                            <ul>
+                                <li>
+                                    🏪 <strong>Маркетинг кампания</strong> -
+                                    $10000-50000
+                                </li>
+                                <li>
+                                    🏪 <strong>Юридическое оформление</strong> -
+                                    $5000-20000
+                                </li>
+                                <li>
+                                    🏪 <strong>Постоянное развитие</strong> -
+                                    команда, продукт, партнерства
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Остальная часть руководства -->
+                <div class="card">
+                    <h3>💼 КОНКРЕТНЫЕ РЕСУРСЫ И КОНТАКТЫ</h3>
+
+                    <div class="budget-card">
+                        <h4>💰 БЮДЖЕТИРОВАНИЕ (реальные цифры):</h4>
+                        <ul>
+                            <li>
+                                <strong>Минимальный бюджет:</strong> $1000-5000
+                                (небольшой проект)
+                            </li>
+                            <li>
+                                <strong>Средний бюджет:</strong> $10000-50000
+                                (серьезный проект)
+                            </li>
+                            <li>
+                                <strong>Крупный бюджет:</strong> $50000-500000+
+                                (топовый проект)
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="resource-list">
+                        <h4>📞 КОНТАКТЫ ДЛЯ ЛИСТИНГА:</h4>
+                        <div class="code-block">
+                            • <strong>Gate.io</strong>: listing@gate.io |
+                            Бюджет: $5000-30000<br />
+                            • <strong>KuCoin</strong>: listing@kucoin.com |
+                            Бюджет: $10000-50000<br />
+                            • <strong>MEXC</strong>: listing@mexc.com | Бюджет:
+                            $3000-15000<br />
+                            • <strong>Bybit</strong>: listing@bybit.com |
+                            Бюджет: $15000-75000<br />
+                            • <strong>HTX</strong>: listing@huobi.com | Бюджет:
+                            $10000-50000
+                        </div>
+                    </div>
+
+                    <div class="resource-list">
+                        <h4>👥 РЕСУРСЫ ДЛЯ РАЗВИТИЯ:</h4>
+                        <div class="code-block">
+                            • <strong>Маркетинг агенства</strong>: Icoda,
+                            Coinpresso, AmaZix<br />
+                            • <strong>Юридические услуги</strong>: LegalNodes,
+                            Tokenomy<br />
+                            • <strong>Технический аудит</strong>: CertiK,
+                            Hacken, Quantstamp<br />
+                            • <strong>Комьюнити менеджеры</strong>:
+                            CryptoTwitter, Telegram groups
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🛠️ ПРАКТИЧЕСКОЕ ИСПОЛЬЗОВАНИЕ МОНЕТЫ</h3>
+
+                    <h4>💳 Как использовать монету в вашем бизнесе:</h4>
+                    <div class="code-block">
+                        // Пример интеграции в сайт function
+                        acceptCryptoPayment(amount, userAddress) { // Принимайте
+                        вашу монету как оплату // За товары, услуги, подписки //
+                        Создайте кошелек для бизнеса } // Создание NFT
+                        маркетплейса function createNFTMarketplace() { //
+                        Используйте вашу монету для покупки NFT // Комиссии в
+                        вашей монете // Стимулирование использования }
+                    </div>
+
+                    <h4>📈 Создание ликвидности и диплоймент:</h4>
+                    <div class="code-block">
+                        // Шаги для PancakeSwap (самый популярный): 1.
+                        Установите MetaMask 2. Пополните BNB для комиссий 3.
+                        Перейдите на PancakeSwap 4. Нажмите "Add Liquidity" 5.
+                        Введите адрес вашего контракта 6. Добавьте пару
+                        BNB/ВашаМонета 7. Подтвердите транзакцию (~$50 комиссия)
+
+                        <strong>Рекомендуемый объем ликвидности:</strong>
+                        • Минимум: $1000-5000 • Оптимально: $10000-50000 • Для
+                        серьезных проекты: $50000+
+                    </div>
+
+                    <h4>🎯 Монетизация стратегии:</h4>
+                    <ul>
+                        <li>
+                            <strong>Комиссии с транзакций</strong> - если
+                            настроить в контракте
+                        </li>
+                        <li>
+                            <strong>Продажа токенов</strong> -
+                            приватные/публичные раунды
+                        </li>
+                        <li>
+                            <strong>Стейкинг</strong> - вознаграждение за
+                            хранение
+                        </li>
+                        <li>
+                            <strong>Голосование</strong> - плата за участие в
+                            управлении
+                        </li>
+                        <li>
+                            <strong>Партнерские программы</strong> - комиссии за
+                            привлечение
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>⚠️ ЧТО ДЕЛАТЬ СЕЙЧАС - пошаговый план</h3>
+                    <ol>
+                        <li>
+                            <strong>СОХРАНИТЕ данные вашей монеты</strong> -
+                            название, символ, контракт
+                        </li>
+                        <li>
+                            <strong>СОЗДАЙТЕ Telegram канал</strong> - сразу
+                            после создания монеты
+                        </li>
+                        <li>
+                            <strong>ЗАРЕГИСТРИРУЙТЕСЬ на CoinMarketCap</strong>
+                            - подайте заявку на добавление
+                        </li>
+                        <li>
+                            <strong>НАЙДИТЕ маркетолога</strong> - на биржах
+                            фриланса или Telegram
+                        </li>
+                        <li>
+                            <strong>ПОДГОТОВЬТЕ White Paper</strong> -
+                            используйте наш шаблон из консоли
+                        </li>
+                        <li>
+                            <strong>СОЗДАЙТЕ ликвидность</strong> - на
+                            PancakeSwap или Uniswap
+                        </li>
+                        <li>
+                            <strong>НАЧИНАЙТЕ переговоры</strong> - с биржами из
+                            списка выше
+                        </li>
+                    </ol>
+
+                    <div class="warning-message">
+                        <p>
+                            <strong>💡 Важно:</strong> Начинайте с малого! Не
+                            нужно сразу $50000.
+                        </p>
+                        <p>
+                            Сначала создайте сообщество, затем ликвидность,
+                            потом переговоры с биржами.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ваши монеты -->
+            <div class="card">
+                <h2>📋 Ваши созданные монеты</h2>
+                <button onclick="loadUserCoins()">🔄 Обновить список</button>
+                <div id="userCoinsList"></div>
+            </div>
+
+            <!-- Маркетплейс -->
+            <div class="card">
+                <h2>🏪 Маркетплейс монет</h2>
+                <button onclick="loadMarketplace()">
+                    🔄 Загрузить маркетплейс
+                </button>
+                <div id="marketplaceList"></div>
+            </div>
+        </div>
+
+        <script>
+            let currentStep = 1;
+
+            // Функция для показа руководства
+            function showFullGuide() {
+                document.getElementById("fullGuide").style.display = "block";
+
+                // Плавная прокрутка к руководству
+                setTimeout(() => {
+                    document.getElementById("fullGuide").scrollIntoView({
+                        behavior: "smooth",
+                    });
+                }, 100);
+
+                alert(
+                    "📚 Руководство открыто! Прокрутите ниже для полной информации.",
+                );
+            }
+
+            // Функции для работы с крипто-платежами
+            function selectPaymentMethod(method) {
+                if (method === "crypto") {
+                    openCryptoModal();
+                } else if (method === "bank") {
+                    alert(
+                        "🏦 Банковские карты скоро будут доступны! Пока используйте криптовалюты.",
+                    );
+                }
+            }
+
+            function openCryptoModal() {
+                const userId = document.getElementById("userId").value;
+                if (!userId) {
+                    alert("❌ Сначала введите название вашего проекта!");
+                    return;
+                }
+                document.getElementById("cryptoModal").style.display = "block";
+            }
+
+            function closeCryptoModal() {
+                document.getElementById("cryptoModal").style.display = "none";
+                document
+                    .getElementById("cryptoInstructions")
+                    .classList.add("hidden");
+                document.getElementById("cryptoAmount").value = "";
+            }
+
+            async function createCryptoPayment() {
+                const userId = document.getElementById("userId").value;
+                const amount = document.getElementById("cryptoAmount").value;
+                const currency =
+                    document.getElementById("cryptoCurrency").value;
+
+                if (!userId) {
+                    alert("❌ Сначала введите название вашего проекта!");
+                    return;
+                }
+
+                if (!amount || amount < 1) {
+                    alert("❌ Минимальная сумма 1 USD");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        "/api/nowpayments/create-payment",
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                userId: userId,
+                                amount: amount,
+                                currency: "USD",
+                                payCurrency: currency,
+                            }),
+                        },
+                    );
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Показываем инструкции
+                        document.getElementById("payAddress").textContent =
+                            result.payment.payAddress;
+                        document.getElementById("payAmount").textContent =
+                            result.payment.payAmount;
+                        document.getElementById("payCurrency").textContent =
+                            result.payment.payCurrency.toUpperCase();
+                        document.getElementById("paymentLink").href =
+                            result.paymentUrl;
+
+                        document
+                            .getElementById("cryptoInstructions")
+                            .classList.remove("hidden");
+
+                        // Сохраняем ID платежа для проверки статуса
+                        localStorage.setItem(
+                            "lastCryptoPayment",
+                            result.payment.nowpaymentsPaymentId,
+                        );
+                        localStorage.setItem("lastCryptoUserId", userId);
+
+                        alert(
+                            "✅ Платеж создан! Отправьте указанную сумму на адрес выше.",
+                        );
+                    } else {
+                        alert("❌ Ошибка: " + result.error);
+                    }
+                } catch (error) {
+                    alert("❌ Ошибка сети: " + error);
+                }
+            }
+
+            function copyPaymentDetails() {
+                const address =
+                    document.getElementById("payAddress").textContent;
+                const amount = document.getElementById("payAmount").textContent;
+                const currency =
+                    document.getElementById("payCurrency").textContent;
+
+                const text = `Адрес: ${address}\nСумма: ${amount} ${currency}`;
+                navigator.clipboard.writeText(text);
+                alert("📋 Данные скопированы в буфер обмена!");
+            }
+
+            // Проверка статуса платежа
+            async function checkCryptoPaymentStatus() {
+                const paymentId = localStorage.getItem("lastCryptoPayment");
+                const userId = localStorage.getItem("lastCryptoUserId");
+
+                if (!paymentId || !userId) return;
+
+                try {
+                    const response = await fetch(
+                        `/api/nowpayments/payment-status/${paymentId}`,
+                    );
+                    const result = await response.json();
+
+                    if (
+                        result.success &&
+                        result.status.payment_status === "finished"
+                    ) {
+                        alert("✅ Платеж подтвержден! Баланс пополнен.");
+                        updateUserBalance();
+                        closeCryptoModal();
+                        localStorage.removeItem("lastCryptoPayment");
+                        localStorage.removeItem("lastCryptoUserId");
+                    }
+                } catch (error) {
+                    console.error("Status check error:", error);
+                }
+            }
+
+            // Проверяем статус каждые 30 секунд
+            setInterval(checkCryptoPaymentStatus, 30000);
+
+            // Остальные функции создания монеты
+            function checkProjectName() {
+                const userId = document.getElementById("userId").value;
+                const warningElement =
+                    document.getElementById("projectWarning");
+
+                if (!userId) {
+                    warningElement.classList.remove("hidden");
+                    return false;
+                } else {
+                    warningElement.classList.add("hidden");
+                    return true;
+                }
+            }
+
+            function showStep1() {
+                if (!checkProjectName()) return;
+
+                document.getElementById("step1").classList.remove("hidden");
+                document.getElementById("step2").classList.add("hidden");
+                document.getElementById("step3").classList.add("hidden");
+                updateSteps(1);
+            }
+
+            function showStep2() {
+                if (!checkProjectName()) {
+                    alert("❌ Сначала введите название вашего проекта!");
+                    return;
+                }
+
+                if (!validateStep1()) return;
+
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.remove("hidden");
+                document.getElementById("step3").classList.add("hidden");
+                updateSteps(2);
+            }
+
+            function showStep3() {
+                if (!checkProjectName()) {
+                    alert("❌ Сначала введите название вашего проекта!");
+                    return;
+                }
+
+                if (!validateStep2()) return;
+
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.add("hidden");
+                document.getElementById("step3").classList.remove("hidden");
+                updateSteps(3);
+                updateCoinPreview();
+            }
+
+            function updateSteps(step) {
+                document.querySelectorAll(".step").forEach((s, index) => {
+                    s.classList.toggle("active", index < step);
+                });
+            }
+
+            function validateStep1() {
+                const name = document.getElementById("coinName").value;
+                const symbol = document.getElementById("coinSymbol").value;
+                const supply = document.getElementById("totalSupply").value;
+
+                if (!name || !symbol || !supply) {
+                    alert("Заполните все основные поля");
+                    return false;
+                }
+
+                if (symbol.length > 10) {
+                    alert("Символ не должен превышать 10 символов");
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateStep2() {
+                return true;
+            }
+
+            function updateCoinPreview() {
+                const preview = document.getElementById("coinPreview");
+                const coinData = getCoinData();
+
+                preview.innerHTML = `
+                <h4>${coinData.name} (${coinData.symbol})</h4>
+                <p><strong>Общее предложение:</strong> ${coinData.totalSupply.toLocaleString()} токенов</p>
+                <p><strong>Категория:</strong> ${getCategoryName(coinData.category)}</p>
+                <p><strong>Описание:</strong> ${coinData.description}</p>
+                ${coinData.utilities && coinData.utilities.length > 0 ? `<p><strong>Утилиты:</strong> ${coinData.utilities.join(", ")}</p>` : ""}
+            `;
+            }
+
+            function getCategoryName(category) {
+                const categories = {
+                    utility: "Утилитарный токен",
+                    governance: "Токен управления",
+                    meme: "Мем-токен",
+                    nft: "NFT токен",
+                    defi: "DeFi токен",
+                };
+                return categories[category] || category;
+            }
+
+            function getCoinData() {
+                return {
+                    name: document.getElementById("coinName").value,
+                    symbol: document
+                        .getElementById("coinSymbol")
+                        .value.toUpperCase(),
+                    totalSupply: parseInt(
+                        document.getElementById("totalSupply").value,
+                    ),
+                    description:
+                        document.getElementById("coinDescription").value,
+                    category: document.getElementById("coinCategory").value,
+                    utilities: document
+                        .getElementById("coinUtilities")
+                        .value.split("\n")
+                        .filter((u) => u.trim()),
+                    roadmap: document
+                        .getElementById("coinRoadmap")
+                        .value.split("\n")
+                        .filter((r) => r.trim()),
+                    website: document.getElementById("coinWebsite").value,
+                };
+            }
+
+            async function createCoin() {
+                const userId = document.getElementById("userId").value;
+                const coinData = getCoinData();
+
+                if (!userId) {
+                    alert("❌ Сначала введите название вашего проекта!");
+                    return;
+                }
+
+                try {
+                    const userResponse = await fetch("/api/user/" + userId);
+                    const userData = await userResponse.json();
+
+                    if (!userData.user || userData.user.balance < 500) {
+                        alert(
+                            "❌ Недостаточно средств! Нужно 500 руб. Пополните баланс.",
+                        );
+                        return;
+                    }
+                } catch (error) {
+                    alert("❌ Ошибка проверки баланса");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/create-coin", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId, coinData }),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showSuccessResult(result);
+                        showFullGuide();
+
+                        updateUserBalance();
+                        loadUserCoins();
+                        loadMarketplace();
+                    } else {
+                        alert("❌ Ошибка: " + result.error);
+                    }
+                } catch (error) {
+                    alert("❌ Ошибка сети: " + error);
+                }
+            }
+
+            function showSuccessResult(result) {
+                const resultDiv = document.getElementById("creationResult");
+                resultDiv.classList.remove("hidden");
+                resultDiv.innerHTML = `
+                <div class="success-message">
+                    <h3>✅ Монета успешно создана!</h3>
+                    <p><strong>Название:</strong> ${result.coin.name}</p>
+                    <p><strong>Символ:</strong> ${result.coin.symbol}</p>
+                    <p><strong>Контракт:</strong> ${result.coin.contractAddress}</p>
+                    <p><strong>Предложение:</strong> ${result.coin.totalSupply.toLocaleString()} токенов</p>
+                    <p><strong>Баланс после списания:</strong> ${result.balance} руб</p>
+                    <p><strong>Хеш в блокчейне:</strong> ${result.blockHash}</p>
+                    <p>📚 <strong>Прокрутите ниже для полного руководства!</strong></p>
+                </div>
+            `;
+            }
+
+            async function loadUserCoins() {
+                const userId = document.getElementById("userId").value;
+                if (!userId) {
+                    document.getElementById("userCoinsList").innerHTML =
+                        "<p>Введите название проекта чтобы увидеть ваши монеты</p>";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/user-coins/" + userId);
+                    const data = await response.json();
+
+                    let html = "";
+                    if (data.coins && data.coins.length > 0) {
+                        data.coins.forEach((coin) => {
+                            html += `
+                            <div class="coin-card">
+                                <h4>${coin.name} (${coin.symbol})</h4>
+                                <p><strong>Контракт:</strong> ${coin.contractAddress}</p>
+                                <p><strong>Предложение:</strong> ${coin.totalSupply.toLocaleString()}</p>
+                                <p><strong>Создана:</strong> ${new Date(coin.createdAt).toLocaleDateString()}</p>
+                                <button onclick="viewCoinDetails('${coin.contractAddress}')">📊 Детали</button>
+                            </div>
+                        `;
+                        });
+                    } else {
+                        html = "<p>У вас пока нет созданных монет</p>";
+                    }
+
+                    document.getElementById("userCoinsList").innerHTML = html;
+                } catch (error) {
+                    console.error("Ошибка загрузки монет:", error);
+                    document.getElementById("userCoinsList").innerHTML =
+                        "<p>Ошибка загрузки монет</p>";
+                }
+            }
+
+            async function loadMarketplace() {
+                try {
+                    const response = await fetch("/api/coin-marketplace");
+                    const data = await response.json();
+
+                    let html = "";
+                    if (data.coins && data.coins.length > 0) {
+                        data.coins.forEach((coin) => {
+                            html += `
+                            <div class="marketplace-item">
+                                <h4>${coin.name} (${coin.symbol})</h4>
+                                <p><strong>Категория:</strong> ${getCategoryName(coin.category)}</p>
+                                <p><strong>Предложение:</strong> ${coin.totalSupply.toLocaleString()}</p>
+                                <p><strong>Создатель:</strong> ${coin.creator}</p>
+                                <button onclick="viewCoinDetails('${coin.contractAddress}')">👀 Детали</button>
+                            </div>
+                        `;
+                        });
+                    } else {
+                        html = "<p>В маркетплейсе пока нет монет</p>";
+                    }
+
+                    document.getElementById("marketplaceList").innerHTML = html;
+                } catch (error) {
+                    console.error("Ошибка загрузки маркетплейса:", error);
+                    document.getElementById("marketplaceList").innerHTML =
+                        "<p>Ошибка загрузки маркетплейса</p>";
+                }
+            }
+
+            async function viewCoinDetails(contractAddress) {
+                try {
+                    const response = await fetch(
+                        "/api/coin-details/" + contractAddress,
+                    );
+                    const data = await response.json();
+
+                    let details = `ДЕТАЛИ МОНЕТЫ:\n\n`;
+                    details += `🎯 Название: ${data.coin.name}\n`;
+                    details += `🔤 Символ: ${data.coin.symbol}\n`;
+                    details += `📝 Контракт: ${data.coin.contractAddress}\n`;
+                    details += `👤 Создатель: ${data.coin.creator}\n`;
+                    details += `📈 Предложение: ${data.coin.totalSupply.toLocaleString()}\n`;
+                    details += `📖 Описание: ${data.coin.description}\n`;
+                    details += `🔗 Хеш в блокчейне: ${data.blockchainProof}`;
+
+                    alert(details);
+                } catch (error) {
+                    alert("❌ Ошибка загрузки деталей монеты");
+                }
+            }
+
+            async function updateUserBalance() {
+                const userId = document.getElementById("userId").value;
+                if (!userId) {
+                    document.getElementById("balanceDisplay").textContent =
+                        "Баланс: 0 руб";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/user/" + userId);
+                    const data = await response.json();
+
+                    if (data.user) {
+                        document.getElementById("balanceDisplay").textContent =
+                            `Баланс: ${data.user.balance} руб`;
+                    } else {
+                        document.getElementById("balanceDisplay").textContent =
+                            "Баланс: 0 руб";
+                    }
+                } catch (error) {
+                    document.getElementById("balanceDisplay").textContent =
+                        "Баланс: 0 руб";
+                }
+            }
+
+            // Инициализация при загрузке страницы
+            document.addEventListener("DOMContentLoaded", function () {
+                // Обновляем баланс при изменении ID пользователя
+                document
+                    .getElementById("userId")
+                    .addEventListener("input", function () {
+                        updateUserBalance();
+                        loadUserCoins();
+                    });
+
+                // Показываем первый шаг по умолчанию
+                showStep1();
+            });
+        </script>
+    </body>
+</html>
