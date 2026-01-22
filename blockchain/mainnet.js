@@ -1,18 +1,18 @@
 const crypto = require("crypto");
 
-class ProofChainMainnet {
+class ZuzcoinMainnet {
     constructor() {
         this.chain = [this.createGenesisBlock()];
         this.difficulty = 3; // Увеличили сложность для Mainnet
         this.pendingTransactions = [];
-        this.miningReward = 10; // PCC
-        this.networkName = "ProofChain Mainnet";
+        this.miningReward = 10; // ZUZ
+        this.networkName = "ZUZCOIN ProofChain Mainnet";
         this.chainId = 7777;
         this.blockTime = 5; // секунд
         this.totalTransactions = 0;
 
         console.log(
-            `🏗️  ProofChain Mainnet инициализирована (ChainID: ${this.chainId})`,
+            `🏗️  ZUZCOIN ProofChain Mainnet инициализирована (ChainID: ${this.chainId})`,
         );
     }
 
@@ -23,8 +23,8 @@ class ProofChainMainnet {
             transactions: [
                 {
                     type: "genesis",
-                    message: "ProofChain Mainnet Genesis Block",
-                    creator: "network",
+                    message: "ZUZCOIN ProofChain Mainnet Genesis Block",
+                    creator: "ZUZCOIN Network",
                     timestamp: "2024-01-01T00:00:00.000Z",
                 },
             ],
@@ -36,14 +36,14 @@ class ProofChainMainnet {
                 [
                     {
                         type: "genesis",
-                        message: "ProofChain Mainnet Genesis Block",
+                        message: "ZUZCOIN ProofChain Mainnet Genesis Block",
                     },
                 ],
                 "0",
                 0,
             ),
             validator: "genesis",
-            network: "ProofChain Mainnet",
+            network: "ZUZCOIN ProofChain Mainnet",
             chainId: 7777,
         };
         return genesisBlock;
@@ -92,7 +92,7 @@ class ProofChainMainnet {
         this.chain.push(newBlock);
         this.totalTransactions += transactions.length;
 
-        console.log(`✅ Блок #${newBlock.index} добавлен в ProofChain Mainnet`);
+        console.log(`✅ Блок #${newBlock.index} добавлен в ZUZCOIN ProofChain`);
         console.log(`   📦 Транзакций: ${transactions.length}`);
         console.log(`   🔗 Хеш: ${newBlock.hash.substr(0, 16)}...`);
 
@@ -167,7 +167,7 @@ class ProofChainMainnet {
             }
         }
 
-        // console.log("✅ Цепочка блоков валидна"); // Отключено: слишком много спама в консоли
+        console.log("✅ Цепочка блоков ZUZCOIN валидна");
         return true;
     }
 
@@ -240,4 +240,4 @@ class ProofChainMainnet {
     }
 }
 
-module.exports = ProofChainMainnet;
+module.exports = ZuzcoinMainnet;

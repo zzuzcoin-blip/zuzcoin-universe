@@ -1,0 +1,41 @@
+{
+    "name": "ZUZCOIN Wallet",
+    "short_name": "ZUZCOIN",
+    "description": "Official ZUZCOIN cryptocurrency wallet",
+    "start_url": "/zuzcoin-wallet",
+    "display": "standalone",
+    "background_color": "#1a1a2e",
+    "theme_color": "#ffd93d",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "ru",
+    "icons": [
+        {
+            "src": "https://i.ibb.co/XrtMMvSn/Zuz.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://i.ibb.co/XrtMMvSn/Zuz.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "https://i.ibb.co/XrtMMvSn/Zuz.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "apple touch icon"
+        }
+    ],
+    "categories": ["finance", "business"],
+    "screenshots": [
+        {
+            "src": "https://i.ibb.co/XrtMMvSn/Zuz.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ]
+}

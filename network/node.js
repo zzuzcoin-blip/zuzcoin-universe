@@ -1,6 +1,6 @@
 const EventEmitter = require("events");
 
-class ProofChainNetwork extends EventEmitter {
+class ZuzcoinNetwork extends EventEmitter {
     constructor(config = {}) {
         super();
 
@@ -24,7 +24,7 @@ class ProofChainNetwork extends EventEmitter {
 
         this.startTime = Date.now();
 
-        console.log(`🌐 ProofChain Node создана: ${this.nodeId}`);
+        console.log(`🌐 ZUZCOIN ProofChain Node создана: ${this.nodeId}`);
     }
 
     startNode() {
@@ -37,11 +37,11 @@ class ProofChainNetwork extends EventEmitter {
         );
         console.log(`🔗 Port: ${this.port}`);
 
-        // Имитация сетевой активности (отключено для уменьшения спама в консоли)
-        // this.networkInterval = setInterval(() => {
-        //     this.updateNetworkStats();
-        //     this.emit("networkUpdate", this.getNetworkInfo());
-        // }, 5000);
+        // Имитация сетевой активности
+        this.networkInterval = setInterval(() => {
+            this.updateNetworkStats();
+            this.emit("networkUpdate", this.getNetworkInfo());
+        }, 5000);
 
         this.emit("nodeStarted", this.nodeId);
     }
@@ -106,8 +106,8 @@ class ProofChainNetwork extends EventEmitter {
             transactionsProcessed: this.transactionsProcessed,
             stats: this.networkStats,
             chainId: 7777,
-            networkName: "ProofChain Mainnet",
-            version: "1.0.0",
+            networkName: "ZUZCOIN ProofChain Mainnet",
+            version: "2.0.0",
         };
     }
 
@@ -138,10 +138,11 @@ class ProofChainNetwork extends EventEmitter {
         if (!transaction.timestamp) return false;
 
         const validTypes = [
-            "pcc_transfer",
+            "zuz_transfer",
             "mining_reward",
             "coin_creation",
             "copyright_proof",
+            "zuzcoin_payment",
         ];
         if (!validTypes.includes(transaction.type)) return false;
 
@@ -151,15 +152,15 @@ class ProofChainNetwork extends EventEmitter {
 
     // Синхронизация с сетью
     syncWithNetwork() {
-        console.log(`🔄 Синхронизация с сетью...`);
+        console.log(`🔄 Синхронизация с сетью ZUZCOIN...`);
         this.emit("syncStarted");
 
         // Имитация синхронизации
         setTimeout(() => {
-            console.log(`✅ Синхронизация завершена`);
+            console.log(`✅ Синхронизация ZUZCOIN завершена`);
             this.emit("syncCompleted");
         }, 2000);
     }
 }
 
-module.exports = ProofChainNetwork;
+module.exports = ZuzcoinNetwork;

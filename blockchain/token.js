@@ -1,12 +1,12 @@
-class PCC_Token {
+class ZUZ_Token {
     constructor() {
-        this.name = "ProofChain Coin";
-        this.symbol = "PCC";
+        this.name = "ZUZCOIN";
+        this.symbol = "ZUZ";
         this.totalSupply = 1000000000; // 1 млрд
         this.decimals = 18;
         this.chainId = 7777;
-        this.contractAddress = "0xProofChain7777PCC";
-        this.creator = "ProofChain Network";
+        this.contractAddress = "0x60cA3145F64919F26b47a2270F4cE36F239033e9";
+        this.creator = "ZUZCOIN ProofChain Network";
         this.creationBlock = 0;
 
         // Распределение токенов
@@ -65,7 +65,7 @@ class PCC_Token {
         return amount * (this.tokenomics.burnRate / 100);
     }
 
-    // Создание нового токена в сети ProofChain
+    // Создание нового токена в сети ZUZCOIN ProofChain
     createNewToken(creator, tokenData) {
         const newToken = {
             name: tokenData.name,
@@ -75,21 +75,21 @@ class PCC_Token {
             creator: creator,
             contractAddress: this.generateContractAddress(),
             created: new Date().toISOString(),
-            network: "ProofChain Mainnet",
+            network: "ZUZCOIN ProofChain Mainnet",
             chainId: this.chainId,
-            standard: "PRC-20",
-            pccCost: this.calculateTokenCreationCost(tokenData),
+            standard: "ZRC-20",
+            zuzCost: this.calculateTokenCreationCost(tokenData),
         };
 
         return newToken;
     }
 
     generateContractAddress() {
-        return `0xPCC${Date.now().toString(36)}${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
+        return `0xZUZ${Date.now().toString(36)}${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
     }
 
     calculateTokenCreationCost(tokenData) {
-        // Стоимость создания токена в PCC
+        // Стоимость создания токена в ZUZ
         const baseCost = 500; // Базовая стоимость
         const supplyFactor = Math.log10(tokenData.totalSupply) / 10;
         return Math.round(baseCost * (1 + supplyFactor));
@@ -124,20 +124,20 @@ class PCC_Token {
         };
     }
 
-    // Получить текущую стоимость PCC в USD (для демо)
+    // Получить текущую стоимость ZUZ в USD (для демо)
     getCurrentPrice() {
         // В реальности здесь будет API запрос к биржам
         return {
-            usd: 0.15,
-            rub: 13.5,
-            eur: 0.14,
-            btc: 0.0000033,
-            eth: 0.000052,
+            usd: 0.01,
+            rub: 0.9,
+            eur: 0.009,
+            btc: 0.00000022,
+            eth: 0.0000035,
         };
     }
 
-    // Конвертация PCC в другие валюты
-    convertPCC(amount, toCurrency = "usd") {
+    // Конвертация ZUZ в другие валюты
+    convertZUZ(amount, toCurrency = "usd") {
         const prices = this.getCurrentPrice();
         const rate = prices[toCurrency.toLowerCase()];
 
@@ -149,4 +149,4 @@ class PCC_Token {
     }
 }
 
-module.exports = PCC_Token;
+module.exports = ZUZ_Token;
