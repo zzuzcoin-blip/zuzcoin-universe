@@ -1,7 +1,7 @@
 const express = require("express");
 const Web3 = require("web3");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 // Настройки блокчейна для разных окружений
 const BLOCKCHAIN_CONFIGS = {
@@ -35,15 +35,15 @@ let blockchainConnected = false;
 try {
   web3 = new Web3(config.rpcUrl);
   web3.eth.getBlockNumber().then(() => {
-    console.log(`✅ Connected to ${config.networkName}`);
-    console.log(`🌐 RPC: ${config.rpcUrl}`);
+    console.log("✅ Connected to " + config.networkName);
+    console.log("🌐 RPC: " + config.rpcUrl);
     blockchainConnected = true;
   }).catch(err => {
-    console.log(`⚠️  Blockchain warning: ${err.message}`);
-    console.log(`🔧 Using demo mode`);
+    console.log("⚠️  Blockchain warning: " + err.message);
+    console.log("🔧 Using demo mode");
   });
 } catch (error) {
-  console.log(`❌ Web3 init error: ${error.message}`);
+  console.log("❌ Web3 init error: " + error.message);
 }
 
 // CORS
@@ -138,6 +138,16 @@ app.get("/", (req, res) => {
           .success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; }
           .warning { background: rgba(255, 152, 0, 0.2); border: 1px solid #FF9800; }
           .error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; }
+          
+          input {
+              width: 100%;
+              padding: 12px;
+              margin: 10px 0;
+              border-radius: 8px;
+              background: rgba(255, 255, 255, 0.1);
+              color: white;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+          }
       </style>
   </head>
   <body>
@@ -167,7 +177,7 @@ app.get("/", (req, res) => {
                     '🔧 Demo mode. In production, this would use real blockchain.'}
               </div>
               
-              <input type="text" id="workTitle" placeholder="Enter work title" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">
+              <input type="text" id="workTitle" placeholder="Enter work title">
               
               <button onclick="registerCopyright()">Register Copyright (100 ZUZ)</button>
               
@@ -175,20 +185,31 @@ app.get("/", (req, res) => {
           </div>
           
           <div class="card">
-              <h2>📊 Next Steps</h2>
+              <h2>🎯 Next Steps</h2>
               <ol style="margin-left: 20px;">
                   <li><strong>Firebase Authentication</strong> - User registration & login</li>
                   <li><strong>KYC Verification</strong> - Identity verification</li>
                   <li><strong>Mobile App</strong> - React Native application</li>
                   <li><strong>Real Blockchain</strong> - Polygon Mainnet deployment</li>
               </ol>
+              
+              <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                  <h3>🚀 Ready for Firebase Auth</h3>
+                  <p>Next we'll add:</p>
+                  <ul style="margin-left: 20px;">
+                      <li>Phone/Email registration</li>
+                      <li>Email verification codes</li>
+                      <li>KYC process with Sumsub</li>
+                      <li>Personal wallet creation</li>
+                  </ul>
+              </div>
           </div>
       </div>
 
       <script>
           function showResult(message, type) {
               const element = document.getElementById('result');
-              element.innerHTML = \`<div class="info-box \${type}">\${message}</div>\`;
+              element.innerHTML = '<div class="info-box ' + type + '">' + message + '</div>';
           }
           
           function registerCopyright() {
@@ -203,15 +224,11 @@ app.get("/", (req, res) => {
               // Демо-регистрация
               setTimeout(() => {
                   const txHash = '0x' + Date.now().toString(16) + 'abcd';
-                  showResult(
-                      \`✅ <strong>Copyright Registered!</strong><br>
-                      Work: "\${title}"<br>
-                      ${isVercel ? 
-                        '🌐 <em>Production: Would be on Polygon Mumbai</em>' : 
-                        '🔧 <em>Development: On local Ganache</em>'}<br>
-                      Demo TX: \${txHash}\`,
-                      'success'
-                  );
+                  const message = ${isVercel} ? 
+                      '✅ <strong>Copyright Registered!</strong><br>Work: "' + title + '"<br>🌐 <em>Production: Would be on Polygon Mumbai</em><br>Demo TX: ' + txHash :
+                      '✅ <strong>Copyright Registered!</strong><br>Work: "' + title + '"<br>🔧 <em>Development: On local Ganache</em><br>Demo TX: ' + txHash;
+                  
+                  showResult(message, 'success');
               }, 1000);
           }
           
@@ -256,7 +273,7 @@ app.get("/health", (req, res) => {
 
 // ==================== ЗАПУСК ====================
 app.listen(PORT, () => {
-  console.log(\`
+  console.log(`
   ================================================
   🚀 ZUZCOIN UNIVERSE - ${isVercel ? 'PRODUCTION' : 'DEVELOPMENT'}
   ================================================
@@ -269,7 +286,7 @@ app.listen(PORT, () => {
   
   💡 Next: Firebase Authentication + KYC System
   ================================================
-  \`);
+  `);
 });
 
 module.exports = app;
