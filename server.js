@@ -1,10 +1,52 @@
 const express = require("express");
 const Web3 = require("web3");
-const { getBlockchainConfig } = require("./blockchain-config");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS для Vercel
+// Настройки блокчейна для разных окружений
+const BLOCKCHAIN_CONFIGS = {
+  // Production (Vercel) - используем Polygon Mumbai
+  production: {
+    rpcUrl: "https://rpc-mumbai.maticvigil.com",
+    chainId: 80001,
+    networkName: "Polygon Mumbai Testnet",
+    explorer: "https://mumbai.polygonscan.com",
+    type: "public"
+  },
+  
+  // Development (Replit) - используем Ganache
+  development: {
+    rpcUrl: "http://localhost:8547",
+    chainId: 7777,
+    networkName: "ZUZCOIN ProofChain",
+    explorer: "http://localhost:8547",
+    type: "local"
+  }
+};
+
+// Определяем окружение
+const isVercel = process.env.VERCEL || process.env.NODE_ENV === 'production';
+const config = isVercel ? BLOCKCHAIN_CONFIGS.production : BLOCKCHAIN_CONFIGS.development;
+
+// Инициализация Web3
+let web3;
+let blockchainConnected = false;
+
+try {
+  web3 = new Web3(config.rpcUrl);
+  web3.eth.getBlockNumber().then(() => {
+    console.log(`✅ Connected to ${config.networkName}`);
+    console.log(`🌐 RPC: ${config.rpcUrl}`);
+    blockchainConnected = true;
+  }).catch(err => {
+    console.log(`⚠️  Blockchain warning: ${err.message}`);
+    console.log(`🔧 Using demo mode`);
+  });
+} catch (error) {
+  console.log(`❌ Web3 init error: ${error.message}`);
+}
+
+// CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -14,26 +56,19 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Инициализация Web3 с правильным RPC
-const blockchainConfig = getBlockchainConfig();
-const web3 = new Web3(blockchainConfig.rpcUrl);
-
-console.log(`✅ Connected to: ${blockchainConfig.networkName}`);
-console.log(`🌐 RPC URL: ${blockchainConfig.rpcUrl}`);
-console.log(`🆔 Chain ID: ${blockchainConfig.chainId}`);
-
-// Демо-режим для Vercel (без реальных транзакций)
-let demoMode = process.env.VERCEL ? true : false;
-
 // ==================== ГЛАВНАЯ СТРАНИЦА ====================
 app.get("/", (req, res) => {
+  const currentUrl = isVercel ? 
+    "https://zuzcoin-platform-roan-delta.vercel.app" : 
+    req.protocol + "://" + req.get('host');
+  
   res.send(`
   <!DOCTYPE html>
   <html lang="en">
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>ZUZCOIN Universe - Production</title>
+      <title>ZUZCOIN Universe - ${isVercel ? 'Production' : 'Development'}</title>
       <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { 
@@ -45,6 +80,18 @@ app.get("/", (req, res) => {
               padding: 20px;
           }
           .container { max-width: 1200px; margin: 0 auto; }
+          
+          .environment-badge {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              padding: 8px 16px;
+              background: ${isVercel ? '#4CAF50' : '#FF9800'};
+              border-radius: 20px;
+              font-weight: bold;
+              font-size: 12px;
+              z-index: 1000;
+          }
           
           header { 
               text-align: center; 
@@ -63,17 +110,6 @@ app.get("/", (req, res) => {
               margin-bottom: 15px;
           }
           
-          .status-indicator {
-              display: inline-block;
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              margin-right: 8px;
-          }
-          
-          .online { background: #4CAF50; }
-          .offline { background: #F44336; }
-          
           .card { 
               background: rgba(255, 255, 255, 0.05); 
               padding: 25px; 
@@ -91,136 +127,102 @@ app.get("/", (req, res) => {
               cursor: pointer; 
               font-size: 16px;
               margin: 10px 5px;
-              transition: all 0.3s;
           }
           
-          .demo-notice {
-              background: rgba(255, 152, 0, 0.2);
-              border: 1px solid #FF9800;
+          .info-box {
               padding: 15px;
               border-radius: 10px;
-              margin: 20px 0;
+              margin: 10px 0;
           }
+          
+          .success { background: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; }
+          .warning { background: rgba(255, 152, 0, 0.2); border: 1px solid #FF9800; }
+          .error { background: rgba(244, 67, 54, 0.2); border: 1px solid #F44336; }
       </style>
   </head>
   <body>
+      <div class="environment-badge">
+          ${isVercel ? '🚀 PRODUCTION' : '🔧 DEVELOPMENT'}
+      </div>
+      
       <div class="container">
           <header>
               <h1 class="universe-title">ZUZCOIN Universe</h1>
-              <p>Production Deployment • ${blockchainConfig.networkName}</p>
-              
-              <div style="display: flex; justify-content: center; gap: 30px; margin: 30px 0; flex-wrap: wrap;">
-                  <div style="text-align: center;">
-                      <div style="font-size: 2.5em">🔗</div>
-                      <h3>ProofChain</h3>
-                      <p><span class="status-indicator online"></span> ${demoMode ? 'Demo Mode' : 'Connected'}</p>
-                  </div>
-                  
-                  <div style="text-align: center;">
-                      <div style="font-size: 2.5em">🔄</div>
-                      <h3>ZUZIM DEX</h3>
-                      <p><span class="status-indicator online"></span> Ready</p>
-                  </div>
-                  
-                  <div style="text-align: center;">
-                      <div style="font-size: 2.5em">🤝</div>
-                      <h3>Giving Pledge</h3>
-                      <p><span class="status-indicator online"></span> Integrated</p>
-                  </div>
-              </div>
+              <p>${isVercel ? 'Production Deployment' : 'Development Environment'}</p>
               
               <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-top: 20px;">
-                  <div><strong>🌐 Network:</strong> ${blockchainConfig.networkName}</div>
-                  <div><strong>🆔 Chain ID:</strong> ${blockchainConfig.chainId}</div>
-                  <div><strong>🔗 Explorer:</strong> ${blockchainConfig.explorer}</div>
-                  <div><strong>📡 Status:</strong> <span id="blockchainStatus">🟢 Operational</span></div>
+                  <div><strong>🌐 URL:</strong> ${currentUrl}</div>
+                  <div><strong>🔗 Network:</strong> ${config.networkName}</div>
+                  <div><strong>🆔 Chain ID:</strong> ${config.chainId}</div>
+                  <div><strong>📡 RPC:</strong> ${config.rpcUrl}</div>
+                  <div><strong>⚡ Status:</strong> ${blockchainConnected ? '🟢 Connected' : '🟡 Demo Mode'}</div>
               </div>
           </header>
-
-          ${demoMode ? `
-          <div class="demo-notice">
-              <h3>🚀 DEMO MODE ACTIVATED</h3>
-              <p>This is a production demo on <strong>${blockchainConfig.networkName}</strong>.</p>
-              <p>Next: Connect real blockchain, add Firebase Auth, implement KYC.</p>
-          </div>
-          ` : ''}
-
+          
           <div class="card">
-              <h2>🔗 ProofChain Services</h2>
-              <p>Register copyrights and create tokens on blockchain</p>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-                  <div style="padding: 20px; background: rgba(255,255,255,0.07); border-radius: 10px;">
-                      <h3>📝 Digital Notary</h3>
-                      <p><strong>100 ZUZ</strong> per registration</p>
-                      <input type="text" id="workTitle" placeholder="Work title" style="width:100%;padding:10px;margin:10px 0;border-radius:5px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">
-                      <button onclick="registerDemo()">Register Copyright</button>
-                      <div id="result1" style="margin-top:10px;"></div>
-                  </div>
-                  
-                  <div style="padding: 20px; background: rgba(255,255,255,0.07); border-radius: 10px;">
-                      <h3>🪙 Coin Factory</h3>
-                      <p><strong>500 ZUZ</strong> per token</p>
-                      <input type="text" id="tokenName" placeholder="Token name" style="width:100%;padding:10px;margin:10px 0;border-radius:5px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">
-                      <button onclick="createTokenDemo()">Create Token</button>
-                      <div id="result2" style="margin-top:10px;"></div>
-                  </div>
+              <h2>📝 Digital Notary</h2>
+              <div class="info-box ${blockchainConnected ? 'success' : 'warning'}">
+                  ${blockchainConnected ? 
+                    '✅ Blockchain connected. Ready for real registrations.' :
+                    '🔧 Demo mode. In production, this would use real blockchain.'}
               </div>
+              
+              <input type="text" id="workTitle" placeholder="Enter work title" style="width:100%;padding:12px;margin:10px 0;border-radius:8px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">
+              
+              <button onclick="registerCopyright()">Register Copyright (100 ZUZ)</button>
+              
+              <div id="result" style="margin-top: 15px;"></div>
           </div>
           
           <div class="card">
-              <h2>📊 System Status</h2>
-              <div id="statusInfo">Loading blockchain info...</div>
-              <button onclick="checkStatus()">Refresh Status</button>
+              <h2>📊 Next Steps</h2>
+              <ol style="margin-left: 20px;">
+                  <li><strong>Firebase Authentication</strong> - User registration & login</li>
+                  <li><strong>KYC Verification</strong> - Identity verification</li>
+                  <li><strong>Mobile App</strong> - React Native application</li>
+                  <li><strong>Real Blockchain</strong> - Polygon Mainnet deployment</li>
+              </ol>
           </div>
       </div>
 
       <script>
-          function showResult(elementId, message, type) {
-              const element = document.getElementById(elementId);
-              element.innerHTML = \`<div style="padding:10px;border-radius:5px;background:\${type==='success'?'rgba(76,175,80,0.2)':'rgba(244,67,54,0.2)'};border:1px solid \${type==='success'?'#4CAF50':'#F44336'};">\${message}</div>\`;
+          function showResult(message, type) {
+              const element = document.getElementById('result');
+              element.innerHTML = \`<div class="info-box \${type}">\${message}</div>\`;
           }
           
-          function registerDemo() {
+          function registerCopyright() {
               const title = document.getElementById('workTitle').value;
               if (!title) {
-                  showResult('result1', 'Please enter work title', 'error');
+                  showResult('Please enter work title', 'error');
                   return;
               }
-              showResult('result1', '✅ Copyright registered in demo mode. In production this would be on blockchain.', 'success');
+              
+              showResult('Processing registration...', 'warning');
+              
+              // Демо-регистрация
+              setTimeout(() => {
+                  const txHash = '0x' + Date.now().toString(16) + 'abcd';
+                  showResult(
+                      \`✅ <strong>Copyright Registered!</strong><br>
+                      Work: "\${title}"<br>
+                      ${isVercel ? 
+                        '🌐 <em>Production: Would be on Polygon Mumbai</em>' : 
+                        '🔧 <em>Development: On local Ganache</em>'}<br>
+                      Demo TX: \${txHash}\`,
+                      'success'
+                  );
+              }, 1000);
           }
           
-          function createTokenDemo() {
-              const name = document.getElementById('tokenName').value;
-              if (!name) {
-                  showResult('result2', 'Please enter token name', 'error');
-                  return;
+          // Показываем подсказку
+          window.onload = function() {
+              if(${isVercel}) {
+                  showResult('🚀 <strong>Production Mode</strong><br>Next: Add Firebase Auth & KYC', 'warning');
+              } else {
+                  showResult('🔧 <strong>Development Mode</strong><br>Ganache blockchain is running locally', 'success');
               }
-              showResult('result2', \`✅ Token "\${name}" created in demo mode. Ready for real blockchain.\`, 'success');
-          }
-          
-          async function checkStatus() {
-              const statusEl = document.getElementById('statusInfo');
-              statusEl.innerHTML = 'Checking...';
-              try {
-                  const response = await fetch('/api/status');
-                  const data = await response.json();
-                  statusEl.innerHTML = \`
-                      <div style="padding:15px;background:rgba(76,175,80,0.1);border-radius:10px;">
-                          <strong>✅ System Operational</strong><br>
-                          Network: \${data.network}<br>
-                          Chain ID: \${data.chainId}<br>
-                          RPC: \${data.rpcUrl}<br>
-                          Mode: \${data.demoMode ? 'Demo' : 'Production'}
-                      </div>
-                  \`;
-              } catch (error) {
-                  statusEl.innerHTML = \`<div style="padding:15px;background:rgba(244,67,54,0.1);border-radius:10px;">❌ Error: \${error.message}</div>\`;
-              }
-          }
-          
-          // Загружаем статус при старте
-          checkStatus();
+          };
       </script>
   </body>
   </html>
@@ -230,34 +232,43 @@ app.get("/", (req, res) => {
 // ==================== API ENDPOINTS ====================
 app.get("/api/status", (req, res) => {
   res.json({
-    status: "operational",
-    network: blockchainConfig.networkName,
-    chainId: blockchainConfig.chainId,
-    rpcUrl: blockchainConfig.rpcUrl,
-    demoMode: demoMode,
-    timestamp: new Date().toISOString()
+    environment: isVercel ? "production" : "development",
+    blockchain: {
+      connected: blockchainConnected,
+      network: config.networkName,
+      chainId: config.chainId,
+      rpcUrl: config.rpcUrl,
+      type: config.type
+    },
+    timestamp: new Date().toISOString(),
+    nextSteps: ["Firebase Auth", "KYC Verification", "Mobile App"]
   });
 });
 
 app.get("/health", (req, res) => {
   res.json({
     healthy: true,
-    service: "ZUZCOIN Universe API",
-    environment: process.env.NODE_ENV || "production",
-    blockchain: blockchainConfig.networkName
+    service: "ZUZCOIN Universe",
+    environment: isVercel ? "production" : "development",
+    url: isVercel ? "https://zuzcoin-platform-roan-delta.vercel.app" : "http://localhost:8080"
   });
 });
 
 // ==================== ЗАПУСК ====================
 app.listen(PORT, () => {
   console.log(\`
-  🚀 ZUZCOIN Universe - PRODUCTION
-  =================================
-  🌐 URL: https://zuzcoin-platform-roan-delta.vercel.app
-  📡 Network: \${blockchainConfig.networkName}
-  🆔 Chain ID: \${blockchainConfig.chainId}
-  ⚙️ Mode: \${demoMode ? 'Demo' : 'Production'}
-  ✅ Ready for next steps: Firebase Auth + KYC
+  ================================================
+  🚀 ZUZCOIN UNIVERSE - ${isVercel ? 'PRODUCTION' : 'DEVELOPMENT'}
+  ================================================
+  
+  🌐 Environment: ${isVercel ? 'Production (Vercel)' : 'Development (Replit)'}
+  📡 Network: ${config.networkName}
+  🆔 Chain ID: ${config.chainId}
+  🔗 RPC: ${config.rpcUrl}
+  ✅ Status: ${blockchainConnected ? 'Connected' : 'Demo Mode'}
+  
+  💡 Next: Firebase Authentication + KYC System
+  ================================================
   \`);
 });
 
