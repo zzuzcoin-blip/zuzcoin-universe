@@ -1,3 +1,12 @@
-modules = ["nodejs-20"]
-[agent]
-expertMode = true
+run = "node server.js"
+language = "nodejs"
+entrypoint = "server.js"
+
+[[workflows]]
+name = "ZUZCOIN"
+mode = "sequential"
+
+[[workflows.tasks]]
+type = "shell"
+name = "Start Server"
+command = "node server.js"
