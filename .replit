@@ -1,29 +1,3 @@
-{
-  "run": "node server.js",
-  "language": "nodejs",
-  "entrypoint": "server.js",
-  
-  "workflows": {
-    "ZUZCOIN_LAUNCH": {
-      "name": "Launch ZUZCOIN",
-      "mode": "sequential",
-      "tasks": [
-        {
-          "type": "shell",
-          "name": "Cleanup",
-          "command": "pkill -f 'node server' 2>/dev/null || true; sleep 2"
-        },
-        {
-          "type": "shell", 
-          "name": "Start Server",
-          "command": "node server.js > zuzcoin.log 2>&1 & echo $! > ZUZCOIN_PID.txt"
-        },
-        {
-          "type": "shell",
-          "name": "Show Info",
-          "command": "sleep 3; echo '✅ ZUZCOIN запущен!'; echo '📱 Откройте: https://'$(hostname)'.repl.co'"
-        }
-      ]
-    }
-  }
-}
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
