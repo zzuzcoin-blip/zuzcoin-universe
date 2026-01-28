@@ -1,3 +1,64 @@
-modules = ["nodejs-20"]
-[agent]
-expertMode = true
+{
+  "run": "node server.js",
+  "language": "nodejs",
+  "entrypoint": "server.js",
+  "onBoot": "npm install",
+  
+  "workflows": {
+    "ZUZCOIN_AUTO_LAUNCH": {
+      "name": "ZUZCOIN Auto Launch",
+      "mode": "sequential",
+      "tasks": [
+        {
+          "type": "shell",
+          "name": "Cleanup old processes",
+          "command": "echo '🛑 Stopping previous servers...' && pkill -f 'node server' 2>/dev/null || echo 'No processes to stop'"
+        },
+        {
+          "type": "shell",
+          "name": "Free ports 3000-3010",
+          "command": "echo '🔓 Freeing ports...' && for port in {3000..3010}; do timeout 0.1 bash -c \"echo >/dev/tcp/localhost/\\$port\" 2>/dev/null && fuser -k \\$port/tcp 2>/dev/null 2>&1 || true; done"
+        },
+        {
+          "type": "shell",
+          "name": "Start ZUZCOIN Server",
+          "command": "echo '🚀 Starting ZUZCOIN Universe...' && node server.js > zuzcoin.log 2>&1 & sleep 3 && echo '✅ Server started in background'"
+        },
+        {
+          "type": "shell",
+          "name": "Check status",
+          "command": "echo '📊 Checking status...' && sleep 2 && if [ -f 'PORT.txt' ]; then PORT=\\$(cat PORT.txt); echo '🌐 Port: '\\$PORT; echo '📡 Local: http://localhost:'\\$PORT; echo '🌍 External: https://'$(hostname)'.repl.co'; else echo '⏳ Server starting... Check logs: tail -f zuzcoin.log'; fi"
+        }
+      ]
+    },
+    
+    "ZUZCOIN_STATUS": {
+      "name": "Check ZUZCOIN Status",
+      "mode": "sequential",
+      "tasks": [
+        {
+          "type": "shell",
+          "name": "Show status",
+          "command": "./QUICK_COMMANDS.sh status"
+        }
+      ]
+    },
+    
+    "ZUZCOIN_RESTART": {
+      "name": "Restart ZUZCOIN",
+      "mode": "sequential",
+      "tasks": [
+        {
+          "type": "shell",
+          "name": "Stop",
+          "command": "./QUICK_COMMANDS.sh stop"
+        },
+        {
+          "type": "shell",
+          "name": "Start",
+          "command": "./INITIALIZE_ZUZCOIN.sh"
+        }
+      ]
+    }
+  }
+}
