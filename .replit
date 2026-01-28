@@ -1,8 +1,3 @@
-{
-  "run": "node server.js",
-  "language": "nodejs",
-  "title": "ZUZCOIN Universe",
-  "description": "Talmudic Ethics in Blockchain • 1% Auto-Philanthropy • Professional DeFi Ecosystem",
-  "icon": "https://raw.githubusercontent.com/iconic/open-iconic/master/svg/globe.svg",
-  "nix": "github:replit/nixpkgs#stable"
-}
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
