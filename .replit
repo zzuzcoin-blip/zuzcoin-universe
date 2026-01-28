@@ -1,28 +1,3 @@
-{
-  "run": "node server.js",
-  "language": "nodejs",
-  
-  "workflows": {
-    "ZUZCOIN_LAUNCH": {
-      "mode": "sequential",
-      "tasks": [
-        {
-          "type": "shell",
-          "command": "pkill -f \"node server\" 2>/dev/null || true\nsleep 2"
-        },
-        {
-          "type": "shell", 
-          "command": "for port in {3000..3010}; do\n  timeout 0.1 bash -c \"echo >/dev/tcp/localhost/\\$port\" 2>/dev/null && {\n    fuser -k \\$port/tcp 2>/dev/null || true\n  } || true\ndone"
-        },
-        {
-          "type": "shell",
-          "command": "node server.js > zuzcoin.log 2>&1 &\nSERVER_PID=\\$!\necho \\$SERVER_PID > ZUZCOIN_PID.txt\necho \"ZUZCOIN запущен! PID: \\$SERVER_PID\""
-        },
-        {
-          "type": "shell",
-          "command": "sleep 5\nif [ -f \"PORT.txt\" ]; then\n  PORT=\\$(cat PORT.txt)\n  echo \"✅ Сервер работает на порту: \\$PORT\"\n  echo \"🌐 Ссылка: https://\\$(cat /etc/hostname).repl.co\"\nelse\n  echo \"⚠️ Ожидание запуска...\"\nfi"
-        }
-      ]
-    }
-  }
-}
+modules = ["nodejs-20"]
+[agent]
+expertMode = true
