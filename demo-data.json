@@ -1,0 +1,32 @@
+{
+  "tokens": [
+    {
+      "name": "ZUZCOIN",
+      "symbol": "ZUZ",
+      "supply": 1000000000,
+      "philanthropy": 1,
+      "address": "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31"
+    },
+    {
+      "name": "Philanthropy Token",
+      "symbol": "LOVE",
+      "supply": 1000000,
+      "philanthropy": 5,
+      "address": "0x1234567890abcdef1234567890abcdef12345678"
+    }
+  ],
+  "pools": [
+    {
+      "pair": "ZUZ/ETH",
+      "liquidity": 10000,
+      "apr": 12.5,
+      "volume24h": 8450
+    },
+    {
+      "pair": "ZUZ/USDT",
+      "liquidity": 5000,
+      "apr": 15.2,
+      "volume24h": 4000
+    }
+  ]
+}

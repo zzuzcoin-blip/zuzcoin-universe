@@ -1,0 +1,91 @@
+const express = require('express');
+const Web3 = require('web3');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+const web3 = new Web3('https://ethereum-sepolia-rpc.publicnode.com');
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname));
+
+// ZUZCOIN контракт
+const ZUZCOIN_ADDRESS = '0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31';
+const ZUZCOIN_ABI = [
+    {"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"type":"function"},
+    {"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"type":"function"},
+    {"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"type":"function"},
+    {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},
+    {"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"type":"function"}
+];
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/api/status', (req, res) => {
+    res.json({
+        status: 'online',
+        ecosystem: 'ZUZCOIN Universe v3.0',
+        network: 'Sepolia Testnet',
+        chainId: 11155111,
+        contract: ZUZCOIN_ADDRESS,
+        contract_explorer: 'https://sepolia.etherscan.io/address/' + ZUZCOIN_ADDRESS,
+        features: [
+            'ZUZCOIN Token (real contract)',
+            'ZUZIM DEX (coming soon)',
+            'Token Factory',
+            'Digital Notary',
+            'KYC Verification',
+            '1% Auto-Philanthropy'
+        ],
+        timestamp: new Date().toISOString()
+    });
+});
+
+// API для проверки баланса ZUZ
+app.get('/api/balance/zuz/:address', async (req, res) => {
+    try {
+        const contract = new web3.eth.Contract(ZUZCOIN_ABI, ZUZCOIN_ADDRESS);
+        const balance = await contract.methods.balanceOf(req.params.address).call();
+        const decimals = await contract.methods.decimals().call();
+        const formatted = balance / Math.pow(10, decimals);
+        
+        res.json({
+            address: req.params.address,
+            balance: balance,
+            formatted: formatted,
+            symbol: 'ZUZ',
+            decimals: decimals
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// API для отправки ZUZ (симуляция - реальная отправка через MetaMask)
+app.post('/api/transfer/simulate', (req, res) => {
+    const { from, to, amount } = req.body;
+    
+    res.json({
+        success: true,
+        message: 'Transfer simulation (real transfer via MetaMask)',
+        from: from,
+        to: to,
+        amount: amount,
+        token: 'ZUZ',
+        hash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+        explorer: 'https://sepolia.etherscan.io/tx/',
+        timestamp: new Date().toISOString()
+    });
+});
+
+const PORT = 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log('🚀 ZUZCOIN Universe v3.0 - REAL CONTRACT MODE');
+    console.log('🌐 Network: Sepolia Testnet');
+    console.log('📄 Contract:', ZUZCOIN_ADDRESS);
+    console.log('🔗 Explorer: https://sepolia.etherscan.io/address/' + ZUZCOIN_ADDRESS);
+    console.log('✨ Real ZUZCOIN token is LIVE!');
+});

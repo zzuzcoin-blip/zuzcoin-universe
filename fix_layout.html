@@ -1,0 +1,47 @@
+<!-- Исправленная структура карточек -->
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-globe"></i>
+        <span>Network Status</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">Ecosystem:</span>
+        <span class="status-value">ZUZCOIN Universe v3.0</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">Network:</span>
+        <span class="status-value">Sepolia Testnet</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">Chain ID:</span>
+        <span class="status-value">11155111</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">API Status:</span>
+        <span class="status-value" id="apiStatus" data-status="checking">
+            <span class="loader"></span> Checking...
+        </span>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-wallet"></i>
+        <span>My Wallet</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">Address:</span>
+        <span class="status-value" id="walletAddress">Not connected</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">ETH Balance:</span>
+        <span class="status-value" id="ethBalance">0.0000 ETH</span>
+    </div>
+    <div class="status-item">
+        <span class="status-label">ZUZ Balance:</span>
+        <span class="status-value" id="zuzBalance">0.0000 ZUZ</span>
+    </div>
+    <button class="btn" id="connectWalletBtn">
+        <i class="fas fa-plug"></i> Connect MetaMask
+    </button>
+</div>

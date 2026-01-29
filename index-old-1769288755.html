@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ZUZCOIN Universe Dashboard</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <style>
+            :root {
+                --primary: #6366f1;
+                --primary-dark: #4f46e5;
+                --bg: #0f172a;
+                --card-bg: #1e293b;
+                --text: #f1f5f9;
+                --text-muted: #94a3b8;
+                --success: #10b981;
+                --warning: #f59e0b;
+                --border: #334155;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Segoe UI", system-ui, sans-serif;
+            }
+            body {
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                padding: 20px;
+                line-height: 1.6;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            header {
+                text-align: center;
+                padding: 2rem 1rem;
+                border-bottom: 1px solid var(--border);
+                margin-bottom: 2rem;
+            }
+            .logo {
+                font-size: 2.5rem;
+                font-weight: 800;
+                background: linear-gradient(90deg, #8b5cf6, var(--primary));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 0.5rem;
+            }
+            .tagline {
+                color: var(--text-muted);
+                font-size: 1.1rem;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            .card {
+                background: var(--card-bg);
+                border-radius: 16px;
+                padding: 1.75rem;
+                border: 1px solid var(--border);
+                transition:
+                    transform 0.3s,
+                    box-shadow 0.3s;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            }
+            .card-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 1.3rem;
+                margin-bottom: 1.25rem;
+                color: #c7d2fe;
+            }
+            .card-title i {
+                font-size: 1.5rem;
+                color: var(--primary);
+            }
+            .status-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .status-label {
+                color: var(--text-muted);
+            }
+            .status-value {
+                font-weight: 600;
+            }
+            #apiStatus[data-status="online"] {
+                color: var(--success);
+            }
+            #apiStatus[data-status="offline"] {
+                color: #ef4444;
+            }
+            #apiStatus[data-status="checking"] {
+                color: var(--warning);
+            }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 10px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                transition: background 0.3s;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .btn:hover {
+                background: var(--primary-dark);
+            }
+            .btn-outline {
+                background: transparent;
+                border: 1px solid var(--primary);
+                color: var(--primary);
+            }
+            .btn-outline:hover {
+                background: rgba(99, 102, 241, 0.1);
+            }
+            .wallet-addr {
+                font-family: monospace;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px;
+                border-radius: 8px;
+                word-break: break-all;
+                margin: 15px 0;
+                font-size: 0.9rem;
+                color: #bae6fd;
+            }
+            .quick-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-top: 1.5rem;
+            }
+            .action-btn {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 14px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .action-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: var(--primary);
+            }
+            .action-btn i {
+                font-size: 1.5rem;
+                color: var(--primary);
+            }
+            footer {
+                text-align: center;
+                padding: 2rem;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                border-top: 1px solid var(--border);
+                margin-top: 2rem;
+            }
+            .loader {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                border-top-color: var(--primary);
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+            @media (max-width: 768px) {
+                .cards-grid {
+                    grid-template-columns: 1fr;
+                }
+                .quick-actions {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="logo">ZUZCOIN UNIVERSE</div>
+                <div class="tagline">
+                    Blockchain Philanthropy Platform • 1% of every transaction
+                    is auto-donated
+                </div>
+            </header>
+
+            <div class="cards-grid">
+                <!-- CARD 1: NETWORK STATUS -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-globe"></i>
+                        <span>Network Status</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Backend API:</span>
+                        <span
+                            class="status-value"
+                            id="apiStatus"
+                            data-status="checking"
+                        >
+                            <span class="loader"></span> Checking...
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Blockchain Network:</span>
+                        <span class="status-value">Polygon Mumbai Testnet</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Chain ID:</span>
+                        <span class="status-value">80001</span>
+                    </div>
+                    <a
+                        href="https://mumbai.polygonscan.com/"
+                        target="_blank"
+                        class="btn btn-outline"
+                    >
+                        <i class="fas fa-external-link-alt"></i> View on Block
+                        Explorer
+                    </a>
+                </div>
+
+                <!-- CARD 2: MY WALLET -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Wallet</span>
+                    </div>
+                    <p style="color: var(--text-muted); margin-bottom: 15px">
+                        Connect your MetaMask wallet to view your balance and
+                        interact with the ZUZCOIN Universe.
+                    </p>
+                    <div class="wallet-addr" id="walletAddress">
+                        Not connected
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">ZUZ Balance:</span>
+                        <span class="status-value" id="zuzBalance">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">MATIC Balance:</span>
+                        <span class="status-value" id="maticBalance">-</span>
+                    </div>
+                    <button class="btn" id="connectWalletBtn">
+                        <i class="fas fa-plug"></i> Connect MetaMask
+                    </button>
+                </div>
+
+                <!-- CARD 3: QUICK ACTIONS -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-bolt"></i>
+                        <span>Quick Actions</span>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="action-btn" id="actionMint">
+                            <i class="fas fa-coins"></i>
+                            <span>Mint Test ZUZ</span>
+                        </div>
+                        <div class="action-btn" id="actionSend">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Send Funds</span>
+                        </div>
+                        <div class="action-btn" id="actionCreateToken">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Token</span>
+                        </div>
+                        <div class="action-btn" id="actionRegister">
+                            <i class="fas fa-file-contract"></i>
+                            <span>Digital Notary</span>
+                        </div>
+                    </div>
+                    <p
+                        style="
+                            margin-top: 20px;
+                            color: var(--text-muted);
+                            font-size: 0.9rem;
+                        "
+                    >
+                        <i class="fas fa-info-circle"></i> Each action is a real
+                        blockchain transaction. You need MATIC for gas fees.
+                    </p>
+                </div>
+            </div>
+
+            <footer>
+                ZUZCOIN Universe © 2026 | Philanthropy by Design. 1%
+                Auto-Donate System.
+                <br />This is a live testnet environment. Use only test MATIC.
+            </footer>
+        </div>
+
+        <script>
+            // Function to check our backend API status
+            async function checkAPIStatus() {
+                const apiStatusEl = document.getElementById("apiStatus");
+                try {
+                    const response = await fetch("/api/status");
+                    const data = await response.json();
+                    if (data.status === "online") {
+                        apiStatusEl.innerHTML =
+                            '<i class="fas fa-check-circle"></i> Online';
+                        apiStatusEl.setAttribute("data-status", "online");
+                    } else {
+                        apiStatusEl.innerHTML =
+                            '<i class="fas fa-times-circle"></i> Offline';
+                        apiStatusEl.setAttribute("data-status", "offline");
+                    }
+                } catch (error) {
+                    apiStatusEl.innerHTML =
+                        '<i class="fas fa-times-circle"></i> Offline';
+                    apiStatusEl.setAttribute("data-status", "offline");
+                }
+            }
+
+            // ==================== META MASK INTEGRATION ====================
+            const connectWalletBtn =
+                document.getElementById("connectWalletBtn");
+            const walletAddressEl = document.getElementById("walletAddress");
+            const maticBalanceEl = document.getElementById("maticBalance");
+            const zuzBalanceEl = document.getElementById("zuzBalance");
+
+            // Проверяем, установлен ли MetaMask
+            function checkMetaMask() {
+                if (typeof window.ethereum === "undefined") {
+                    alert("Please install MetaMask extension!");
+                    return false;
+                }
+                return true;
+            }
+
+            // Подключаем кошелек
+            async function connectWallet() {
+                if (!checkMetaMask()) return;
+
+                try {
+                    connectWalletBtn.innerHTML =
+                        '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                    connectWalletBtn.disabled = true;
+
+                    // Запрашиваем подключение аккаунтов
+                    const accounts = await window.ethereum.request({
+                        method: "eth_requestAccounts",
+                    });
+
+                    const userAddress = accounts[0];
+                    walletAddressEl.textContent = userAddress;
+                    walletAddressEl.style.color = "#4ade80";
+
+                    // Обновляем балансы
+                    await updateBalances(userAddress);
+
+                    connectWalletBtn.innerHTML =
+                        '<i class="fas fa-check"></i> Connected';
+                    connectWalletBtn.style.background = "#10b981";
+
+                    // Слушаем изменения аккаунта
+                    window.ethereum.on("accountsChanged", (newAccounts) => {
+                        if (newAccounts.length === 0) {
+                            disconnectWallet();
+                        } else {
+                            walletAddressEl.textContent = newAccounts[0];
+                            updateBalances(newAccounts[0]);
+                        }
+                    });
+                } catch (error) {
+                    console.error("Connection error:", error);
+                    alert("Connection error: " + error.message);
+                    connectWalletBtn.innerHTML =
+                        '<i class="fas fa-plug"></i> Connect MetaMask';
+                    connectWalletBtn.disabled = false;
+                }
+            }
+
+            // Обновляем балансы
+            async function updateBalances(address) {
+                try {
+                    // Баланс MATIC
+                    const maticWei = await window.ethereum.request({
+                        method: "eth_getBalance",
+                        params: [address, "latest"],
+                    });
+                    const maticEth = parseInt(maticWei) / 1e18;
+                    maticBalanceEl.textContent = maticEth.toFixed(4) + " MATIC";
+                    maticBalanceEl.style.color = "#8b5cf6";
+
+                    // Баланс ZUZ (пока заглушка)
+                    zuzBalanceEl.textContent = "0.0000 ZUZ";
+                    zuzBalanceEl.style.color = "#f59e0b";
+                } catch (error) {
+                    console.error("Balance error:", error);
+                    maticBalanceEl.textContent = "Error";
+                    zuzBalanceEl.textContent = "Error";
+                }
+            }
+
+            // Отключение кошелька
+            function disconnectWallet() {
+                walletAddressEl.textContent = "Not connected";
+                walletAddressEl.style.color = "#bae6fd";
+                maticBalanceEl.textContent = "-";
+                zuzBalanceEl.textContent = "-";
+                connectWalletBtn.innerHTML =
+                    '<i class="fas fa-plug"></i> Connect MetaMask';
+                connectWalletBtn.style.background = "";
+                connectWalletBtn.disabled = false;
+            }
+
+            // Инициализация
+            window.addEventListener("DOMContentLoaded", () => {
+                checkAPIStatus();
+                connectWalletBtn.addEventListener("click", connectWallet);
+
+                // Проверяем, если кошелек уже подключен
+                if (window.ethereum && window.ethereum.selectedAddress) {
+                    walletAddressEl.textContent =
+                        window.ethereum.selectedAddress;
+                    updateBalances(window.ethereum.selectedAddress);
+                    connectWalletBtn.innerHTML =
+                        '<i class="fas fa-check"></i> Connected';
+                    connectWalletBtn.style.background = "#10b981";
+                }
+            });
+        </script>
+    </body>
+</html>

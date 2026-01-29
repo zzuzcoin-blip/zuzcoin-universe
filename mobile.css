@@ -1,0 +1,225 @@
+/* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ZUZCOIN UNIVERSE ===== */
+
+@media (max-width: 768px) {
+    /* Общие настройки для мобильных */
+    body {
+        font-size: 15px;
+        overflow-x: hidden;
+    }
+    
+    /* Top Bar адаптация */
+    .top-bar {
+        padding: 0 16px !important;
+        height: 60px !important;
+    }
+    
+    .logo {
+        font-size: 18px !important;
+    }
+    
+    .connect-btn {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+    
+    /* Бургер-меню всегда видно на мобильных */
+    .burger-menu {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 36px !important;
+        height: 36px !important;
+        margin-right: 12px !important;
+    }
+    
+    .burger-line {
+        width: 18px !important;
+        height: 2px !important;
+    }
+    
+    /* Sidebar для мобильных */
+    .sidebar {
+        width: 280px !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+    
+    /* Overlay для мобильного меню */
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 998;
+    }
+    
+    .mobile-overlay.active {
+        display: block;
+    }
+    
+    /* Main Content адаптация */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Адаптация статистики */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+    
+    .stat-card {
+        padding: 16px !important;
+    }
+    
+    .stat-value {
+        font-size: 22px !important;
+    }
+    
+    /* Адаптация экосистемы */
+    .ecosystem-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .feature-card {
+        padding: 20px !important;
+    }
+    
+    .feature-title {
+        font-size: 18px !important;
+    }
+    
+    /* Идеология */
+    .ideology-principles {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    .ideology-section {
+        padding: 20px !important;
+    }
+    
+    /* Модальные окна */
+    .modal-content {
+        width: 95% !important;
+        padding: 20px !important;
+        margin: 0 10px;
+    }
+    
+    /* Улучшаем тач-интерфейс */
+    button, .nav-item, .feature-card {
+        min-height: 44px !important; /* Минимальный размер для пальцев */
+    }
+    
+    .nav-item {
+        padding: 14px 16px !important;
+    }
+    
+    /* Уменьшаем шрифты заголовков */
+    .section-title {
+        font-size: 18px !important;
+    }
+    
+    h1.section-title {
+        font-size: 22px !important;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .top-bar {
+        padding: 0 12px !important;
+    }
+    
+    .logo {
+        font-size: 16px !important;
+    }
+    
+    .connect-btn {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+    
+    .burger-menu {
+        width: 32px !important;
+        height: 32px !important;
+        margin-right: 10px !important;
+    }
+    
+    .burger-line {
+        width: 16px !important;
+    }
+    
+    .main-content {
+        padding: 12px !important;
+    }
+    
+    .feature-card {
+        padding: 16px !important;
+    }
+    
+    .feature-icon {
+        font-size: 24px !important;
+    }
+    
+    .stat-value {
+        font-size: 20px !important;
+    }
+}
+
+/* Горизонтальная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar {
+        width: 240px !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .main-content {
+        padding: 12px !important;
+    }
+}
+
+/* Анимации для мобильных */
+@media (max-width: 768px) {
+    .feature-card:active {
+        transform: scale(0.98) !important;
+        transition: transform 0.1s !important;
+    }
+    
+    .connect-btn:active {
+        transform: scale(0.95) !important;
+        transition: transform 0.1s !important;
+    }
+    
+    .nav-item:active {
+        background-color: var(--bg-secondary) !important;
+        transition: background-color 0.1s !important;
+    }
+}
+
+/* Фикс для iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 768px) {
+        .main-content {
+            padding-bottom: 80px !important; /* Для безопасной зоны */
+        }
+    }
+}

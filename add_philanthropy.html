@@ -1,0 +1,149 @@
+<!-- Баннер филантропии 1% -->
+<div class="philanthropy-banner" style="
+    background: linear-gradient(135deg, #10b981 0%, #0d9488 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    color: white;
+    text-align: center;
+    border: 2px solid #059669;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">❤️</div>
+    <h2 style="margin: 0 0 0.5rem 0; font-size: 1.8rem;">1% Auto-Philanthropy System</h2>
+    <p style="margin: 0 0 1rem 0; font-size: 1.1rem; opacity: 0.95;">
+        Every transaction in ZUZCOIN Universe automatically donates <strong>1% to charity</strong>.
+        Your contributions make the world better!
+    </p>
+    <div style="
+        display: flex;
+        justify-content: space-around;
+        background: rgba(255,255,255,0.15);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+    ">
+        <div>
+            <div style="font-size: 1.5rem; font-weight: bold;">1%</div>
+            <div>Auto-Donate</div>
+        </div>
+        <div>
+            <div style="font-size: 1.5rem; font-weight: bold;">99%</div>
+            <div>To Recipient</div>
+        </div>
+        <div>
+            <div style="font-size: 1.5rem; font-weight: bold;">100%</div>
+            <div>Transparent</div>
+        </div>
+    </div>
+</div>
+
+<!-- Панель навигации по экосистеме -->
+<div class="ecosystem-nav" style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+">
+    <div class="ecosystem-card" onclick="showSection('dex')" style="
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.3s;
+    ">
+        <div style="font-size: 2rem; color: #8b5cf6; margin-bottom: 0.5rem;">🔄</div>
+        <h3 style="margin: 0 0 0.5rem 0;">ZUZIM DEX</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+            Decentralized Exchange<br>Trade tokens instantly
+        </p>
+    </div>
+    
+    <div class="ecosystem-card" onclick="showSection('factory')" style="
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.3s;
+    ">
+        <div style="font-size: 2rem; color: #f59e0b; margin-bottom: 0.5rem;">🏭</div>
+        <h3 style="margin: 0 0 0.5rem 0;">Token Factory</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+            Create your own tokens<br>No coding required
+        </p>
+    </div>
+    
+    <div class="ecosystem-card" onclick="showSection('notary')" style="
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.3s;
+    ">
+        <div style="font-size: 2rem; color: #10b981; margin-bottom: 0.5rem;">📄</div>
+        <h3 style="margin: 0 0 0.5rem 0;">Digital Notary</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+            Notarize documents<br>on blockchain forever
+        </p>
+    </div>
+    
+    <div class="ecosystem-card" onclick="showSection('kyc')" style="
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        transition: all 0.3s;
+    ">
+        <div style="font-size: 2rem; color: #6366f1; margin-bottom: 0.5rem;">✅</div>
+        <h3 style="margin: 0 0 0.5rem 0;">KYC Verification</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+            Identity verification<br>Secure & private
+        </p>
+    </div>
+</div>
+
+<script>
+// Функции для перехода по разделам
+function showSection(section) {
+    const sections = {
+        dex: "ZUZIM DEX - Decentralized Exchange (Coming Soon)",
+        factory: "Token Factory - Create your own ERC-20 tokens (Coming Soon)", 
+        notary: "Digital Notary - Timestamp documents on blockchain (Coming Soon)",
+        kyc: "KYC Verification - Secure identity verification (Coming Soon)"
+    };
+    
+    alert(`🚀 ${sections[section]}\n\nThis feature is under development. You'll be able to:\n• ${section === 'dex' ? 'Trade tokens with 1% auto-donate' : ''}\n• ${section === 'factory' ? 'Create custom tokens in 2 minutes' : ''}\n• ${section === 'notary' ? 'Notarize documents permanently' : ''}\n• ${section === 'kyc' ? 'Verify identity securely' : ''}`);
+    
+    // Можно добавить реальную навигацию позже
+    console.log(`Navigating to: ${section}`);
+}
+
+// Анимация при наведении
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.ecosystem-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+            this.style.borderColor = '#6366f1';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+            this.style.borderColor = 'var(--border)';
+        });
+    });
+    
+    console.log("🚀 ZUZCOIN Ecosystem navigation loaded");
+    console.log("💡 Main idea: 1% of EVERY transaction goes to charity automatically");
+});
+</script>

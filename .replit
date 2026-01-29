@@ -1,3 +1,60 @@
 modules = ["nodejs-20"]
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "ZUZCOIN_LAUNCH"
+mode = "sequential"
+author = 48156713
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "Execute Shell Command: pkill -f \"node server\" 2>/dev/null || true sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = 'Execute Shell Command: for port in {3000..3010}; do   timeout 0.1 bash -c "echo >/dev/tcp/localhost/\$port" 2>/dev/null && {     fuser -k \$port/tcp 2>/dev/null || true   } || true done'
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "Execute Shell Command: node server.js > zuzcoin.log 2>&1 & SERVER_PID=$! echo $SERVER_PID > ZUZCOIN_PID.txt echo \"ZUZCOIN запущен! PID: $SERVER_PID\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "Execute Shell Command: sleep 5 if [ -f \"PORT.txt\" ]; then   PORT=$(cat PORT.txt)   echo \"✅ Сервер работает на порту: $PORT\"   echo \"🌐 Ссылка: https://$(cat /etc/hostname).repl.co\" else   echo \"⚠️ Ожидание запуска...\" fi"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "ZUZCOIN_LAUNCH"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "ProofChain Server"
+
+[[workflows.workflow]]
+name = "ProofChain Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
+waitForPort = 5000
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
+localPort = 5000
+externalPort = 80

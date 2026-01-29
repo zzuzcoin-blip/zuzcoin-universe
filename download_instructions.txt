@@ -1,0 +1,25 @@
+=== ИНСТРУКЦИЯ ПО СОХРАНЕНИЮ ZUZCOIN UNIVERSE ===
+
+1. ФАЙЛЫ ДЛЯ СОХРАНЕНИЯ:
+   - index.html          (главная страница)
+   - server-sepolia-fixed.js (сервер)
+   - package.json        (зависимости)
+   - server.log          (логи)
+
+2. КОМАНДЫ ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА:
+   npm install
+   node server-sepolia-fixed.js
+
+3. ДОСТУПНЫЕ ФУНКЦИИ:
+   - Отправка ZUZ токенов с филантропией 1%
+   - Проверка баланса в реальном времени
+   - Подключение MetaMask
+
+4. КОНТРАКТ ZUZCOIN:
+   Адрес: 0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31
+   Сеть: Sepolia Testnet
+   Ссылка: https://sepolia.etherscan.io/address/0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31
+
+5. ВАШ КОШЕЛЁК:
+   Адрес: 0xf89ce65b635da29be08c659e313D6C250750bC73
+   Баланс: 1,000,000 ZUZ

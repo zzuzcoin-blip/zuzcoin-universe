@@ -1,0 +1,70 @@
+<script>
+// ===== ОСНОВНОЙ СКРИПТ ДЛЯ БАЛАНСА ZUZCOIN =====
+async function updateZuzBalanceInUI() {
+    console.log("🔄 Обновляю баланс ZUZ...");
+    
+    // Пробуем разные возможные ID элементов
+    const balanceElement = document.getElementById('tokenBalance') || 
+                          document.getElementById('zuzBalance') ||
+                          document.querySelector('[class*="balance"][class*="zuz"]') ||
+                          document.querySelector('span:contains("ZUZ")');
+    
+    if (!balanceElement) {
+        console.error("❌ Не найден элемент баланса. Ищем вручную...");
+        // Посмотрим всю структуру карточки кошелька
+        const walletCard = document.querySelector('.card:contains("My Wallet")');
+        if (walletCard) console.log("Найдена карточка кошелька:", walletCard.innerHTML);
+        return;
+    }
+
+    if (!window.ethereum?.selectedAddress) {
+        balanceElement.textContent = '0.0000 ZUZ';
+        return;
+    }
+
+    const userAddress = window.ethereum.selectedAddress;
+    balanceElement.innerHTML = '<span class="loader"></span> Loading...';
+
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contract = new ethers.Contract(
+            "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+            ["function balanceOf(address) view returns (uint256)", "function symbol() view returns (string)"],
+            provider
+        );
+
+        const [rawBalance, symbol] = await Promise.all([
+            contract.balanceOf(userAddress),
+            contract.symbol()
+        ]);
+
+        const formatted = ethers.utils.formatUnits(rawBalance, 18);
+        balanceElement.textContent = `${parseFloat(formatted).toFixed(4)} ${symbol}`;
+        console.log(`✅ Баланс обновлён: ${parseFloat(formatted).toFixed(4)} ${symbol}`);
+        
+    } catch (error) {
+        console.error("❌ Ошибка:", error.message);
+        balanceElement.textContent = 'Error';
+    }
+}
+
+// Автозапуск при загрузке
+if (typeof ethers !== 'undefined' && window.ethereum) {
+    // Ждём загрузки DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateZuzBalanceInUI, 1000);
+        });
+    } else {
+        setTimeout(updateZuzBalanceInUI, 1000);
+    }
+    
+    // Слушаем события MetaMask
+    window.ethereum.on('accountsChanged', updateZuzBalanceInUI);
+    window.ethereum.on('chainChanged', () => setTimeout(updateZuzBalanceInUI, 1000));
+}
+
+// Функция для ручного вызова из консоли
+window.updateZUZ = updateZuzBalanceInUI;
+console.log("🚀 Скрипт баланса ZUZCOIN загружен. Для ручного обновления введите: updateZUZ()");
+</script>

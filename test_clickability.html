@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест кликабельности</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #0a0b0d;
+            color: white;
+        }
+        .test-area {
+            background: #1e1f2e;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .click-test {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: rgba(108, 93, 211, 0.2);
+            border: 2px solid #6c5dd3;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            margin: 20px;
+        }
+        .click-test span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background: #6c5dd3;
+            margin: 5px auto;
+            border-radius: 2px;
+        }
+        .click-test:active {
+            transform: scale(0.95);
+            background: rgba(108, 93, 211, 0.4);
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+        .success { color: #4CAF50; }
+        .click-counter {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6c5dd3;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖱️ Тест кликабельности бургер-меню</h1>
+    
+    <div class="test-area">
+        <h3>Тест 1: Кликните на этот демо-бургер</h3>
+        <div class="click-test" id="demoBurger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="click-counter" id="demoCounter">0 кликов</div>
+        <p id="demoResult">Кликайте на бургер выше</p>
+    </div>
+    
+    <div class="test-area">
+        <h3>Тест 2: Перейдите на основную страницу</h3>
+        <p>Откройте <a href="/" style="color: #6c5dd3;">главную страницу ZUZCOIN</a> и проверьте:</p>
+        <ol style="text-align: left; display: inline-block;">
+            <li>Нажмите на бургер-меню (три полоски)</li>
+            <li>Должна открыться боковая панель</li>
+            <li>Нажмите еще раз или кликните рядом - должна закрыться</li>
+            <li>Проверьте на телефоне в разных ориентациях</li>
+        </ol>
+        
+        <div class="test-result">
+            <h4>Техническая проверка:</h4>
+            <p id="techCheck">Загрузка...</p>
+            <button onclick="checkBurger()" style="padding: 10px 20px; background: #6c5dd3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Проверить бургер-меню
+            </button>
+        </div>
+    </div>
+    
+    <div class="test-area">
+        <h3>Если бургер все еще не кликабелен:</h3>
+        <p>Запустите команду в терминале:</p>
+        <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+./launch_zuzcoin.sh</pre>
+        <p>Или:</p>
+        <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+pkill -f node; sleep 2; node server-auto-port.js &</pre>
+    </div>
+    
+    <script>
+        // Тест 1: Демо кликабельности
+        let clickCount = 0;
+        const demoBurger = document.getElementById('demoBurger');
+        const demoCounter = document.getElementById('demoCounter');
+        const demoResult = document.getElementById('demoResult');
+        
+        demoBurger.addEventListener('click', function() {
+            clickCount++;
+            demoCounter.textContent = clickCount + ' кликов';
+            
+            // Визуальная обратная связь
+            this.classList.add('clicked');
+            setTimeout(() => this.classList.remove('clicked'), 200);
+            
+            demoResult.innerHTML = '<span class="success">✅ Клик зарегистрирован!</span>';
+            demoResult.innerHTML += '<br>Обратная связь работает.';
+        });
+        
+        // Тест 2: Проверка основного бургер-меню
+        function checkBurger() {
+            const techCheck = document.getElementById('techCheck');
+            techCheck.innerHTML = 'Проверяем...';
+            
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const burger = doc.getElementById('mobileMenuBtn');
+                    
+                    if (!burger) {
+                        techCheck.innerHTML = '❌ Бургер-меню не найден на главной странице';
+                        return;
+                    }
+                    
+                    // Проверяем стили
+                    const style = window.getComputedStyle ? 
+                        getComputedStyle(burger) : burger.currentStyle;
+                    
+                    let results = [];
+                    results.push('✅ Бургер-меню найден');
+                    results.push(`cursor: ${style.cursor}`);
+                    results.push(`z-index: ${style.zIndex}`);
+                    results.push(`display: ${style.display}`);
+                    
+                    // Проверяем наличие обработчиков
+                    const hasClickHandler = html.includes('addEventListener') || 
+                                           html.includes('onclick') ||
+                                           html.includes('toggleMobileMenu');
+                    
+                    results.push(hasClickHandler ? 
+                        '✅ JavaScript обработчики найдены' : 
+                        '❌ JavaScript обработчики не найдены');
+                    
+                    techCheck.innerHTML = results.join('<br>');
+                })
+                .catch(err => {
+                    techCheck.innerHTML = '❌ Ошибка проверки: ' + err.message;
+                });
+        }
+        
+        // Автопроверка
+        setTimeout(checkBurger, 1000);
+    </script>
+</body>
+</html>

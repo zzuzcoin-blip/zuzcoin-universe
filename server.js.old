@@ -1,0 +1,72 @@
+const express = require('express');
+const Web3 = require('web3');
+const cors = require('cors');
+require('dotenv').config();
+
+// Используем публичный RPC для Polygon Mumbai
+const web3 = new Web3('https://polygon-mumbai.g.alchemy.com/v2/demo');
+console.log('✅ Using public Polygon Mumbai RPC');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Базовый маршрут
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'online',
+    network: 'Polygon Mumbai',
+    message: 'ZUZCOIN Universe - Real Blockchain'
+  });
+});
+
+// Проверка подключения к блокчейну
+app.get('/api/blockchain/status', async (req, res) => {
+  try {
+    const blockNumber = await web3.eth.getBlockNumber();
+    const accounts = await web3.eth.getAccounts();
+    
+    res.json({
+      connected: true,
+      network: 'Polygon Mumbai',
+      chainId: 80001,
+      blockNumber: blockNumber,
+      accounts: accounts,
+      rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/demo'
+    });
+  } catch (error) {
+    res.status(500).json({
+      connected: false,
+      error: error.message
+    });
+  }
+});
+
+// Простая регистрация (для теста)
+app.post('/api/register', async (req, res) => {
+  try {
+    const { work } = req.body;
+    
+    // Симуляция транзакции
+    const txHash = '0x' + Math.random().toString(16).substr(2, 64);
+    
+    res.json({
+      success: true,
+      message: 'Copyright Registered on Polygon Mumbai!',
+      work: work,
+      transaction: txHash,
+      network: 'Polygon Mumbai',
+      explorer: `https://mumbai.polygonscan.com/tx/${txHash}`
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Запуск сервера
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 Network: Polygon Mumbai`);
+  console.log(`🔗 RPC: https://polygon-mumbai.g.alchemy.com/v2/demo`);
+});

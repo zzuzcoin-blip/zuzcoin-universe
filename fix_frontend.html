@@ -1,0 +1,83 @@
+<script>
+// ===== КОНФИГУРАЦИЯ ТОКЕНА ZUZCOIN =====
+const ZUZCOIN_CONTRACT = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+// =======================================
+
+async function updateZuzBalanceInUI() {
+    console.log("🔄 Обновляю баланс ZUZ в интерфейсе...");
+    const balanceElement = document.getElementById('tokenBalance');
+    if (!balanceElement) {
+        console.error("❌ Не найден элемент для отображения баланса!");
+        return;
+    }
+
+    // Проверяем, подключен ли кошелек
+    if (!window.ethereum || !window.ethereum.selectedAddress) {
+        balanceElement.textContent = '0.0000 ZUZ';
+        return;
+    }
+
+    const userAddress = window.ethereum.selectedAddress;
+    console.log("👤 Адрес для проверки:", userAddress);
+
+    // Показываем загрузку
+    balanceElement.innerHTML = '<span class="loader" style="margin-right: 8px;"></span> Loading...';
+
+    try {
+        // Используем ethers из глобальной области видимости
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contractABI = [
+            "function balanceOf(address owner) view returns (uint256)",
+            "function symbol() view returns (string)"
+        ];
+        const contract = new ethers.Contract(ZUZCOIN_CONTRACT, contractABI, provider);
+
+        // Получаем баланс и символ
+        const [rawBalance, symbol] = await Promise.all([
+            contract.balanceOf(userAddress),
+            contract.symbol()
+        ]);
+
+        // Форматируем баланс (18 decimals стандартно для ERC-20)
+        const formattedBalance = ethers.utils.formatUnits(rawBalance, 18);
+        const displayBalance = parseFloat(formattedBalance).toFixed(4);
+        
+        console.log("✅ Баланс получен:", displayBalance, symbol);
+
+        // Обновляем интерфейс
+        balanceElement.textContent = `${displayBalance} ${symbol}`;
+        balanceElement.style.color = "#10b981"; // Зеленый цвет для успеха
+        
+    } catch (error) {
+        console.error("❌ Ошибка при получении баланса:", error);
+        balanceElement.textContent = 'Error';
+        balanceElement.style.color = "#ef4444"; // Красный цвет для ошибки
+    }
+}
+
+// АВТОМАТИЧЕСКИЙ ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Страница загружена, запускаю проверку баланса...");
+    
+    // Ждем загрузки ethers и MetaMask
+    setTimeout(() => {
+        if (typeof ethers !== 'undefined' && window.ethereum) {
+            // Проверяем баланс сразу
+            updateZuzBalanceInUI();
+            
+            // Обновляем при смене аккаунта
+            window.ethereum.on('accountsChanged', updateZuzBalanceInUI);
+            
+            // Обновляем при смене сети
+            window.ethereum.on('chainChanged', () => {
+                setTimeout(updateZuzBalanceInUI, 1000);
+            });
+        } else {
+            console.warn("⚠️ Ethers или MetaMask не загружены");
+        }
+    }, 1000);
+});
+
+// Экспортируем функцию для ручного вызова (например, из консоли)
+window.updateZuzBalance = updateZuzBalanceInUI;
+</script>

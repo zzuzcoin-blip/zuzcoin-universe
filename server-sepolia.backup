@@ -1,0 +1,151 @@
+const express = require('express');
+const { ethers } = require('ethers');
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.static(__dirname));
+
+// CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+    next();
+});
+
+// Configuration
+const provider = new ethers.providers.JsonRpcProvider("https://ethereum-sepolia.publicnode.com");
+
+// API Endpoints
+app.get('/api/status', async (req, res) => {
+    try {
+        const block = await provider.getBlockNumber();
+        res.json({
+            status: "online",
+            platform: "ZUZCOIN Universe",
+            version: "3.0",
+            network: "Sepolia Testnet",
+            chainId: 11155111,
+            blockNumber: block,
+            contract: "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+            features: ["DEX", "Token Factory", "Digital Notary", "KYC", "1% Philanthropy"],
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/balance/:address', async (req, res) => {
+    try {
+        // Simulate balance for demo
+        const fakeBalance = Math.random() * 10000 + 1000;
+        res.json({
+            address: req.params.address,
+            balanceZUZ: fakeBalance.toFixed(4),
+            valueUSD: (fakeBalance * 0.10).toFixed(2),
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/philanthropy', async (req, res) => {
+    res.json({
+        totalDonated: (Math.random() * 1000).toFixed(2),
+        philanthropyBalance: (Math.random() * 500).toFixed(2),
+        philanthropyWallet: "0x742d35Cc6634C0532925a3b844Bc9e5F2A5dF2e3",
+        mechanism: "1% of every ZUZCOIN transaction",
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.post('/api/dex/swap', (req, res) => {
+    const { fromToken, toToken, amount, userAddress } = req.body;
+    const donation = amount * 0.01;
+    const output = amount * 0.99 * (Math.random() * 0.1 + 0.95); // Random exchange rate
+    
+    res.json({
+        success: true,
+        fromToken, toToken, amount,
+        amountOut: output.toFixed(4),
+        donation: donation.toFixed(4),
+        philanthropyImpact: `${donation.toFixed(4)} ${fromToken} donated`,
+        transaction: "simulated_" + Date.now(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.post('/api/factory/create', (req, res) => {
+    const { name, symbol, supply, includePhilanthropy } = req.body;
+    
+    // Generate fake address
+    const fakeAddress = "0x" + Array(40).fill(0).map(() => 
+        Math.floor(Math.random() * 16).toString(16)).join('');
+    
+    res.json({
+        success: true,
+        tokenName: name,
+        tokenSymbol: symbol,
+        totalSupply: supply,
+        contractAddress: fakeAddress,
+        includePhilanthropy,
+        philanthropyPercentage: includePhilanthropy ? "1%" : "0%",
+        transactionHash: "0x" + Array(64).fill(0).map(() => 
+            Math.floor(Math.random() * 16).toString(16)).join(''),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.post('/api/notarize', (req, res) => {
+    const { documentHash, description, userAddress } = req.body;
+    
+    res.json({
+        success: true,
+        documentHash,
+        description: description || "Notarized document",
+        notarizedBy: userAddress || "Anonymous",
+        timestamp: Math.floor(Date.now() / 1000),
+        blockNumber: Math.floor(Math.random() * 1000000) + 5000000,
+        transactionHash: "0x" + Array(64).fill(0).map(() => 
+            Math.floor(Math.random() * 16).toString(16)).join(''),
+        verificationUrl: `https://sepolia.etherscan.io/tx/0x${Array(64).fill(0).map(() => 
+            Math.floor(Math.random() * 16).toString(16)).join('')}`,
+        timestampReadable: new Date().toISOString()
+    });
+});
+
+app.post('/api/kyc/verify', (req, res) => {
+    const { name, country, userAddress } = req.body;
+    const levels = ["Bronze", "Silver", "Gold", "Platinum"];
+    
+    res.json({
+        success: true,
+        name, country, userAddress,
+        kycId: "KYC-" + Array(8).fill(0).map(() => 
+            Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+        level: levels[Math.floor(Math.random() * levels.length)],
+        verified: true,
+        verificationDate: new Date().toISOString(),
+        expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+    });
+});
+
+// Serve index.html for root
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+// Start server
+app.listen(port, () => {
+    console.log('═══════════════════════════════════════════════════');
+    console.log('🚀 ZUZCOIN Universe Server v3.0');
+    console.log(`📡 Running on port ${port}`);
+    console.log('🌐 Network: Sepolia Testnet');
+    console.log('💎 Demo Mode: Active');
+    console.log('❤️  1% Auto-Philanthropy: Simulated');
+    console.log('💻 Open: http://localhost:' + port);
+    console.log('═══════════════════════════════════════════════════');
+});

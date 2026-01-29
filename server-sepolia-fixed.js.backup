@@ -1,0 +1,63 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+
+// CORS для фронтенда
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+// Главная страница
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+// API статус
+app.get('/api/status', (req, res) => {
+    res.json({
+        status: "online",
+        ecosystem: "ZUZCOIN Universe v3.0",
+        network: "Sepolia Testnet",
+        chainId: 11155111,
+        contract: "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+        contract_explorer: "https://sepolia.etherscan.io/address/0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+        features: ["ZUZCOIN Token (real contract)", "ZUZIM DEX (coming soon)", "Token Factory", "Digital Notary", "KYC Verification", "1% Auto-Philanthropy"],
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Проверка баланса через API (альтернативный метод)
+app.get('/api/balance/:address', async (req, res) => {
+    try {
+        const ethers = require('ethers');
+        const provider = new ethers.providers.JsonRpcProvider("https://ethereum-sepolia.publicnode.com");
+        const contract = new ethers.Contract(
+            "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+            ["function balanceOf(address) view returns (uint256)"],
+            provider
+        );
+        const balance = await contract.balanceOf(req.params.address);
+        res.json({
+            address: req.params.address,
+            balanceWei: balance.toString(),
+            balanceZUZ: ethers.utils.formatUnits(balance, 18),
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Статические файлы
+app.use(express.static(__dirname));
+
+app.listen(port, () => {
+    console.log(`🚀 ZUZCOIN Universe сервер запущен на порту ${port}`);
+    console.log(`🌐 Сеть: Sepolia Testnet`);
+    console.log(`📝 Контракт: 0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31`);
+    console.log(`🔄 API статус: http://localhost:${port}/api/status`);
+});

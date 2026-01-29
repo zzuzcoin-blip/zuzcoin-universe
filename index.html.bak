@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZUZCOIN Universe - Blockchain Philanthropy</title>
+    <style>
+        body { background: #0a192f; color: white; text-align: center; padding: 50px; }
+        h1 { color: gold; }
+        .card { background: rgba(255,255,255,0.1); padding: 30px; margin: 30px auto; max-width: 800px; border-radius: 15px; }
+    </style>
+</head>
+<body>
+    <h1>ZUZCOIN UNIVERSE</h1>
+    <p>Blockchain Philanthropy Platform • 1% Auto-Donate System</p>
+    
+    <div class="card">
+        <h2>For The Giving Pledge</h2>
+        <p>Platform temporarily offline for maintenance.</p>
+        <p>Full demo available by request.</p>
+        <p>Contact: [Твоя почта]</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<script>
+// Простая функция обновления баланса
+async function showZUZBalance() {
+    console.log("🔄 Обновляю баланс ZUZ...");
+    
+    // 1. Находим элемент с текстом "ZUZ Balance:"
+    const allSpans = Array.from(document.querySelectorAll('span, div, p'));
+    const label = allSpans.find(el => el.textContent && el.textContent.includes('ZUZ Balance'));
+    
+    if (!label) {
+        console.error("❌ Не найден текст 'ZUZ Balance' на странице");
+        return;
+    }
+    
+    console.log("✅ Найден label:", label.textContent);
+    
+    // 2. Находим или создаём элемент для значения
+    let valueElement = label.nextElementSibling;
+    
+    if (!valueElement || !valueElement.id) {
+        // Создаём новый элемент для значения
+        valueElement = document.createElement('span');
+        valueElement.id = 'zuzBalanceDisplay';
+        valueElement.style.fontWeight = 'bold';
+        valueElement.style.color = '#10b981';
+        valueElement.style.marginLeft = '10px';
+        valueElement.style.fontSize = '1.1em';
+        
+        // Вставляем после label
+        label.parentNode.insertBefore(valueElement, label.nextSibling);
+        console.log("✅ Создан новый элемент для отображения баланса");
+    }
+    
+    // 3. Получаем баланс через наш API
+    try {
+        const userAddress = window.ethereum?.selectedAddress;
+        if (!userAddress) {
+            valueElement.textContent = 'Connect Wallet';
+            return;
+        }
+        
+        valueElement.innerHTML = '<span class="loader" style="display:inline-block; margin-right:5px;"></span> Loading...';
+        
+        const response = await fetch('/api/balance/' + userAddress);
+        const data = await response.json();
+        
+        if (data.balanceZUZ) {
+            const balance = parseFloat(data.balanceZUZ).toFixed(4);
+            valueElement.textContent = `${balance} ZUZ`;
+            valueElement.style.color = '#10b981'; // Зелёный
+            console.log(`✅ Баланс отображён: ${balance} ZUZ`);
+        } else {
+            valueElement.textContent = 'Error';
+            valueElement.style.color = '#ef4444'; // Красный
+        }
+        
+    } catch (error) {
+        console.error("❌ Ошибка:", error);
+        valueElement.textContent = 'Error';
+        valueElement.style.color = '#ef4444';
+    }
+}
+
+// Запускаем при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Страница загружена, запускаю отображение баланса...");
+    
+    // Ждём подключения MetaMask
+    if (window.ethereum) {
+        setTimeout(showZUZBalance, 1000);
+        
+        // Обновляем при смене аккаунта
+        window.ethereum.on('accountsChanged', showZUZBalance);
+    } else {
+        console.warn("⚠️ MetaMask не обнаружен");
+    }
+});
+
+// Делаем функцию доступной для ручного вызова
+window.showZUZBalance = showZUZBalance;
+console.log("📢 Для ручного обновления баланса введите: showZUZBalance()");
+</script>
+
+<style>
+.loader {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #6366f1;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>

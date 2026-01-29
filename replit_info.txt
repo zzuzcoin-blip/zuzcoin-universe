@@ -1,0 +1,7 @@
+Активный порт: 3000
+Основной URL: https://workspace.alekseev2508.repl.co
+Прямая ссылка: https://workspace.alekseev2508.repl.co/?port=3000
+
+Команды для проверки:
+curl http://localhost:3000/api/status
+curl http://localhost:3000/api/dex/pairs

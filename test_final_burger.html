@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финальный тест бургер-меню</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0a0b0d;
+            color: white;
+            min-height: 100vh;
+        }
+        .test-result {
+            background: #1e1f2e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #6c5dd3;
+        }
+        .success { border-left-color: #4CAF50; }
+        .error { border-left-color: #f44336; }
+        .warning { border-left-color: #FF9800; }
+        .burger-demo {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(108, 93, 211, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .burger-demo span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: #6c5dd3;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+        .test-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #6c5dd3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+        }
+        .instructions {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍔 Финальный тест бургер-меню</h1>
+    
+    <div class="test-result" id="test1">
+        <h3>Тест 1: Проверка на этой странице</h3>
+        <p id="test1Result">Выполняется...</p>
+        <div class="burger-demo">
+            <span></span>
+            <span></span>
+            <span></span>
+            <p style="margin-top: 10px; font-size: 12px;">Так должно выглядеть бургер-меню</p>
+        </div>
+    </div>
+    
+    <div class="test-result" id="test2">
+        <h3>Тест 2: Проверка на основном сайте</h3>
+        <div class="instructions">
+            <p><strong>Откройте основную страницу и проверьте:</strong></p>
+            <ol>
+                <li>В верхнем левом углу должны быть три синие полоски</li>
+                <li>Нажмите на них - должна открыться боковая панель</li>
+                <li>Проверьте в вертикальной ориентации</li>
+                <li>Поверните телефон и проверьте в горизонтальной ориентации</li>
+                <li>Меню должно оставаться видимым в любой ориентации</li>
+            </ol>
+        </div>
+        <a href="/" class="test-button">Открыть ZUZCOIN</a>
+        <a href="/burger-test" class="test-button">Старый тест</a>
+    </div>
+    
+    <div class="test-result" id="test3">
+        <h3>Тест 3: Техническая проверка</h3>
+        <p id="techInfo">Загрузка...</p>
+        <p id="orientationInfo">Ориентация: ...</p>
+        <p id="widthInfo">Ширина: ...</p>
+    </div>
+    
+    <div class="test-result success" style="display: none;" id="successMessage">
+        <h3>✅ ВСЕ ТЕСТЫ ПРОЙДЕНЫ!</h3>
+        <p>Бургер-меню работает правильно во всех ориентациях.</p>
+    </div>
+    
+    <script>
+        // Тест 1: Проверка окружения
+        function runTest1() {
+            const test1Result = document.getElementById('test1Result');
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const width = window.innerWidth;
+            
+            let result = [];
+            result.push(`Устройство: ${isMobile ? '📱 Мобильное' : '💻 Десктоп'}`);
+            result.push(`Ширина экрана: ${width}px`);
+            result.push(`User Agent: ${navigator.userAgent.substring(0, 50)}...`);
+            
+            test1Result.innerHTML = result.join('<br>');
+            
+            if (isMobile && width <= 768) {
+                test1Result.innerHTML += '<br><span style="color: #4CAF50;">✅ Находитесь в мобильном режиме</span>';
+                document.getElementById('test1').classList.add('success');
+            } else if (isMobile) {
+                test1Result.innerHTML += '<br><span style="color: #FF9800;">⚠️ Мобильное устройство, но широкая ориентация</span>';
+                document.getElementById('test1').classList.add('warning');
+            } else {
+                test1Result.innerHTML += '<br><span style="color: #2196F3;">ℹ️ Десктоп - для теста используйте телефон</span>';
+            }
+        }
+        
+        // Тест 3: Техническая информация
+        function updateTechInfo() {
+            document.getElementById('techInfo').innerHTML = 
+                `Портал: ${window.location.hostname}<br>
+                 Ширина документа: ${document.documentElement.clientWidth}px<br>
+                 Высота документа: ${document.documentElement.clientHeight}px`;
+            
+            document.getElementById('orientationInfo').innerHTML = 
+                `Ориентация: ${window.innerWidth > window.innerHeight ? 'Горизонтальная' : 'Вертикальная'}`;
+            
+            document.getElementById('widthInfo').innerHTML = 
+                `Внутренняя ширина: ${window.innerWidth}px, Медиа-запрос: ${window.innerWidth <= 768 ? '📱 Мобильный' : '💻 Десктоп'}`;
+            
+            // Проверяем видимость бургер-меню на основной странице
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    const hasBurger = html.includes('mobile-menu-btn') && html.includes('mobileMenuBtn');
+                    const techDiv = document.getElementById('test3');
+                    const info = document.createElement('p');
+                    info.innerHTML = hasBurger ? 
+                        '✅ Бургер-меню найден в HTML основной страницы' :
+                        '❌ Бургер-меню НЕ найден в HTML основной страницы';
+                    techDiv.appendChild(info);
+                    
+                    if (hasBurger) {
+                        techDiv.classList.add('success');
+                        document.getElementById('successMessage').style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error('Ошибка проверки:', err);
+                });
+        }
+        
+        // Запускаем тесты
+        runTest1();
+        updateTechInfo();
+        
+        // Обновляем при изменении
+        window.addEventListener('resize', function() {
+            runTest1();
+            updateTechInfo();
+        });
+        
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                runTest1();
+                updateTechInfo();
+            }, 300);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZCOIN Universe | Blockchain Philanthropy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <style>
+        /* Основные стили */
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #8b5cf6;
+            --success: #00c087;
+            --danger: #f6465d;
+            --warning: #f0b90b;
+            --philanthropy: #ec4899;
+            --bg-dark: #0a0b0d;
+            --bg-card: #16182c;
+            --bg-hover: #1c1f32;
+            --text: #eaecef;
+            --text-muted: #848e9c;
+            --border: #2a2d3e;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* Хедер */
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-badge {
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+            color: white;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+        
+        .connect-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .connect-btn:hover {
+            background: #00a878;
+        }
+        
+        /* Основной контент */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Карточки */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .card-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Филантропия */
+        .philanthropy-banner {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
+            border: 2px solid var(--philanthropy);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        /* Навигация */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Утилиты */
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-primary { color: var(--primary); }
+        .text-muted { color: var(--text-muted); }
+        
+        .hidden { display: none; }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 18px; }
+        }
+        
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Хедер -->
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <div class="logo">ZUZCOIN</div>
+            <div class="logo-badge">Universe</div>
+        </div>
+        
+        <button class="connect-btn" id="connectBtn">
+            <i class="fas fa-plug"></i> Connect Wallet
+        </button>
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Герой секция -->
+        <div class="hero">
+            <h1>ZUZCOIN Universe</h1>
+            <p>Professional blockchain ecosystem with built-in philanthropy.<br>1% of every transaction is automatically donated to charity.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="showDashboard()">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button class="btn btn-outline" onclick="showDex()">
+                    <i class="fas fa-exchange-alt"></i> DEX Trading
+                </button>
+                <button class="btn btn-outline" onclick="showFactory()">
+                    <i class="fas fa-industry"></i> Token Factory
+                </button>
+            </div>
+        </div>
+        
+        <!-- Филантропия баннер -->
+        <div class="philanthropy-banner">
+            <h2 style="color: var(--philanthropy); margin-bottom: 15px;">
+                <i class="fas fa-heart"></i> Trade with Purpose
+            </h2>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                Every transaction automatically donates 1% to verified charities.<br>
+                Your trading generates real-world impact.
+            </p>
+            <button class="btn btn-primary">
+                <i class="fas fa-chart-line"></i> View Impact Dashboard
+            </button>
+        </div>
+        
+        <!-- Навигация -->
+        <div class="nav-tabs">
+            <a href="#" class="nav-tab active" onclick="showDashboard()">Dashboard</a>
+            <a href="#" class="nav-tab" onclick="showDex()">DEX Trading</a>
+            <a href="#" class="nav-tab" onclick="showFactory()">Token Factory</a>
+            <a href="#" class="nav-tab" onclick="showNotary()">Digital Notary</a>
+            <a href="#" class="nav-tab" onclick="showKYC()">KYC Verification</a>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-value" id="balanceZUZ">0.0000</div>
+                <div class="stat-label">Your ZUZ Balance</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-value text-primary" id="totalDonated">0.00</div>
+                <div class="stat-label">Total Donated</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-value" id="marketCap">$100,000</div>
+                <div class="stat-label">Market Cap</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="stat-value" id="dailyVolume">$12,450</div>
+                <div class="stat-label">24h Volume</div>
+            </div>
+        </div>
+        
+        <!-- Секции -->
+        <div id="dashboardSection" class="section">
+            <div class="dashboard-grid">
+                <!-- DEX карточка -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">ZUZIM DEX</div>
+                        <div class="card-icon">💧</div>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 20px;">
+                        Decentralized exchange with 1% auto-donate on every trade
+                    </p>
+                    <button class="btn btn-primary w-full" onclick="showDex()">
+                        <i class="fas fa-exchange-alt"></i> Open DEX
+                    </button>
+                </div>
+                
+                <!-- Token Factory карточка -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Token Factory</div>
+                        <div class="card-icon">🏭</div>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 20px;">
+                        Create your own tokens with built-in philanthropy features
+                    </p>
+                    <button class="btn btn-primary w-full" onclick="showFactory()">
+                        <i class="fas fa-industry"></i> Create Token
+                    </button>
+                </div>
+                
+                <!-- Digital Notary карточка -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Digital Notary</div>
+                        <div class="card-icon">📄</div>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 20px;">
+                        Timestamp and verify documents on the blockchain
+                    </p>
+                    <button class="btn btn-primary w-full" onclick="showNotary()">
+                        <i class="fas fa-file-contract"></i> Notarize Document
+                    </button>
+                </div>
+                
+                <!-- KYC карточка -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">KYC Verification</div>
+                        <div class="card-icon">👤</div>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 20px;">
+                        Secure identity verification for advanced features
+                    </p>
+                    <button class="btn btn-primary w-full" onclick="showKYC()">
+                        <i class="fas fa-user-check"></i> Verify Identity
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DEX Section (скрыта по умолчанию) -->
+        <div id="dexSection" class="section hidden">
+            <div class="card">
+                <h2 style="margin-bottom: 20px;">ZUZIM DEX - Token Swap</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h3 style="margin-bottom: 15px;">Swap Tokens</h3>
+                        <div style="background: var(--bg-hover); padding: 20px; border-radius: 12px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">You Pay</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" id="swapAmount" placeholder="0.0" style="flex: 1; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                                    <select id="fromToken" style="padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; width: 100px;">
+                                        <option value="ZUZ">ZUZ</option>
+                                        <option value="ETH">ETH</option>
+                                        <option value="USDT">USDT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 20px 0;">
+                                <button class="btn btn-outline" onclick="swapTokens()">
+                                    <i class="fas fa-arrow-down"></i>
+                                </button>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">You Receive</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" id="receiveAmount" placeholder="0.0" readonly style="flex: 1; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                                    <select id="toToken" style="padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; color: white; width: 100px;">
+                                        <option value="ETH">ETH</option>
+                                        <option value="ZUZ">ZUZ</option>
+                                        <option value="USDT">USDT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="background: rgba(236, 72, 153, 0.1); padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid var(--philanthropy);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span>Philanthropy Donation:</span>
+                                    <span class="text-primary" id="donationAmount">0.0 ZUZ</span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted);">
+                                    1% of every trade auto-donated to charity
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-success w-full" onclick="executeSwap()" id="swapBtn">
+                                <i class="fas fa-exchange-alt"></i> Swap Tokens
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 15px;">How It Works</h3>
+                        <div style="background: var(--bg-hover); padding: 20px; border-radius: 12px;">
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-hand-holding-heart text-primary" style="position: absolute; left: 0;"></i>
+                                    <strong>Automatic Philanthropy</strong>
+                                    <p style="color: var(--text-muted); margin-top: 5px;">1% of every trade is automatically donated</p>
+                                </li>
+                                <li style="margin-bottom: 15px; padding-left: 25px; position: relative;">
+                                    <i class="fas fa-shield-alt text-success" style="position: absolute; left: 0;"></i>
+                                    <strong>Secure & Transparent</strong>
+                                    <p style="color: var(--text-muted); margin-top: 5px;">All transactions on Sepolia blockchain</p>
+                                </li>
+                                <li style="padding-left: 25px; position: relative;">
+                                    <i class="fas fa-chart-line text-warning" style="position: absolute; left: 0;"></i>
+                                    <strong>Real Impact</strong>
+                                    <p style="color: var(--text-muted); margin-top: 5px;">Track your donations in real-time</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); color: var(--text-muted);">
+            <p>ZUZCOIN Universe © 2024 - Blockchain Philanthropy Ecosystem</p>
+            <p style="font-size: 14px; margin-top: 10px;">1% of every transaction supports verified charities worldwide</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Конфигурация
+        const API_BASE = 'http://localhost:3001/api';
+        const CONTRACT_ADDRESS = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+        let currentUser = null;
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ZUZCOIN Universe v3.0 initialized');
+            
+            // Кнопка подключения кошелька
+            document.getElementById('connectBtn').addEventListener('click', connectWallet);
+            
+            // Проверяем если уже подключен
+            if (window.ethereum?.selectedAddress) {
+                connectWalletSilently();
+            }
+            
+            // Загружаем данные
+            updateDashboardData();
+            
+            // Показываем dashboard по умолчанию
+            showDashboard();
+        });
+        
+        // Подключение кошелька
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert('Please install MetaMask to use ZUZCOIN Universe');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('connectBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                btn.disabled = true;
+                
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                
+                currentUser = accounts[0];
+                updateWalletDisplay();
+                updateBalance();
+                
+                btn.innerHTML = `<i class="fas fa-check"></i> ${currentUser.slice(0,6)}...${currentUser.slice(-4)}`;
+                btn.disabled = false;
+                
+                console.log('Wallet connected:', currentUser);
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('Connection failed: ' + error.message);
+                document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Connect Wallet';
+                document.getElementById('connectBtn').disabled = false;
+            }
+        }
+        
+        // Тихий реконнект
+        async function connectWalletSilently() {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    currentUser = accounts[0];
+                    updateWalletDisplay();
+                    updateBalance();
+                    document.getElementById('connectBtn').innerHTML = 
+                        `<i class="fas fa-check"></i> ${currentUser.slice(0,6)}...${currentUser.slice(-4)}`;
+                }
+            } catch (error) {
+                console.log('Silent connection check failed');
+            }
+        }
+        
+        // Обновление отображения кошелька
+        function updateWalletDisplay() {
+            // Можно добавить больше информации о кошельке
+        }
+        
+        // Обновление баланса
+        async function updateBalance() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/balance/${currentUser}`);
+                const data = await response.json();
+                
+                document.getElementById('balanceZUZ').textContent = 
+                    parseFloat(data.balanceZUZ).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 4
+                    });
+                
+            } catch (error) {
+                console.error('Balance update error:', error);
+            }
+        }
+        
+        // Обновление данных дашборда
+        async function updateDashboardData() {
+            try {
+                // Обновляем статистику филантропии
+                const response = await fetch(`${API_BASE}/philanthropy`);
+                const data = await response.json();
+                
+                document.getElementById('totalDonated').textContent = 
+                    parseFloat(data.totalDonated).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                
+            } catch (error) {
+                console.error('Dashboard data error:', error);
+            }
+        }
+        
+        // Навигация по секциям
+        function showDashboard() {
+            showSection('dashboardSection');
+            updateNavTab('dashboard');
+            updateDashboardData();
+        }
+        
+        function showDex() {
+            showSection('dexSection');
+            updateNavTab('dex');
+        }
+        
+        function showFactory() {
+            alert('Token Factory - Coming Soon!\n\nCreate your own tokens with built-in philanthropy.');
+        }
+        
+        function showNotary() {
+            alert('Digital Notary - Coming Soon!\n\nNotarize documents on the blockchain.');
+        }
+        
+        function showKYC() {
+            alert('KYC Verification - Coming Soon!\n\nVerify your identity for enhanced features.');
+        }
+        
+        // Вспомогательные функции навигации
+        function showSection(sectionId) {
+            // Скрываем все секции
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Показываем нужную секцию
+            document.getElementById(sectionId)?.classList.remove('hidden');
+        }
+        
+        function updateNavTab(activeTab) {
+            // Обновляем активную вкладку
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Можно добавить логику для установки активной вкладки
+        }
+        
+        // Обмен токенов
+        async function executeSwap() {
+            if (!currentUser) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            
+            const amount = document.getElementById('swapAmount').value;
+            const fromToken = document.getElementById('fromToken').value;
+            const toToken = document.getElementById('toToken').value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            try {
+                const swapBtn = document.getElementById('swapBtn');
+                swapBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                swapBtn.disabled = true;
+                
+                const response = await fetch(`${API_BASE}/dex/swap`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fromToken,
+                        toToken,
+                        amount: parseFloat(amount),
+                        userAddress: currentUser
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Показываем успех
+                    document.getElementById('receiveAmount').value = result.amountOut;
+                    document.getElementById('donationAmount').textContent = 
+                        `${result.donation} ${fromToken}`;
+                    
+                    alert(`✅ Swap successful!\nReceived: ${result.amountOut} ${toToken}\nDonated: ${result.donation} ${fromToken}`);
+                    
+                    // Обновляем баланс
+                    updateBalance();
+                    updateDashboardData();
+                } else {
+                    throw new Error(result.error || 'Swap failed');
+                }
+                
+            } catch (error) {
+                alert(`Swap error: ${error.message}`);
+            } finally {
+                const swapBtn = document.getElementById('swapBtn');
+                swapBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Swap Tokens';
+                swapBtn.disabled = false;
+            }
+        }
+        
+        // Обмен токенов (предпросчет)
+        function swapTokens() {
+            const amount = document.getElementById('swapAmount').value;
+            const fromToken = document.getElementById('fromToken').value;
+            const toToken = document.getElementById('toToken').value;
+            
+            if (amount && parseFloat(amount) > 0) {
+                // Простой расчет
+                const donation = parseFloat(amount) * 0.01;
+                const received = parseFloat(amount) * 0.99 * 0.95; // 1% donation + 5% slippage
+                
+                document.getElementById('receiveAmount').value = received.toFixed(4);
+                document.getElementById('donationAmount').textContent = 
+                    `${donation.toFixed(4)} ${fromToken}`;
+            }
+        }
+        
+        // Обработчики событий MetaMask
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length > 0) {
+                    currentUser = accounts[0];
+                    updateWalletDisplay();
+                    updateBalance();
+                    document.getElementById('connectBtn').innerHTML = 
+                        `<i class="fas fa-check"></i> ${currentUser.slice(0,6)}...${currentUser.slice(-4)}`;
+                } else {
+                    currentUser = null;
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Connect Wallet';
+                    document.getElementById('balanceZUZ').textContent = '0.0000';
+                }
+            });
+            
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
+        
+        // Экспорт для консоли
+        window.zuz = {
+            connect: connectWallet,
+            showDashboard: showDashboard,
+            showDex: showDex,
+            user: () => currentUser
+        };
+        
+        console.log('💡 Console commands: zuz.connect(), zuz.showDashboard(), zuz.user()');
+    </script>
+</body>
+</html>

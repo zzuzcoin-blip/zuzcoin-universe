@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZCOIN Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>ZUZCOIN Universe System Check</h1>
+    
+    <div id="status">
+        <h2>System Status: <span class="loading">Checking...</span></h2>
+    </div>
+    
+    <div id="tests">
+        <h3>Running Tests:</h3>
+        <ul id="test-results"></ul>
+    </div>
+    
+    <div id="actions">
+        <h3>Quick Actions:</h3>
+        <button onclick="connectWallet()">Connect Wallet</button>
+        <button onclick="checkBalance()">Check Balance</button>
+        <button onclick="testSwap()">Test Swap</button>
+        <button onclick="testCreateToken()">Test Token Creation</button>
+    </div>
+    
+    <div id="console">
+        <h3>Console Output:</h3>
+        <pre id="output"></pre>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        const output = document.getElementById('output');
+        const testResults = document.getElementById('test-results');
+        
+        function log(message) {
+            output.textContent += message + '\n';
+        }
+        
+        async function runTests() {
+            log('Starting system tests...');
+            
+            // Test 1: API Status
+            try {
+                const response = await fetch(API_BASE + '/status');
+                const data = await response.json();
+                addTestResult('API Status', 'success', `✅ ${data.ecosystem}`);
+                document.getElementById('status').innerHTML = 
+                    `<h2>System Status: <span class="success">ONLINE</span></h2>
+                     <p>${data.ecosystem} | ${data.network}</p>`;
+            } catch (error) {
+                addTestResult('API Status', 'error', `❌ ${error.message}`);
+            }
+            
+            // Test 2: Balance API
+            try {
+                const response = await fetch(API_BASE + '/balance/0x0000000000000000000000000000000000000000');
+                const data = await response.json();
+                addTestResult('Balance API', 'success', `✅ Working (${data.balanceZUZ} ZUZ)`);
+            } catch (error) {
+                addTestResult('Balance API', 'error', `❌ ${error.message}`);
+            }
+            
+            // Test 3: MetaMask
+            if (window.ethereum) {
+                addTestResult('MetaMask', 'success', '✅ Detected');
+            } else {
+                addTestResult('MetaMask', 'error', '❌ Not detected');
+            }
+            
+            // Test 4: Ethers.js
+            if (typeof ethers !== 'undefined') {
+                addTestResult('Ethers.js', 'success', '✅ Loaded');
+            } else {
+                addTestResult('Ethers.js', 'error', '❌ Not loaded');
+            }
+            
+            log('Tests completed.');
+        }
+        
+        function addTestResult(name, type, message) {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${name}:</strong> <span class="${type}">${message}</span>`;
+            testResults.appendChild(li);
+        }
+        
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert('MetaMask not installed');
+                return;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                log(`✅ Wallet connected: ${accounts[0].slice(0,10)}...`);
+            } catch (error) {
+                log(`❌ Wallet connection failed: ${error.message}`);
+            }
+        }
+        
+        async function checkBalance() {
+            if (!window.ethereum?.selectedAddress) {
+                log('⚠️  Please connect wallet first');
+                return;
+            }
+            
+            try {
+                const address = window.ethereum.selectedAddress;
+                const response = await fetch(`${API_BASE}/balance/${address}`);
+                const data = await response.json();
+                log(`💰 Balance: ${data.balanceZUZ} ZUZ ($${data.valueUSD})`);
+            } catch (error) {
+                log(`❌ Balance check failed: ${error.message}`);
+            }
+        }
+        
+        async function testSwap() {
+            try {
+                const response = await fetch(`${API_BASE}/dex/swap`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fromToken: 'ZUZ',
+                        toToken: 'ETH',
+                        amount: 100,
+                        userAddress: '0x0000000000000000000000000000000000000000'
+                    })
+                });
+                const data = await response.json();
+                log(`🔄 Swap test: ${data.amountOut} ETH received, donated: ${data.donation} ZUZ`);
+            } catch (error) {
+                log(`❌ Swap test failed: ${error.message}`);
+            }
+        }
+        
+        async function testCreateToken() {
+            try {
+                const response = await fetch(`${API_BASE}/factory/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'TestToken',
+                        symbol: 'TEST',
+                        supply: 1000000,
+                        includePhilanthropy: true
+                    })
+                });
+                const data = await response.json();
+                log(`🏭 Token created: ${data.tokenSymbol} at ${data.contractAddress}`);
+            } catch (error) {
+                log(`❌ Token creation failed: ${error.message}`);
+            }
+        }
+        
+        // Run tests on load
+        runTests();
+    </script>
+</body>
+</html>

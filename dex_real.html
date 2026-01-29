@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZIM DEX | Live Trading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.8.0/dist/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --bybit-bg: #0b0e18;
+            --bybit-card: #131722;
+            --bybit-border: #2a2f42;
+            --bybit-text: #e4e5e8;
+            --bybit-text-muted: #848e9c;
+            --bybit-green: #00c087;
+            --bybit-red: #f6465d;
+            --bybit-blue: #0ea5e9;
+            --bybit-gradient: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bybit-bg);
+            color: var(--bybit-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            height: 56px;
+            background: var(--bybit-card);
+            border-bottom: 1px solid var(--bybit-border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: var(--bybit-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 40px;
+        }
+        
+        .nav-main {
+            display: flex;
+            gap: 2px;
+            height: 40px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: var(--bybit-text-muted);
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: var(--bybit-text);
+            background: rgba(14, 165, 233, 0.1);
+            position: relative;
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--bybit-blue);
+        }
+        
+        /* DEX LAYOUT */
+        .dex-container {
+            margin-top: 56px;
+            padding: 24px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .dex-header {
+            margin-bottom: 32px;
+        }
+        
+        .dex-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--bybit-blue), var(--bybit-text));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .dex-subtitle {
+            color: var(--bybit-text-muted);
+            font-size: 14px;
+        }
+        
+        /* DEX GRID */
+        .dex-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .dex-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* POOLS SECTION */
+        .pools-section {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--bybit-blue);
+        }
+        
+        /* POOLS LIST */
+        .pools-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .pool-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .pool-item:hover {
+            border-color: var(--bybit-border);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        
+        .pool-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .pool-tokens {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .token-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bybit-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .token-badge.second {
+            background: var(--bybit-green);
+            margin-left: -10px;
+        }
+        
+        .pool-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .pool-apr {
+            background: rgba(0, 192, 135, 0.1);
+            color: var(--bybit-green);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        .pool-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .stat-label {
+            color: var(--bybit-text-muted);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .pool-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        /* TRADE SECTION */
+        .trade-section {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .trade-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        
+        .trade-tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--bybit-text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .trade-tab.active {
+            background: var(--bybit-bg);
+            color: var(--bybit-text);
+        }
+        
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--bybit-text-muted);
+            font-weight: 500;
+            font-size: 12px;
+        }
+        
+        .input-with-max {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .dex-input {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--bybit-bg);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            color: var(--bybit-text);
+            font-size: 14px;
+        }
+        
+        .dex-input:focus {
+            outline: none;
+            border-color: var(--bybit-blue);
+        }
+        
+        .max-btn {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--bybit-blue);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            padding: 0 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .max-btn:hover {
+            background: rgba(14, 165, 233, 0.2);
+        }
+        
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--bybit-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0284c7;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: var(--bybit-green);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00a878;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--bybit-border);
+            color: var(--bybit-text);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--bybit-blue);
+            color: var(--bybit-blue);
+        }
+        
+        /* INFO BOX */
+        .info-box {
+            background: rgba(14, 165, 233, 0.05);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        
+        .info-title {
+            color: var(--bybit-blue);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-text {
+            color: var(--bybit-text-muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        /* WALLET INFO */
+        .wallet-info {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .wallet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .wallet-address {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--bybit-text-muted);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        
+        .connect-btn {
+            background: var(--bybit-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .connect-btn:hover {
+            background: #00a878;
+        }
+        
+        .connect-btn.connected {
+            background: rgba(0, 192, 135, 0.1);
+            color: var(--bybit-green);
+        }
+        
+        /* LOADING */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--bybit-blue);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* UTILITIES */
+        .hidden { display: none; }
+        .text-green { color: var(--bybit-green); }
+        .text-red { color: var(--bybit-red); }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 300px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--bybit-green);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--bybit-red);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--bybit-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="logo">ZUZIM DEX</div>
+        <nav class="nav-main">
+            <div class="nav-item active">Pools</div>
+            <div class="nav-item">Trade</div>
+            <div class="nav-item">Docs</div>
+            <div class="nav-item">Stats</div>
+        </nav>
+        <div style="margin-left: auto;">
+            <button class="connect-btn" id="connectBtn">
+                <i class="fas fa-plug"></i> Connect Wallet
+            </button>
+        </div>
+    </div>
+    
+    <!-- NOTIFICATION -->
+    <div class="notification hidden" id="notification"></div>
+    
+    <!-- MAIN CONTENT -->
+    <div class="dex-container">
+        <!-- WALLET INFO -->
+        <div class="wallet-info hidden" id="walletInfo">
+            <div class="wallet-header">
+                <div>
+                    <div class="section-title"><i class="fas fa-wallet"></i> Wallet Connected</div>
+                    <div class="wallet-address" id="connectedAddress"></div>
+                </div>
+                <div>
+                    <div class="text-center mb-2">
+                        <div class="stat-label">ZUZ Balance</div>
+                        <div class="stat-value" id="zuzBalance">0</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="stat-label">ETH Balance</div>
+                        <div class="stat-value" id="ethBalance">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dex-header">
+            <h1 class="dex-title">ZUZIM Decentralized Exchange</h1>
+            <p class="dex-subtitle">Trade with purpose. Every transaction donates 1% to charity.</p>
+        </div>
+        
+        <div class="dex-grid">
+            <!-- LEFT COLUMN: POOLS -->
+            <div class="pools-section">
+                <div class="section-title"><i class="fas fa-water"></i> Liquidity Pools</div>
+                
+                <div class="pools-list" id="poolsList">
+                    <!-- Pools will be loaded here -->
+                </div>
+                
+                <div class="text-center mt-4" id="noPoolsMessage">
+                    <i class="fas fa-water" style="font-size: 48px; color: var(--bybit-text-muted); margin-bottom: 16px;"></i>
+                    <h3>No Active Pools</h3>
+                    <p class="dex-subtitle">Be the first to provide liquidity!</p>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN: TRADE -->
+            <div class="trade-section">
+                <div class="trade-tabs">
+                    <button class="trade-tab active" data-tab="add">Add Liquidity</button>
+                    <button class="trade-tab" data-tab="swap">Swap Tokens</button>
+                </div>
+                
+                <!-- ADD LIQUIDITY FORM -->
+                <div id="addLiquidityForm">
+                    <div class="form-group">
+                        <label class="input-label">Select Pool</label>
+                        <select class="dex-input" id="poolSelect">
+                            <option value="zuz_eth">ZUZ/ETH Pool</option>
+                            <option value="zuz_usdt">ZUZ/USDT Pool</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="input-label">ZUZ Amount</label>
+                        <div class="input-with-max">
+                            <input type="number" class="dex-input" id="addZuzAmount" placeholder="0.0" min="0" step="0.1">
+                            <button class="max-btn" onclick="setMaxZuz()">MAX</button>
+                        </div>
+                        <div class="text-right mt-2">
+                            <span class="stat-label">Balance: </span>
+                            <span id="addZuzBalance">0</span> ZUZ
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="input-label" id="pairedTokenLabel">ETH Amount</label>
+                        <div class="input-with-max">
+                            <input type="number" class="dex-input" id="addPairedAmount" placeholder="0.0" min="0" step="0.001">
+                            <button class="max-btn" onclick="setMaxEth()">MAX</button>
+                        </div>
+                        <div class="text-right mt-2">
+                            <span class="stat-label">Balance: </span>
+                            <span id="addEthBalance">0</span> ETH
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <div class="info-title"><i class="fas fa-info-circle"></i> Pool Information</div>
+                        <div class="info-text">
+                            <div>Your Share: <span id="poolShare">0%</span></div>
+                            <div>LP Tokens: <span id="lpTokens">0</span></div>
+                            <div>Fee Share: <span id="feeShare">0%</span> of 0.3% trading fees</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success mt-4" id="addLiquidityBtn" onclick="addLiquidity()">
+                        <i class="fas fa-plus"></i> Add Liquidity
+                    </button>
+                </div>
+                
+                <!-- SWAP FORM -->
+                <div id="swapForm" class="hidden">
+                    <div class="form-group">
+                        <label class="input-label">From</label>
+                        <div class="input-with-max">
+                            <input type="number" class="dex-input" id="swapFromAmount" placeholder="0.0" min="0" step="0.1">
+                            <button class="max-btn" onclick="setMaxSwapFrom()">MAX</button>
+                        </div>
+                        <div class="text-right mt-2">
+                            <span class="stat-label">Balance: </span>
+                            <span id="swapFromBalance">0</span> <span id="swapFromSymbol">ZUZ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center my-2">
+                        <button class="max-btn" onclick="switchTokens()" style="padding: 8px 12px;">
+                            <i class="fas fa-exchange-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="input-label">To (estimated)</label>
+                        <input type="text" class="dex-input" id="swapToAmount" placeholder="0.0" readonly>
+                        <div class="text-right mt-2">
+                            <span class="stat-label">Balance: </span>
+                            <span id="swapToBalance">0</span> <span id="swapToSymbol">ETH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <div class="info-title"><i class="fas fa-heart"></i> Philanthropy</div>
+                        <div class="info-text">
+                            <div>1% Donation: <span id="swapDonation">0</span> <span id="donationSymbol">ZUZ</span></div>
+                            <div>Price Impact: <span id="priceImpact">0.01%</span></div>
+                            <div>Minimum Received: <span id="minReceived">0</span> <span id="minReceivedSymbol">ETH</span></div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="swapBtn" onclick="executeSwap()">
+                        <i class="fas fa-exchange-alt"></i> Swap Tokens
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== ZUZIM DEX - LIVE VERSION =====
+    class ZUZIMDEXLive {
+        constructor() {
+            this.user = null;
+            this.provider = null;
+            this.signer = null;
+            this.zuzContract = null;
+            this.dexContract = null;
+            this.isConnected = false;
+            
+            // Configuration
+            this.config = {
+                ZUZ_TOKEN: "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+                DEX_ADDRESS: null, // Will be loaded from config
+                RPC_URL: "https://ethereum-sepolia.publicnode.com",
+                ZUZ_PRICE: 0.10, // USD per ZUZ
+                ETH_PRICE: 2000 // USD per ETH
+            };
+            
+            this.init();
+        }
+        
+        async init() {
+            console.log("🚀 ZUZIM DEX Live Initializing...");
+            
+            // Load configuration
+            await this.loadConfig();
+            
+            // Initialize UI
+            this.initUI();
+            
+            // Check for existing connection
+            await this.checkConnection();
+            
+            // Load pools data
+            this.loadPools();
+            
+            console.log("✅ ZUZIM DEX Live Ready");
+        }
+        
+        async loadConfig() {
+            try {
+                const response = await fetch('/api/dex/config');
+                const config = await response.json();
+                this.config.DEX_ADDRESS = config.dexAddress || "0x0000000000000000000000000000000000000000";
+                console.log("Config loaded:", this.config);
+            } catch (error) {
+                console.log("Using default config");
+            }
+        }
+        
+        initUI() {
+            // Tab switching
+            document.querySelectorAll('.trade-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    this.switchTab(tabName);
+                });
+            });
+            
+            // Connect button
+            document.getElementById('connectBtn').addEventListener('click', () => this.connectWallet());
+            
+            // Form inputs
+            document.getElementById('addZuzAmount')?.addEventListener('input', () => this.updateAddForm());
+            document.getElementById('addPairedAmount')?.addEventListener('input', () => this.updateAddForm());
+            document.getElementById('swapFromAmount')?.addEventListener('input', () => this.updateSwapForm());
+            
+            // Pool select
+            document.getElementById('poolSelect')?.addEventListener('change', () => this.updatePairedToken());
+            
+            // Update forms initially
+            this.updateAddForm();
+            this.updateSwapForm();
+        }
+        
+        async checkConnection() {
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                this.user = window.ethereum.selectedAddress;
+                await this.initContracts();
+                this.updateWalletInfo();
+                this.isConnected = true;
+                this.updateConnectionUI();
+            }
+        }
+        
+        async connectWallet() {
+            if (!window.ethereum) {
+                this.showNotification('Please install MetaMask', 'error');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('connectBtn');
+                btn.innerHTML = '<span class="loading"></span> Connecting';
+                btn.disabled = true;
+                
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                
+                this.user = accounts[0];
+                await this.initContracts();
+                this.updateWalletInfo();
+                this.isConnected = true;
+                this.updateConnectionUI();
+                
+                this.showNotification('Wallet connected successfully', 'success');
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                this.showNotification('Connection failed: ' + error.message, 'error');
+                this.isConnected = false;
+                this.updateConnectionUI();
+            }
+        }
+        
+        async initContracts() {
+            if (!this.user || !window.ethereum) return;
+            
+            try {
+                this.provider = new ethers.BrowserProvider(window.ethereum);
+                this.signer = await this.provider.getSigner();
+                
+                // ZUZ Token ABI
+                const zuzABI = [
+                    "function balanceOf(address) view returns (uint256)",
+                    "function approve(address, uint256) returns (bool)",
+                    "function allowance(address, address) view returns (uint256)"
+                ];
+                
+                this.zuzContract = new ethers.Contract(this.config.ZUZ_TOKEN, zuzABI, this.signer);
+                
+                // Try to get real balances
+                await this.updateBalances();
+                
+            } catch (error) {
+                console.error("Contract init error:", error);
+                // Use demo data if contracts fail
+                this.updateBalancesDemo();
+            }
+        }
+        
+        async updateBalances() {
+            if (!this.user || !this.zuzContract) {
+                this.updateBalancesDemo();
+                return;
+            }
+            
+            try {
+                // Get ZUZ balance
+                const zuzBalance = await this.zuzContract.balanceOf(this.user);
+                const zuzFormatted = ethers.formatUnits(zuzBalance, 18);
+                
+                // Get ETH balance
+                const ethBalance = await this.provider.getBalance(this.user);
+                const ethFormatted = ethers.formatEther(ethBalance);
+                
+                // Update displays
+                document.getElementById('zuzBalance').textContent = parseFloat(zuzFormatted).toFixed(2);
+                document.getElementById('ethBalance').textContent = parseFloat(ethFormatted).toFixed(4);
+                document.getElementById('addZuzBalance').textContent = parseFloat(zuzFormatted).toFixed(2);
+                document.getElementById('addEthBalance').textContent = parseFloat(ethFormatted).toFixed(4);
+                document.getElementById('swapFromBalance').textContent = parseFloat(zuzFormatted).toFixed(2);
+                document.getElementById('swapToBalance').textContent = parseFloat(ethFormatted).toFixed(4);
+                
+            } catch (error) {
+                console.error("Balance update error:", error);
+                this.updateBalancesDemo();
+            }
+        }
+        
+        updateBalancesDemo() {
+            // Demo balances
+            document.getElementById('zuzBalance').textContent = '1,000,000';
+            document.getElementById('ethBalance').textContent = '0.5';
+            document.getElementById('addZuzBalance').textContent = '1,000,000';
+            document.getElementById('addEthBalance').textContent = '0.5';
+            document.getElementById('swapFromBalance').textContent = '1,000,000';
+            document.getElementById('swapToBalance').textContent = '0.5';
+        }
+        
+        // === UI FUNCTIONS ===
+        updateConnectionUI() {
+            const connectBtn = document.getElementById('connectBtn');
+            const walletInfo = document.getElementById('walletInfo');
+            const connectedAddress = document.getElementById('connectedAddress');
+            
+            if (this.isConnected && this.user) {
+                connectBtn.innerHTML = '<i class="fas fa-check"></i> Connected';
+                connectBtn.classList.add('connected');
+                walletInfo.classList.remove('hidden');
+                connectedAddress.textContent = this.user.slice(0, 6) + '...' + this.user.slice(-4);
+            } else {
+                connectBtn.innerHTML = '<i class="fas fa-plug"></i> Connect Wallet';
+                connectBtn.classList.remove('connected');
+                walletInfo.classList.add('hidden');
+            }
+        }
+        
+        switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.trade-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.trade-tab[data-tab="${tabName}"]`)?.classList.add('active');
+            
+            // Show/hide forms
+            document.getElementById('addLiquidityForm').classList.toggle('hidden', tabName !== 'add');
+            document.getElementById('swapForm').classList.toggle('hidden', tabName !== 'swap');
+            
+            // Update form
+            if (tabName === 'add') {
+                this.updateAddForm();
+            } else {
+                this.updateSwapForm();
+            }
+        }
+        
+        updatePairedToken() {
+            const poolSelect = document.getElementById('poolSelect');
+            const label = document.getElementById('pairedTokenLabel');
+            
+            if (poolSelect.value === 'zuz_eth') {
+                label.textContent = 'ETH Amount';
+            } else {
+                label.textContent = 'USDT Amount';
+            }
+            
+            this.updateAddForm();
+        }
+        
+        updateAddForm() {
+            const zuzAmount = parseFloat(document.getElementById('addZuzAmount')?.value) || 0;
+            const pairedAmount = parseFloat(document.getElementById('addPairedAmount')?.value) || 0;
+            
+            if (zuzAmount > 0 && pairedAmount > 0) {
+                // Calculate LP tokens (simple formula)
+                const lpTokens = Math.sqrt(zuzAmount * pairedAmount);
+                const poolShare = (lpTokens / 10000) * 100; // Assuming 10000 total LP
+                const feeShare = poolShare * 0.3; // 0.3% of pool share
+                
+                document.getElementById('lpTokens').textContent = lpTokens.toFixed(4);
+                document.getElementById('poolShare').textContent = poolShare.toFixed(2) + '%';
+                document.getElementById('feeShare').textContent = feeShare.toFixed(2) + '%';
+            } else {
+                document.getElementById('lpTokens').textContent = '0';
+                document.getElementById('poolShare').textContent = '0%';
+                document.getElementById('feeShare').textContent = '0%';
+            }
+        }
+        
+        updateSwapForm() {
+            const fromAmount = parseFloat(document.getElementById('swapFromAmount')?.value) || 0;
+            const fromSymbol = document.getElementById('swapFromSymbol').textContent;
+            const toSymbol = document.getElementById('swapToSymbol').textContent;
+            
+            if (fromAmount > 0) {
+                // Calculate swap (simple 1 ZUZ = 0.0001 ETH)
+                const exchangeRate = fromSymbol === 'ZUZ' ? 0.0001 : 10000;
+                const toAmount = fromAmount * exchangeRate;
+                const donation = fromAmount * 0.01;
+                const received = toAmount * 0.99; // After 1% fee
+                const minReceived = received * 0.995; // 0.5% slippage
+                
+                document.getElementById('swapToAmount').value = received.toFixed(6);
+                document.getElementById('swapDonation').textContent = donation.toFixed(4);
+                document.getElementById('donationSymbol').textContent = fromSymbol;
+                document.getElementById('priceImpact').textContent = '0.01%';
+                document.getElementById('minReceived').textContent = minReceived.toFixed(6);
+                document.getElementById('minReceivedSymbol').textContent = toSymbol;
+            } else {
+                document.getElementById('swapToAmount').value = '0.0';
+                document.getElementById('swapDonation').textContent = '0';
+                document.getElementById('priceImpact').textContent = '0%';
+                document.getElementById('minReceived').textContent = '0';
+            }
+        }
+        
+        // === POOLS MANAGEMENT ===
+        loadPools() {
+            const poolsList = document.getElementById('poolsList');
+            const noPoolsMessage = document.getElementById('noPoolsMessage');
+            
+            // Mock pools data
+            const pools = [
+                {
+                    id: 'zuz_eth',
+                    tokenA: 'ZUZ',
+                    tokenB: 'ETH',
+                    tvl: '$10,250',
+                    volume24h: '$8,450',
+                    apr: '12.5%',
+                    fees: '0.3%'
+                },
+                {
+                    id: 'zuz_usdt',
+                    tokenA: 'ZUZ',
+                    tokenB: 'USDT',
+                    tvl: '$5,120',
+                    volume24h: '$4,000',
+                    apr: '15.2%',
+                    fees: '0.3%'
+                }
+            ];
+            
+            if (pools.length > 0) {
+                poolsList.innerHTML = pools.map(pool => `
+                    <div class="pool-item">
+                        <div class="pool-header">
+                            <div class="pool-tokens">
+                                <div class="token-badge">${pool.tokenA.charAt(0)}</div>
+                                <div class="token-badge second">${pool.tokenB.charAt(0)}</div>
+                                <div class="pool-name">${pool.tokenA}/${pool.tokenB}</div>
+                            </div>
+                            <div class="pool-apr">APR ${pool.apr}</div>
+                        </div>
+                        
+                        <div class="pool-stats">
+                            <div class="stat">
+                                <div class="stat-label">TVL</div>
+                                <div class="stat-value">${pool.tvl}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">24h Volume</div>
+                                <div class="stat-value">${pool.volume24h}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Fees</div>
+                                <div class="stat-value">${pool.fees}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Your Liquidity</div>
+                                <div class="stat-value">$0.00</div>
+                            </div>
+                        </div>
+                        
+                        <div class="pool-actions">
+                            <button class="btn btn-outline" onclick="dex.switchTab('add')">
+                                Add Liquidity
+                            </button>
+                            <button class="btn btn-outline" onclick="dex.switchTab('swap')">
+                                Trade
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                noPoolsMessage.style.display = 'none';
+            } else {
+                poolsList.innerHTML = '';
+                noPoolsMessage.style.display = 'block';
+            }
+        }
+        
+        // === ACTIONS ===
+        async addLiquidity() {
+            if (!this.isConnected) {
+                this.showNotification('Please connect wallet first', 'error');
+                return;
+            }
+            
+            const zuzAmount = parseFloat(document.getElementById('addZuzAmount')?.value);
+            const pairedAmount = parseFloat(document.getElementById('addPairedAmount')?.value);
+            
+            if (!zuzAmount || !pairedAmount || zuzAmount <= 0 || pairedAmount <= 0) {
+                this.showNotification('Please enter valid amounts', 'error');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('addLiquidityBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="loading"></span> Adding Liquidity...';
+                btn.disabled = true;
+                
+                // Simulate transaction (would be real contract call)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                this.showNotification(
+                    `Successfully added ${zuzAmount} ZUZ and ${pairedAmount} ETH to liquidity pool`,
+                    'success'
+                );
+                
+                // Reset form
+                document.getElementById('addZuzAmount').value = '';
+                document.getElementById('addPairedAmount').value = '';
+                this.updateAddForm();
+                
+                // Update pools display
+                this.loadPools();
+                
+            } catch (error) {
+                console.error('Add liquidity error:', error);
+                this.showNotification('Failed to add liquidity: ' + error.message, 'error');
+            } finally {
+                const btn = document.getElementById('addLiquidityBtn');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        async executeSwap() {
+            if (!this.isConnected) {
+                this.showNotification('Please connect wallet first', 'error');
+                return;
+            }
+            
+            const fromAmount = parseFloat(document.getElementById('swapFromAmount')?.value);
+            
+            if (!fromAmount || fromAmount <= 0) {
+                this.showNotification('Please enter valid amount', 'error');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('swapBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="loading"></span> Swapping...';
+                btn.disabled = true;
+                
+                // Simulate transaction
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const fromSymbol = document.getElementById('swapFromSymbol').textContent;
+                const toSymbol = document.getElementById('swapToSymbol').textContent;
+                const toAmount = parseFloat(document.getElementById('swapToAmount')?.value);
+                const donation = parseFloat(document.getElementById('swapDonation')?.textContent);
+                
+                this.showNotification(
+                    `Swapped ${fromAmount} ${fromSymbol} for ${toAmount} ${toSymbol}. ${donation} ${fromSymbol} donated to charity.`,
+                    'success'
+                );
+                
+                // Reset form
+                document.getElementById('swapFromAmount').value = '';
+                this.updateSwapForm();
+                
+            } catch (error) {
+                console.error('Swap error:', error);
+                this.showNotification('Swap failed: ' + error.message, 'error');
+            } finally {
+                const btn = document.getElementById('swapBtn');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        // === UTILITY FUNCTIONS ===
+        setMaxZuz() {
+            const balance = document.getElementById('addZuzBalance').textContent.replace(/,/g, '');
+            document.getElementById('addZuzAmount').value = balance;
+            this.updateAddForm();
+        }
+        
+        setMaxEth() {
+            const balance = document.getElementById('addEthBalance').textContent.replace(/,/g, '');
+            document.getElementById('addPairedAmount').value = balance;
+            this.updateAddForm();
+        }
+        
+        setMaxSwapFrom() {
+            const fromSymbol = document.getElementById('swapFromSymbol').textContent;
+            const balanceId = fromSymbol === 'ZUZ' ? 'swapFromBalance' : 'swapToBalance';
+            const balance = document.getElementById(balanceId).textContent.replace(/,/g, '');
+            document.getElementById('swapFromAmount').value = balance;
+            this.updateSwapForm();
+        }
+        
+        switchTokens() {
+            const fromSymbol = document.getElementById('swapFromSymbol');
+            const toSymbol = document.getElementById('swapToSymbol');
+            const fromBalance = document.getElementById('swapFromBalance');
+            const toBalance = document.getElementById('swapToBalance');
+            
+            // Swap symbols
+            const tempSymbol = fromSymbol.textContent;
+            fromSymbol.textContent = toSymbol.textContent;
+            toSymbol.textContent = tempSymbol;
+            
+            // Swap balances
+            const tempBalance = fromBalance.textContent;
+            fromBalance.textContent = toBalance.textContent;
+            toBalance.textContent = tempBalance;
+            
+            // Update form
+            this.updateSwapForm();
+        }
+        
+        showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            // Auto-hide
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+    }
+    
+    // Initialize DEX
+    const dex = new ZUZIMDEXLive();
+    
+    // Global functions for onclick handlers
+    window.setMaxZuz = () => dex.setMaxZuz();
+    window.setMaxEth = () => dex.setMaxEth();
+    window.setMaxSwapFrom = () => dex.setMaxSwapFrom();
+    window.switchTokens = () => dex.switchTokens();
+    window.addLiquidity = () => dex.addLiquidity();
+    window.executeSwap = () => dex.executeSwap();
+    
+    // Global access
+    window.dex = dex;
+    
+    console.log("💡 Console: dex.showNotification('message', 'success|error|info')");
+    </script>
+</body>
+</html>

@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZCOIN Universe | Professional Crypto Exchange</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <style>
+        /* ===== BYBIT STYLE BASE ===== */
+        :root {
+            /* Bybit Color Palette */
+            --bybit-bg-dark: #0a0b0d;
+            --bybit-bg-card: #16182c;
+            --bybit-bg-hover: #1c1f32;
+            --bybit-bg-active: #23263b;
+            
+            --bybit-primary: #0ea5e9;
+            --bybit-primary-dark: #0284c7;
+            --bybit-success: #00c087;
+            --bybit-danger: #f6465d;
+            --bybit-warning: #f0b90b;
+            --bybit-philanthropy: #ec4899;
+            
+            --bybit-text: #eaecef;
+            --bybit-text-muted: #848e9c;
+            --bybit-text-dim: #6c757d;
+            
+            --bybit-border: #2a2d3e;
+            --bybit-border-light: #3a3d4e;
+            
+            --bybit-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            --bybit-gradient: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: var(--bybit-bg-dark);
+            color: var(--bybit-text);
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        /* ===== TOP BAR (BYBIT STYLE) ===== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--bybit-bg-card);
+            border-bottom: 1px solid var(--bybit-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--bybit-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-badge {
+            background: var(--bybit-gradient);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        
+        .main-nav {
+            display: flex;
+            gap: 2px;
+            background: var(--bybit-bg-card);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .nav-item {
+            padding: 8px 16px;
+            color: var(--bybit-text-muted);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .nav-item:hover {
+            color: var(--bybit-text);
+            background: var(--bybit-bg-hover);
+        }
+        
+        .nav-item.active {
+            background: var(--bybit-primary);
+            color: white;
+        }
+        
+        /* ===== WIDGET AREA ===== */
+        .widget-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .wallet-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bybit-bg-hover);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .wallet-widget:hover {
+            background: var(--bybit-bg-active);
+        }
+        
+        .wallet-info {
+            text-align: right;
+        }
+        
+        .wallet-balance {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .wallet-address {
+            font-size: 12px;
+            color: var(--bybit-text-muted);
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .connect-btn {
+            background: var(--bybit-success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .connect-btn:hover {
+            background: #00a878;
+            transform: translateY(-1px);
+        }
+        
+        /* ===== MAIN LAYOUT (BYBIT STYLE) ===== */
+        .main-container {
+            display: flex;
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+        
+        /* ===== SIDEBAR (BYBIT STYLE) ===== */
+        .sidebar {
+            width: 240px;
+            background: var(--bybit-bg-card);
+            border-right: 1px solid var(--bybit-border);
+            padding: 24px 0;
+            position: fixed;
+            top: 64px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+        
+        .nav-group {
+            margin-bottom: 32px;
+            padding: 0 20px;
+        }
+        
+        .nav-group-title {
+            color: var(--bybit-text-dim);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--bybit-text);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .sidebar-item:hover {
+            background: var(--bybit-bg-hover);
+        }
+        
+        .sidebar-item.active {
+            background: var(--bybit-bg-active);
+            color: var(--bybit-primary);
+            font-weight: 600;
+        }
+        
+        .sidebar-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .badge {
+            background: var(--bybit-primary);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+        
+        /* ===== CONTENT AREA ===== */
+        .content-area {
+            flex: 1;
+            margin-left: 240px;
+            padding: 24px;
+            background: var(--bybit-bg-dark);
+            min-height: calc(100vh - 64px);
+        }
+        
+        /* ===== DASHBOARD (BYBIT STYLE) ===== */
+        .dashboard-header {
+            margin-bottom: 24px;
+        }
+        
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--bybit-text), var(--bybit-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .dashboard-description {
+            color: var(--bybit-text-muted);
+            font-size: 14px;
+            max-width: 800px;
+        }
+        
+        /* ===== STATS GRID (BYBIT STYLE) ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--bybit-bg-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--bybit-border-light);
+            box-shadow: var(--bybit-shadow);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .stat-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bybit-text);
+        }
+        
+        .stat-subtitle {
+            font-size: 12px;
+            color: var(--bybit-text-muted);
+            margin-top: 4px;
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            color: var(--bybit-primary);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: var(--bybit-text-muted);
+            font-size: 13px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .change-positive {
+            color: var(--bybit-success);
+        }
+        
+        .change-negative {
+            color: var(--bybit-danger);
+        }
+        
+        /* ===== PHILANTHROPY HIGHLIGHT ===== */
+        .philanthropy-highlight {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+        
+        .philanthropy-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .philanthropy-icon {
+            font-size: 40px;
+            color: var(--bybit-philanthropy);
+        }
+        
+        .philanthropy-text h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--bybit-text);
+        }
+        
+        .philanthropy-text p {
+            color: var(--bybit-text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        /* ===== MARKET TABLE (BYBIT STYLE) ===== */
+        .market-table-container {
+            background: var(--bybit-bg-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+        
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .market-table th {
+            text-align: left;
+            padding: 12px 16px;
+            color: var(--bybit-text-muted);
+            font-weight: 500;
+            font-size: 12px;
+            border-bottom: 1px solid var(--bybit-border);
+        }
+        
+        .market-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        
+        .market-table tr:hover {
+            background: var(--bybit-bg-hover);
+        }
+        
+        .token-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .token-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bybit-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+        
+        /* ===== TRADING VIEW (BYBIT STYLE) ===== */
+        .trading-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .chart-container {
+            background: var(--bybit-bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--bybit-border);
+            min-height: 500px;
+        }
+        
+        .order-book {
+            background: var(--bybit-bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--bybit-border);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        /* ===== BUTTONS (BYBIT STYLE) ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--bybit-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--bybit-primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: var(--bybit-success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00a878;
+        }
+        
+        .btn-danger {
+            background: var(--bybit-danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #e4354c;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--bybit-border-light);
+            color: var(--bybit-text);
+        }
+        
+        .btn-outline:hover {
+            border-color: var(--bybit-primary);
+            color: var(--bybit-primary);
+        }
+        
+        /* ===== FORMS (BYBIT STYLE) ===== */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--bybit-text-muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bybit-bg-dark);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            color: var(--bybit-text);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bybit-primary);
+        }
+        
+        /* ===== SWAP INTERFACE (BYBIT STYLE) ===== */
+        .swap-container {
+            background: var(--bybit-bg-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .swap-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .swap-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .swap-subtitle {
+            color: var(--bybit-text-muted);
+            font-size: 14px;
+        }
+        
+        .swap-box {
+            background: var(--bybit-bg-dark);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .swap-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .swap-label {
+            color: var(--bybit-text-muted);
+            font-size: 13px;
+        }
+        
+        .swap-balance {
+            color: var(--bybit-text-muted);
+            font-size: 13px;
+        }
+        
+        .swap-input-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .swap-amount {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--bybit-text);
+            font-size: 24px;
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+        }
+        
+        .swap-amount::placeholder {
+            color: var(--bybit-text-muted);
+        }
+        
+        .swap-token {
+            background: var(--bybit-bg-hover);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--bybit-text);
+            font-weight: 600;
+            min-width: 100px;
+            cursor: pointer;
+        }
+        
+        .swap-arrow {
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        .swap-arrow-btn {
+            background: var(--bybit-bg-hover);
+            border: 1px solid var(--bybit-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bybit-text);
+            cursor: pointer;
+            margin: 0 auto;
+        }
+        
+        .swap-arrow-btn:hover {
+            border-color: var(--bybit-primary);
+            color: var(--bybit-primary);
+        }
+        
+        .swap-details {
+            background: var(--bybit-bg-dark);
+            border: 1px solid var(--bybit-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .swap-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .swap-detail-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .swap-detail-label {
+            color: var(--bybit-text-muted);
+        }
+        
+        .swap-detail-value {
+            font-weight: 600;
+        }
+        
+        .philanthropy-notice {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--bybit-philanthropy);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .philanthropy-notice i {
+            color: var(--bybit-philanthropy);
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+        
+        .philanthropy-notice p {
+            color: var(--bybit-text);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .philanthropy-notice small {
+            color: var(--bybit-text-muted);
+            font-size: 12px;
+        }
+        
+        /* ===== LOADING STATES ===== */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--bybit-primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .philanthropy-highlight {
+                grid-column: span 2;
+            }
+            
+            .trading-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .content-area {
+                margin-left: 0;
+            }
+            
+            .top-bar {
+                padding: 0 16px;
+            }
+            
+            .main-nav {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .philanthropy-highlight {
+                grid-column: span 1;
+            }
+        }
+        
+        /* ===== UTILITIES ===== */
+        .text-success { color: var(--bybit-success); }
+        .text-danger { color: var(--bybit-danger); }
+        .text-warning { color: var(--bybit-warning); }
+        .text-muted { color: var(--bybit-text-muted); }
+        .text-primary { color: var(--bybit-primary); }
+        .text-philanthropy { color: var(--bybit-philanthropy); }
+        
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-4 { gap: 16px; }
+        
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        
+        .p-3 { padding: 12px; }
+        .p-4 { padding: 16px; }
+        
+        .rounded { border-radius: 8px; }
+        .rounded-lg { border-radius: 12px; }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR (BYBIT STYLE) -->
+    <div class="top-bar">
+        <!-- Logo Area -->
+        <div class="logo-area">
+            <div class="logo">ZUZCOIN</div>
+            <div class="logo-badge">PRO</div>
+        </div>
+        
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <a href="#" class="nav-item active" onclick="showSection('dashboard')">Dashboard</a>
+            <a href="#" class="nav-item" onclick="showSection('trade')">Trade</a>
+            <a href="#" class="nav-item" onclick="showSection('dex')">DEX</a>
+            <a href="#" class="nav-item" onclick="showSection('wallet')">Wallet</a>
+            <a href="#" class="nav-item" onclick="showSection('earn')">Earn</a>
+        </nav>
+        
+        <!-- Wallet Widget -->
+        <div class="widget-area">
+            <div class="wallet-widget" onclick="showSection('wallet')">
+                <div class="wallet-info">
+                    <div class="wallet-balance" id="walletBalance">0.0000 ZUZ</div>
+                    <div class="wallet-address" id="walletAddress">Not connected</div>
+                </div>
+                <i class="fas fa-wallet"></i>
+            </div>
+            <button class="connect-btn" id="connectBtn">
+                <i class="fas fa-plug"></i> Connect Wallet
+            </button>
+        </div>
+    </div>
+    
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- SIDEBAR (BYBIT STYLE) -->
+        <div class="sidebar">
+            <!-- Main Group -->
+            <div class="nav-group">
+                <div class="nav-group-title">Trading</div>
+                <a class="sidebar-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('markets')">
+                    <i class="fas fa-list"></i>
+                    <span>Markets</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('spot')">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Spot Trade</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('futures')">
+                    <i class="fas fa-chart-candlestick"></i>
+                    <span>Futures</span>
+                    <span class="badge">Soon</span>
+                </a>
+            </div>
+            
+            <!-- Ecosystem Group -->
+            <div class="nav-group">
+                <div class="nav-group-title">Ecosystem</div>
+                <a class="sidebar-item" onclick="showSection('dex')">
+                    <i class="fas fa-water"></i>
+                    <span>ZUZIM DEX</span>
+                    <span class="badge">Live</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('liquidity')">
+                    <i class="fas fa-faucet"></i>
+                    <span>Liquidity</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('farm')">
+                    <i class="fas fa-tractor"></i>
+                    <span>Yield Farm</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('launchpad')">
+                    <i class="fas fa-rocket"></i>
+                    <span>Launchpad</span>
+                </a>
+            </div>
+            
+            <!-- Tools Group -->
+            <div class="nav-group">
+                <div class="nav-group-title">Tools</div>
+                <a class="sidebar-item" onclick="showSection('factory')">
+                    <i class="fas fa-industry"></i>
+                    <span>Token Factory</span>
+                    <span class="badge">New</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('notary')">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Digital Notary</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('kyc')">
+                    <i class="fas fa-user-check"></i>
+                    <span>KYC</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('analytics')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+            </div>
+            
+            <!-- Philanthropy Group -->
+            <div class="nav-group">
+                <div class="nav-group-title">Philanthropy</div>
+                <a class="sidebar-item" onclick="showSection('impact')">
+                    <i class="fas fa-heart"></i>
+                    <span>Impact</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('donations')">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>Donations</span>
+                </a>
+                <a class="sidebar-item" onclick="showSection('partners')">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partners</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section-content">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">ZUZCOIN Universe Dashboard</h1>
+                    <p class="dashboard-description">
+                        Professional trading platform with built-in philanthropy. 1% of every transaction supports global charities.
+                    </p>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <!-- Market Cap -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Market Cap</div>
+                                <div class="stat-subtitle">ZUZCOIN</div>
+                            </div>
+                            <div class="stat-icon">💰</div>
+                        </div>
+                        <div class="stat-value">$4,850,240</div>
+                        <div class="stat-label">Total Value Locked</div>
+                        <div class="stat-change change-positive">+5.2%</div>
+                    </div>
+                    
+                    <!-- Your Balance -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Your Balance</div>
+                                <div class="stat-subtitle">Portfolio Value</div>
+                            </div>
+                            <div class="stat-icon">👛</div>
+                        </div>
+                        <div class="stat-value text-success" id="userBalance">$12,450.80</div>
+                        <div class="stat-label">ZUZ: 124,508 tokens</div>
+                        <div class="stat-change change-positive">+2.5%</div>
+                    </div>
+                    
+                    <!-- 24h Volume -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">24h Volume</div>
+                                <div class="stat-subtitle">Trading Activity</div>
+                            </div>
+                            <div class="stat-icon">📊</div>
+                        </div>
+                        <div class="stat-value">$1,245,020</div>
+                        <div class="stat-label">Across all pairs</div>
+                        <div class="stat-change change-positive">+18.3%</div>
+                    </div>
+                    
+                    <!-- Total Donations -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Total Impact</div>
+                                <div class="stat-subtitle">1% Auto-Donate</div>
+                            </div>
+                            <div class="stat-icon">❤️</div>
+                        </div>
+                        <div class="stat-value text-philanthropy">$48,502</div>
+                        <div class="stat-label">Donated to charity</div>
+                        <div class="stat-change change-positive">+$2,450 today</div>
+                    </div>
+                    
+                    <!-- Philanthropy Highlight -->
+                    <div class="stat-card philanthropy-highlight">
+                        <div class="philanthropy-content">
+                            <div class="philanthropy-icon">
+                                <i class="fas fa-hand-holding-heart"></i>
+                            </div>
+                            <div class="philanthropy-text">
+                                <h3>Your Trading Makes a Difference</h3>
+                                <p>Every trade on ZUZCOIN automatically donates 1% to verified charities. Track your personal impact in real-time.</p>
+                                <button class="btn btn-primary mt-4" onclick="showSection('impact')">
+                                    <i class="fas fa-chart-line"></i> View Your Impact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Users -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Active Traders</div>
+                                <div class="stat-subtitle">Community</div>
+                            </div>
+                            <div class="stat-icon">👥</div>
+                        </div>
+                        <div class="stat-value">12,458</div>
+                        <div class="stat-label">Trading with purpose</div>
+                        <div class="stat-change change-positive">+324 today</div>
+                    </div>
+                </div>
+                
+                <!-- Market Overview -->
+                <div class="market-table-container">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">Market Overview</div>
+                            <div class="stat-subtitle">Top Trading Pairs</div>
+                        </div>
+                        <button class="btn btn-outline" onclick="showSection('markets')">
+                            View All Markets
+                        </button>
+                    </div>
+                    
+                    <table class="market-table">
+                        <thead>
+                            <tr>
+                                <th>Pair</th>
+                                <th>Price</th>
+                                <th>24h Change</th>
+                                <th>24h Volume</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="token-name">
+                                        <div class="token-icon">ZUZ</div>
+                                        <div>
+                                            <div>ZUZ/ETH</div>
+                                            <div class="text-muted">ZUZCOIN</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>0.0001 ETH</td>
+                                <td class="text-success">+3.2%</td>
+                                <td>$845,200</td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="showSection('spot')">
+                                        Trade
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="token-name">
+                                        <div class="token-icon" style="background: var(--bybit-gradient);">USDT</div>
+                                        <div>
+                                            <div>ZUZ/USDT</div>
+                                            <div class="text-muted">ZUZCOIN</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$0.1025</td>
+                                <td class="text-danger">-1.5%</td>
+                                <td>$624,300</td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="showSection('spot')">
+                                        Trade
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="token-name">
+                                        <div class="token-icon" style="background: linear-gradient(135deg, #f0b90b, #f6465d);">BTC</div>
+                                        <div>
+                                            <div>BTC/USDT</div>
+                                            <div class="text-muted">Bitcoin</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$42,850.00</td>
+                                <td class="text-success">+2.1%</td>
+                                <td>$24.5M</td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm" onclick="showSection('spot')">
+                                        Trade
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="token-name">
+                                        <div class="token-icon" style="background: linear-gradient(135deg, #627eea, #ec4899);">ETH</div>
+                                        <div>
+                                            <div>ETH/USDT</div>
+                                            <div class="text-muted">Ethereum</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>$2,450.00</td>
+                                <td class="text-success">+1.8%</td>
+                                <td>$12.8M</td>
+                                <td>
+                                    <button class="btn btn-outline btn-sm" onclick="showSection('spot')">
+                                        Trade
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="stats-grid mt-4">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Quick Actions</div>
+                            <div class="stat-subtitle">One-click access</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                            <button class="btn btn-outline" onclick="showSection('dex')">
+                                <i class="fas fa-exchange-alt"></i> Swap
+                            </button>
+                            <button class="btn btn-outline" onclick="showSection('liquidity')">
+                                <i class="fas fa-faucet"></i> Add Liquidity
+                            </button>
+                            <button class="btn btn-outline" onclick="showSection('factory')">
+                                <i class="fas fa-industry"></i> Create Token
+                            </button>
+                            <button class="btn btn-outline" onclick="showSection('notary')">
+                                <i class="fas fa-file-contract"></i> Notarize
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">ZUZIM DEX</div>
+                            <div class="stat-subtitle">Decentralized Exchange</div>
+                        </div>
+                        <p class="text-muted mt-4 mb-4">Trade with 1% automatic charity donation</p>
+                        <button class="btn btn-primary w-full" onclick="showSection('dex')">
+                            <i class="fas fa-water"></i> Open DEX
+                        </button>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Token Factory</div>
+                            <div class="stat-subtitle">Create Your Token</div>
+                        </div>
+                        <p class="text-muted mt-4 mb-4">Launch your own token with philanthropy features</p>
+                        <button class="btn btn-primary w-full" onclick="showSection('factory')">
+                            <i class="fas fa-industry"></i> Create Token
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DEX Trading Section -->
+            <div id="dexSection" class="section-content hidden">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">ZUZIM DEX Trading</h1>
+                    <p class="dashboard-description">
+                        Decentralized exchange with 1% auto-philanthropy. Swap tokens instantly.
+                    </p>
+                </div>
+                
+                <div class="swap-container">
+                    <div class="swap-header">
+                        <h2 class="swap-title">Swap Tokens</h2>
+                        <p class="swap-subtitle">Trade with purpose. 1% auto-donated to charity.</p>
+                    </div>
+                    
+                    <!-- From Token -->
+                    <div class="swap-box">
+                        <div class="swap-box-header">
+                            <span class="swap-label">You Pay</span>
+                            <span class="swap-balance">Balance: <span id="payBalance">0.0000</span></span>
+                        </div>
+                        <div class="swap-input-group">
+                            <input type="number" class="swap-amount" id="payAmount" placeholder="0.0" value="100">
+                            <select class="swap-token" id="payToken">
+                                <option value="ZUZ">ZUZ</option>
+                                <option value="ETH">ETH</option>
+                                <option value="USDT">USDT</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Swap Arrow -->
+                    <div class="swap-arrow">
+                        <button class="swap-arrow-btn" onclick="swapDirection()">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- To Token -->
+                    <div class="swap-box">
+                        <div class="swap-box-header">
+                            <span class="swap-label">You Receive</span>
+                            <span class="swap-balance">≈ $<span id="receiveValue">0.00</span></span>
+                        </div>
+                        <div class="swap-input-group">
+                            <input type="number" class="swap-amount" id="receiveAmount" placeholder="0.0" readonly>
+                            <select class="swap-token" id="receiveToken">
+                                <option value="ETH">ETH</option>
+                                <option value="ZUZ" selected>ZUZ</option>
+                                <option value="USDT">USDT</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Swap Details -->
+                    <div class="swap-details">
+                        <div class="swap-detail-row">
+                            <span class="swap-detail-label">Exchange Rate</span>
+                            <span class="swap-detail-value" id="exchangeRate">1 ZUZ = 0.00005 ETH</span>
+                        </div>
+                        <div class="swap-detail-row">
+                            <span class="swap-detail-label">DEX Fee (0.3%)</span>
+                            <span class="swap-detail-value" id="dexFee">0.3 ZUZ</span>
+                        </div>
+                        <div class="swap-detail-row">
+                            <span class="swap-detail-label text-philanthropy">Philanthropy (1%)</span>
+                            <span class="swap-detail-value text-philanthropy" id="donationAmount">1.0 ZUZ</span>
+                        </div>
+                        <div class="swap-detail-row">
+                            <span class="swap-detail-label">Minimum Received</span>
+                            <span class="swap-detail-value" id="minReceived">4.85 ETH</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Philanthropy Notice -->
+                    <div class="philanthropy-notice">
+                        <i class="fas fa-heart"></i>
+                        <p>This trade will donate <strong id="donationDisplay">1.0 ZUZ</strong> to charity</p>
+                        <small>Supporting education and healthcare projects worldwide</small>
+                    </div>
+                    
+                    <!-- Swap Button -->
+                    <button class="btn btn-success w-full" id="swapButton" onclick="executeSwap()">
+                        <i class="fas fa-exchange-alt"></i> Swap Tokens
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Other sections would be here -->
+            <div id="otherSections" class="hidden">
+                <!-- Other sections content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== ZUZCOIN BYBIT INTERFACE =====
+        const API_BASE = 'http://localhost:3001/api';
+        let currentUser = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 ZUZCOIN Universe - Bybit Style Interface');
+            
+            // Wallet connection
+            document.getElementById('connectBtn').addEventListener('click', connectWallet);
+            
+            // Navigation
+            document.querySelectorAll('.nav-item, .sidebar-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.textContent.trim().toLowerCase().replace(' ', '');
+                    showSection(section);
+                });
+            });
+            
+            // Swap amount input
+            document.getElementById('payAmount').addEventListener('input', updateSwapPreview);
+            document.getElementById('payToken').addEventListener('change', updateSwapPreview);
+            document.getElementById('receiveToken').addEventListener('change', updateSwapPreview);
+            
+            // Check if already connected
+            if (window.ethereum?.selectedAddress) {
+                connectWalletSilently();
+            }
+            
+            // Load initial data
+            updateSwapPreview();
+            
+            console.log('✅ Bybit style interface ready');
+        });
+        
+        // Navigation
+        function showSection(section) {
+            console.log('Navigating to:', section);
+            
+            // Update active states
+            document.querySelectorAll('.nav-item, .sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show section content (simplified for demo)
+            document.querySelectorAll('.section-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            if (section === 'dashboard' || section === 'Dashboard') {
+                document.getElementById('dashboardSection').classList.remove('hidden');
+            } else if (section === 'dex' || section === 'DEX') {
+                document.getElementById('dexSection').classList.remove('hidden');
+            } else {
+                alert(`${section} section is coming soon!`);
+                document.getElementById('dashboardSection').classList.remove('hidden');
+            }
+        }
+        
+        // Wallet connection
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert('Please install MetaMask to use ZUZCOIN Universe');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('connectBtn');
+                btn.innerHTML = '<span class="loading"></span> Connecting...';
+                btn.disabled = true;
+                
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                
+                currentUser = accounts[0];
+                updateWalletDisplay();
+                
+                btn.innerHTML = '<i class="fas fa-check"></i> Connected';
+                btn.disabled = false;
+                
+                // Update balance
+                if (currentUser) {
+                    updateUserBalance();
+                }
+                
+                console.log('✅ Wallet connected:', currentUser);
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('Connection failed: ' + error.message);
+                document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Connect Wallet';
+                document.getElementById('connectBtn').disabled = false;
+            }
+        }
+        
+        async function connectWalletSilently() {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts.length > 0) {
+                    currentUser = accounts[0];
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-check"></i> Connected';
+                    updateWalletDisplay();
+                    updateUserBalance();
+                }
+            } catch (error) {
+                console.log('Silent connection check failed');
+            }
+        }
+        
+        function updateWalletDisplay() {
+            if (!currentUser) return;
+            
+            const addressDisplay = document.getElementById('walletAddress');
+            addressDisplay.textContent = 
+                currentUser.slice(0, 6) + '...' + currentUser.slice(-4);
+        }
+        
+        async function updateUserBalance() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/balance/${currentUser}`);
+                const data = await response.json();
+                
+                const balance = parseFloat(data.balanceZUZ).toFixed(4);
+                document.getElementById('walletBalance').textContent = `${balance} ZUZ`;
+                document.getElementById('payBalance').textContent = balance;
+                document.getElementById('userBalance').textContent = `$${data.valueUSD}`;
+                
+            } catch (error) {
+                console.error('Balance update error:', error);
+            }
+        }
+        
+        // Swap functionality
+        function swapDirection() {
+            const payToken = document.getElementById('payToken').value;
+            const receiveToken = document.getElementById('receiveToken').value;
+            const payAmount = document.getElementById('payAmount').value;
+            
+            // Swap tokens
+            document.getElementById('payToken').value = receiveToken;
+            document.getElementById('receiveToken').value = payToken;
+            
+            // Swap amounts if receive amount is not empty
+            const receiveAmount = document.getElementById('receiveAmount').value;
+            if (receiveAmount && parseFloat(receiveAmount) > 0) {
+                document.getElementById('payAmount').value = receiveAmount;
+            }
+            
+            updateSwapPreview();
+        }
+        
+        async function updateSwapPreview() {
+            const amount = parseFloat(document.getElementById('payAmount').value) || 0;
+            const fromToken = document.getElementById('payToken').value;
+            const toToken = document.getElementById('receiveToken').value;
+            
+            if (amount <= 0) {
+                resetSwapPreview();
+                return;
+            }
+            
+            // Calculate exchange (simplified for demo)
+            const rates = {
+                'ZUZ/ETH': 0.00005,
+                'ZUZ/USDT': 0.10,
+                'ETH/ZUZ': 20000,
+                'ETH/USDT': 2000,
+                'USDT/ZUZ': 10,
+                'USDT/ETH': 0.0005
+            };
+            
+            const pair = `${fromToken}/${toToken}`;
+            const reversePair = `${toToken}/${fromToken}`;
+            
+            let rate = rates[pair] || (1 / (rates[reversePair] || 1));
+            
+            // Add some variation
+            const variation = 0.95 + Math.random() * 0.1;
+            const effectiveRate = rate * variation;
+            
+            // Calculate amounts
+            const donation = amount * 0.01;
+            const dexFee = amount * 0.003;
+            const amountAfterFees = amount - donation - dexFee;
+            const received = amountAfterFees * effectiveRate;
+            
+            // Update UI
+            document.getElementById('receiveAmount').value = received.toFixed(4);
+            document.getElementById('exchangeRate').textContent = 
+                `1 ${fromToken} = ${effectiveRate.toFixed(6)} ${toToken}`;
+            document.getElementById('dexFee').textContent = `${dexFee.toFixed(4)} ${fromToken}`;
+            document.getElementById('donationAmount').textContent = `${donation.toFixed(4)} ${fromToken}`;
+            document.getElementById('donationDisplay').textContent = `${donation.toFixed(4)} ${fromToken}`;
+            document.getElementById('minReceived').textContent = `${(received * 0.99).toFixed(4)} ${toToken}`;
+            
+            // Update USD value
+            const usdRates = { ZUZ: 0.10, ETH: 2000, USDT: 1.00 };
+            const usdValue = received * (usdRates[toToken] || 1);
+            document.getElementById('receiveValue').textContent = usdValue.toFixed(2);
+        }
+        
+        function resetSwapPreview() {
+            document.getElementById('receiveAmount').value = '';
+            document.getElementById('exchangeRate').textContent = '-';
+            document.getElementById('dexFee').textContent = '-';
+            document.getElementById('donationAmount').textContent = '-';
+            document.getElementById('minReceived').textContent = '-';
+            document.getElementById('receiveValue').textContent = '0.00';
+        }
+        
+        async function executeSwap() {
+            if (!currentUser) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('payAmount').value);
+            const fromToken = document.getElementById('payToken').value;
+            const toToken = document.getElementById('receiveToken').value;
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            try {
+                const btn = document.getElementById('swapButton');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="loading"></span> Processing...';
+                btn.disabled = true;
+                
+                // Call API
+                const response = await fetch(`${API_BASE}/dex/swap`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fromToken,
+                        toToken,
+                        amount,
+                        userAddress: currentUser
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success
+                    alert(`✅ Swap successful!\nReceived: ${result.amountOut} ${toToken}\nDonated: ${result.donation} ${fromToken} to charity`);
+                    
+                    // Update balance
+                    updateUserBalance();
+                    
+                    // Reset form
+                    document.getElementById('payAmount').value = '';
+                    resetSwapPreview();
+                    
+                } else {
+                    throw new Error(result.error || 'Swap failed');
+                }
+                
+            } catch (error) {
+                console.error('Swap error:', error);
+                alert(`Swap failed: ${error.message}`);
+            } finally {
+                const btn = document.getElementById('swapButton');
+                btn.innerHTML = '<i class="fas fa-exchange-alt"></i> Swap Tokens';
+                btn.disabled = false;
+            }
+        }
+        
+        // Event listeners for MetaMask
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length > 0) {
+                    currentUser = accounts[0];
+                    updateWalletDisplay();
+                    updateUserBalance();
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-check"></i> Connected';
+                } else {
+                    currentUser = null;
+                    document.getElementById('walletAddress').textContent = 'Not connected';
+                    document.getElementById('walletBalance').textContent = '0.0000 ZUZ';
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Connect Wallet';
+                }
+            });
+        }
+        
+        // Export for console
+        window.zuz = {
+            connect: connectWallet,
+            swap: executeSwap,
+            show: showSection,
+            user: () => currentUser
+        };
+        
+        console.log('💡 Console commands: zuz.connect(), zuz.swap(), zuz.show("section")');
+    </script>
+</body>
+</html>

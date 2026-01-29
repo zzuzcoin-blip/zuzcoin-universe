@@ -1,0 +1,378 @@
+# Создаём английские версии ВСЕХ страниц # 1. Главная страница (уже есть) # 2.
+Страница создания монеты cat > coin-creator_en.html << 'EOF'
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ZUZCOIN ProofChain - Create Your Cryptocurrency</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Arial", sans-serif;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: white;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            h1 {
+                color: #ffd93d;
+                text-align: center;
+                margin: 30px 0;
+            }
+            .card {
+                background: rgba(255, 255, 255, 0.08);
+                padding: 30px;
+                border-radius: 15px;
+                margin: 20px 0;
+            }
+            input,
+            button {
+                width: 100%;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 10px;
+                border: none;
+            }
+            input {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+            button {
+                background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            .price {
+                background: rgba(255, 215, 0, 0.2);
+                padding: 10px 20px;
+                border-radius: 25px;
+                display: inline-block;
+                margin: 15px 0;
+            }
+            .back-button {
+                display: inline-block;
+                padding: 10px 20px;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🪙 Create Your Cryptocurrency - 500 ZUZ</h1>
+
+            <div class="card">
+                <h2>Step 1: Coin Details</h2>
+                <input type="text" placeholder="Coin Name (e.g., MyToken)" />
+                <input type="text" placeholder="Symbol (e.g., MTK)" />
+                <input
+                    type="number"
+                    placeholder="Total Supply (e.g., 1000000)"
+                />
+            </div>
+
+            <div class="card">
+                <h2>Step 2: Project Description</h2>
+                <textarea
+                    placeholder="Describe your project, vision, and use case..."
+                    rows="4"
+                ></textarea>
+            </div>
+
+            <div class="card">
+                <h2>Step 3: Payment</h2>
+                <div class="price">Price: 500 ZUZ</div>
+                <p>
+                    Your coin will be created on ZUZCOIN ProofChain (Chain ID:
+                    7777)
+                </p>
+                <p>Includes blockchain patent and promotion guide</p>
+                <button>🪙 Create Coin (500 ZUZ)</button>
+            </div>
+
+            <div
+                class="card"
+                style="
+                    background: rgba(0, 100, 0, 0.2);
+                    border: 2px solid #4caf50;
+                "
+            >
+                <h2 style="color: #4caf50">For The Giving Pledge</h2>
+                <p>
+                    <strong>ZUZIM DEX Integration:</strong> Your coin will be
+                    automatically listed on ZUZIM DEX with 1% auto-donate to
+                    charity.
+                </p>
+                <p>Every trade of your coin will contribute to philanthropy.</p>
+            </div>
+
+            <a href="/" class="back-button">← Back to Main Page</a>
+        </div>
+    </body>
+</html>
+EOF # 3. Страница статуса сети cat > network-status_en.html << 'EOF'
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ZUZCOIN ProofChain - Network Status</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Arial", sans-serif;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: white;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            h1 {
+                color: #ffd93d;
+                text-align: center;
+                margin: 30px 0;
+            }
+            .status-card {
+                background: rgba(255, 255, 255, 0.08);
+                padding: 30px;
+                border-radius: 15px;
+                margin: 20px 0;
+            }
+            .online {
+                color: #4caf50;
+            }
+            .offline {
+                color: #ff6b6b;
+            }
+            .stat {
+                display: flex;
+                justify-content: space-between;
+                margin: 10px 0;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 10px;
+            }
+            .back-button {
+                display: inline-block;
+                padding: 10px 20px;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>📊 ZUZCOIN ProofChain Network Status</h1>
+
+            <div class="status-card">
+                <h2 class="online">🟢 ZUZCOIN ProofChain: ONLINE</h2>
+                <div class="stat">
+                    <span>Chain ID:</span>
+                    <span><strong>7777</strong></span>
+                </div>
+                <div class="stat">
+                    <span>Network Status:</span>
+                    <span class="online">Operational</span>
+                </div>
+                <div class="stat">
+                    <span>Blocks Processed:</span>
+                    <span>1,247</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <h2>🔗 Connected Networks</h2>
+                <div class="stat">
+                    <span>Binance Smart Chain:</span>
+                    <span class="online">Connected ✅</span>
+                </div>
+                <div class="stat">
+                    <span>Ethereum Mainnet:</span>
+                    <span class="online">Connected ✅</span>
+                </div>
+                <div class="stat">
+                    <span>ZUZ Token (BSC):</span>
+                    <span class="online"
+                        >0x60cA3145F64919F26b47a2270F4cE36F239033e9</span
+                    >
+                </div>
+            </div>
+
+            <div
+                class="status-card"
+                style="
+                    background: rgba(0, 100, 0, 0.2);
+                    border: 2px solid #4caf50;
+                "
+            >
+                <h2 style="color: #4caf50">🤝 Philanthropy Integration</h2>
+                <div class="stat">
+                    <span>ZUZIM DEX Status:</span>
+                    <span>Development (Q1 2024)</span>
+                </div>
+                <div class="stat">
+                    <span>Auto-Donate Feature:</span>
+                    <span class="online">Ready for Integration</span>
+                </div>
+                <div class="stat">
+                    <span>Giving Pledge Partnership:</span>
+                    <span>Available for Discussion</span>
+                </div>
+            </div>
+
+            <a href="/" class="back-button">← Back to Main Page</a>
+        </div>
+    </body>
+</html>
+EOF # 4. Простая страница кошелька cat > wallet_en.html << 'EOF'
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ZUZCOIN Wallet</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Arial", sans-serif;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                color: white;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            h1 {
+                color: #ffd93d;
+                text-align: center;
+                margin: 30px 0;
+            }
+            .card {
+                background: rgba(255, 255, 255, 0.08);
+                padding: 30px;
+                border-radius: 15px;
+                margin: 20px 0;
+            }
+            .balance {
+                font-size: 2.5em;
+                color: #ffd93d;
+                text-align: center;
+                margin: 20px 0;
+            }
+            button {
+                width: 100%;
+                padding: 15px;
+                margin: 10px 0;
+                background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+            .back-button {
+                display: inline-block;
+                padding: 10px 20px;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>💳 ZUZCOIN Wallet</h1>
+
+            <div class="card">
+                <h2>Your Balance</h2>
+                <div class="balance">0 ZUZ</div>
+                <p style="text-align: center">
+                    ZUZ Token (BSC): 0x60cA3145F64919F26b47a2270F4cE36F239033e9
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>Buy ZUZ Tokens</h2>
+                <p>Purchase ZUZ to use ProofChain services:</p>
+                <button>🔗 Buy on PancakeSwap</button>
+                <button>💳 Buy with NOWPayments</button>
+                <button>📱 Request ZUZ (Test Mode)</button>
+            </div>
+
+            <div class="card">
+                <h2>ZUZCOIN ProofChain Services</h2>
+                <p>Each service requires ZUZ tokens:</p>
+                <div
+                    style="
+                        background: rgba(255, 255, 255, 0.05);
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin: 10px 0;
+                    "
+                >
+                    <strong>📝 Copyright Registration:</strong> 100 ZUZ
+                </div>
+                <div
+                    style="
+                        background: rgba(255, 255, 255, 0.05);
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin: 10px 0;
+                    "
+                >
+                    <strong>🪙 Create Cryptocurrency:</strong> 500 ZUZ
+                </div>
+            </div>
+
+            <div
+                class="card"
+                style="
+                    background: rgba(0, 100, 0, 0.2);
+                    border: 2px solid #4caf50;
+                "
+            >
+                <h2 style="color: #4caf50">Philanthropy Note</h2>
+                <p>
+                    When ZUZIM DEX launches, 1% of all ZUZ transactions will be
+                    automatically donated to The Giving Pledge charities.
+                </p>
+                <p>
+                    <strong
+                        >Your participation contributes to global
+                        philanthropy.</strong
+                    >
+                </p>
+            </div>
+
+            <a href="/" class="back-button">← Back to Main Page</a>
+        </div>
+    </body>
+</html>
+EOF

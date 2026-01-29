@@ -1,0 +1,19 @@
+<html><body>
+<h1>ZUZCOIN Diagnostic</h1>
+<p>Open console (F12) to see errors</p>
+<button onclick="test()">Test Connection</button>
+<div id="result"></div>
+<script>
+async function test() {
+    try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('result').innerHTML = 
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    } catch(e) {
+        document.getElementById('result').innerHTML = 
+            `Error: ${e.message}`;
+    }
+}
+</script>
+</body></html>

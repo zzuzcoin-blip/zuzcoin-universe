@@ -1,0 +1,98 @@
+{
+  "users": {
+    "demo-user": {
+      "balance": 1000,
+      "currency": "RUB",
+      "proofs": [],
+      "coins": []
+    },
+    "zuzcoin": {
+      "balance": 0,
+      "proofs": [],
+      "coins": [
+        {
+          "creatorId": "zuzcoin",
+          "name": "zuzcoin",
+          "symbol": "ZUZ",
+          "totalSupply": 1000000000,
+          "description": "ZuzCoin — это специализированная криптовалюта, разработанная для безопасных транзакций с тактическим снаряжением и защитной экипировкой. Наша платформа предлагает:\n\nАнонимные и безопасные платежи\nПоддержка международных поставщиков\nСоответствие стандартам ITAR и EAR\nИнтеграция с ведущими биржами\nZuzCoin использует передовые технологии блокчейн:\n\nФирменный протокол конфиденциальности\nПоддержка смарт-контрактов\nКонсенсус Proof-of-Stake\nИнтеграция Binance Smart Chain\n",
+          "contractAddress": "PRC_2b7e4aabf22a7e2dc55d6f24b684822c",
+          "createdAt": "2025-10-01T12:26:54.533Z",
+          "blockchainProof": "0002400f91cc4f21de7ca91c206ca5f2b6065ba869c2c695221c9bbd4ccdddbb",
+          "tokenStandard": "PRC-20",
+          "utilities": [
+            "Обмен, покупка, продажа"
+          ],
+          "roadmap": [
+            "ZuzCoin использует передовые технологии блокчейн:",
+            "Фирменный протокол конфиденциальности",
+            "Поддержка смарт-контрактов",
+            "Консенсус Proof-of-Stake",
+            "Интеграция Binance Smart Chain"
+          ],
+          "website": "zuzcoin.app",
+          "socialLinks": {},
+          "category": "governance",
+          "status": "created"
+        }
+      ]
+    }
+  },
+  "payments": [
+    {
+      "id": "pay_1759321443383",
+      "userId": "zuzcoin",
+      "amount": 500,
+      "method": "sberbank",
+      "transactionId": "23234543",
+      "status": "completed",
+      "timestamp": "2025-10-01T12:24:03.383Z",
+      "previousBalance": 0,
+      "newBalance": 500,
+      "attempts": 1,
+      "verifiedAt": "2025-10-01T12:24:13.384Z"
+    }
+  ],
+  "blockchain": {
+    "length": 1,
+    "lastBlock": {
+      "index": 0,
+      "timestamp": "2024-01-01T00:00:00.000Z",
+      "transactions": [
+        {
+          "type": "genesis",
+          "message": "ProofChain Mainnet Genesis Block",
+          "creator": "network",
+          "timestamp": "2024-01-01T00:00:00.000Z"
+        }
+      ],
+      "previousHash": "0",
+      "nonce": 0,
+      "hash": "1b31022d27c140762dd24b6360bf2c9191969ab2328d8f8542b79132f3207506",
+      "validator": "genesis",
+      "network": "ProofChain Mainnet",
+      "chainId": 7777
+    }
+  },
+  "network": {
+    "nodeId": "main_node_1",
+    "status": "running",
+    "isValidator": true,
+    "port": 5000,
+    "peersCount": 0,
+    "blocksMined": 0,
+    "transactionsProcessed": 0,
+    "stats": {
+      "uptime": 2396757,
+      "lastBlockTime": "2025-10-02T11:18:45.049Z",
+      "averageBlockTime": 0,
+      "connectedPeers": 0,
+      "networkHashrate": 524.0156296081298
+    },
+    "chainId": 7777,
+    "networkName": "ProofChain Mainnet",
+    "version": "1.0.0"
+  },
+  "timestamp": "2025-10-02T11:18:48.310Z",
+  "version": "2.0"
+}

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZIM Universe | Professional DEX</title>
+    <style>
+        /* Bybit цветовая схема */
+        :root {
+            --bybit-bg: #0b0e18;
+            --bybit-card: #131722;
+            --bybit-border: #2a2f42;
+            --bybit-green: #00c087;
+            --bybit-red: #f6465d;
+            --bybit-blue: #0ea5e9;
+            --bybit-yellow: #f0b90b;
+            --bybit-text: #e4e5e8;
+            --bybit-text-secondary: #848e9c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bybit-bg);
+            color: var(--bybit-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Top Navigation Bar */
+        .top-bar {
+            height: 56px;
+            background: var(--bybit-card);
+            border-bottom: 1px solid var(--bybit-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--bybit-blue), var(--bybit-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+        }
+        
+        /* Wallet Section */
+        .wallet-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .wallet-btn {
+            background: var(--bybit-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .wallet-btn:hover {
+            background: #0d8bc9;
+            transform: translateY(-1px);
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid var(--bybit-border);
+        }
+        
+        .wallet-address {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .balance {
+            color: var(--bybit-green);
+            font-weight: bold;
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bybit-card);
+            border-right: 1px solid var(--bybit-border);
+            padding: 20px 0;
+            position: fixed;
+            top: 56px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+        
+        .nav-item {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-item.active {
+            background: rgba(14, 165, 233, 0.1);
+            border-left-color: var(--bybit-blue);
+            color: var(--bybit-blue);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 24px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            border-color: var(--bybit-blue);
+            transform: translateY(-2px);
+        }
+        
+        .stat-title {
+            color: var(--bybit-text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .stat-change {
+            font-size: 14px;
+        }
+        
+        .stat-change.positive {
+            color: var(--bybit-green);
+        }
+        
+        .stat-change.negative {
+            color: var(--bybit-red);
+        }
+        
+        /* Trading Pairs */
+        .trading-pairs {
+            margin-bottom: 24px;
+        }
+        
+        .pairs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .pair-card {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pair-card:hover {
+            border-color: var(--bybit-blue);
+            transform: translateY(-2px);
+        }
+        
+        .pair-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .pair-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .pair-price {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .pair-change {
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .pair-change.positive {
+            background: rgba(0, 192, 135, 0.1);
+            color: var(--bybit-green);
+        }
+        
+        .pair-change.negative {
+            background: rgba(246, 70, 93, 0.1);
+            color: var(--bybit-red);
+        }
+        
+        .pair-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            height: 500px;
+            position: relative;
+        }
+        
+        /* Order Book */
+        .orderbook-container {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .orderbook {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+        }
+        
+        .orderbook-header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .asks, .bids {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .order-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 6px 10px;
+            font-size: 13px;
+            position: relative;
+        }
+        
+        .order-row.bid {
+            background: linear-gradient(90deg, transparent, rgba(0, 192, 135, 0.1));
+        }
+        
+        .order-row.ask {
+            background: linear-gradient(90deg, rgba(246, 70, 93, 0.1), transparent);
+        }
+        
+        .orderbook-middle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .current-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--bybit-blue);
+        }
+        
+        /* Trade Form */
+        .trade-form-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .trade-form {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .form-title {
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--bybit-border);
+        }
+        
+        .form-title.buy {
+            color: var(--bybit-green);
+        }
+        
+        .form-title.sell {
+            color: var(--bybit-red);
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--bybit-text-secondary);
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--bybit-border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--bybit-text);
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bybit-blue);
+        }
+        
+        .input-with-max {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .max-btn {
+            background: var(--bybit-blue);
+            color: white;
+            border: none;
+            padding: 0 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .form-info {
+            margin: 16px 0;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .trade-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .trade-btn.buy {
+            background: var(--bybit-green);
+            color: white;
+        }
+        
+        .trade-btn.buy:hover {
+            background: #00a878;
+        }
+        
+        .trade-btn.sell {
+            background: var(--bybit-red);
+            color: white;
+        }
+        
+        .trade-btn.sell:hover {
+            background: #e53e5c;
+        }
+        
+        /* Wallet Buttons Grid */
+        .wallet-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .wallet-btn-provider {
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .wallet-btn-provider:hover {
+            border-color: var(--bybit-blue);
+            transform: translateY(-2px);
+        }
+        
+        .wallet-icon-provider {
+            font-size: 24px;
+        }
+        
+        /* Notifications */
+        .transaction-notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 300px;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .notification-icon {
+            font-size: 20px;
+        }
+        
+        .notification-text {
+            flex: 1;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--bybit-text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* System Status */
+        .system-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bybit-card);
+            border: 1px solid var(--bybit-border);
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .system-status.info {
+            border-color: var(--bybit-blue);
+        }
+        
+        .system-status.success {
+            border-color: var(--bybit-green);
+        }
+        
+        .system-status.error {
+            border-color: var(--bybit-red);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .top-bar {
+                padding: 0 16px;
+            }
+            .logo span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="logo">
+            <span class="logo-icon">🌌</span>
+            <span>ZUZIM Universe</span>
+        </div>
+        
+        <div class="wallet-section">
+            <div id="wallet-buttons">
+                <!-- Wallet buttons will be injected here -->
+            </div>
+            <div id="wallet-info" style="display: none;">
+                <!-- Connected wallet info will be here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item active">
+                <span class="nav-icon">📈</span>
+                <span>Trade</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">💰</span>
+                <span>Liquidity</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🏦</span>
+                <span>Staking</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Analytics</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📜</span>
+                <span>History</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Value Locked</div>
+                    <div class="stat-value" id="total-tvl">$665,780</div>
+                    <div class="stat-change positive">+12.5%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">24h Volume</div>
+                    <div class="stat-value" id="total-volume">$1,307,830</div>
+                    <div class="stat-change positive">+8.3%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Total Traders</div>
+                    <div class="stat-value" id="total-traders">1,234</div>
+                    <div class="stat-change positive">+5.2%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Active Pools</div>
+                    <div class="stat-value" id="active-pools">3</div>
+                    <div class="stat-change">Updated now</div>
+                </div>
+            </div>
+            
+            <!-- Trading Pairs -->
+            <div class="trading-pairs">
+                <h2 style="margin-bottom: 16px;">Trading Pairs</h2>
+                <div class="pairs-grid" id="pools-list">
+                    <!-- Pools will be injected here -->
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="chart-container">
+                <canvas id="trading-chart"></canvas>
+            </div>
+            
+            <!-- Trading Interface -->
+            <div class="trade-form-container">
+                <!-- Buy Form -->
+                <div class="trade-form">
+                    <div class="form-title buy">Buy ZUZ</div>
+                    <div class="form-group">
+                        <label class="form-label">Price (USDT)</label>
+                        <div class="input-with-max">
+                            <input type="number" class="form-input" id="buy-price" value="0.056789" step="0.000001">
+                            <button class="max-btn" onclick="setMarketPrice('buy')">Market</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount (ZUZ)</label>
+                        <div class="input-with-max">
+                            <input type="number" class="form-input" id="buy-amount" value="1000">
+                            <button class="max-btn" onclick="setMaxBuy()">Max</button>
+                        </div>
+                    </div>
+                    <div class="form-info">
+                        <div class="info-row">
+                            <span>Total</span>
+                            <span id="buy-total">56.789 USDT</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Fee (0.3%)</span>
+                            <span id="buy-fee">0.17 USDT</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Slippage</span>
+                            <span>0.5%</span>
+                        </div>
+                    </div>
+                    <button class="trade-btn buy" onclick="executeBuy()">Buy ZUZ</button>
+                </div>
+                
+                <!-- Sell Form -->
+                <div class="trade-form">
+                    <div class="form-title sell">Sell ZUZ</div>
+                    <div class="form-group">
+                        <label class="form-label">Price (USDT)</label>
+                        <div class="input-with-max">
+                            <input type="number" class="form-input" id="sell-price" value="0.056789" step="0.000001">
+                            <button class="max-btn" onclick="setMarketPrice('sell')">Market</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount (ZUZ)</label>
+                        <div class="input-with-max">
+                            <input type="number" class="form-input" id="sell-amount" value="1000">
+                            <button class="max-btn" onclick="setMaxSell()">Max</button>
+                        </div>
+                    </div>
+                    <div class="form-info">
+                        <div class="info-row">
+                            <span>Total</span>
+                            <span id="sell-total">56.789 USDT</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Fee (0.3%)</span>
+                            <span id="sell-fee">0.17 USDT</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Slippage</span>
+                            <span>0.5%</span>
+                        </div>
+                    </div>
+                    <button class="trade-btn sell" onclick="executeSell()">Sell ZUZ</button>
+                </div>
+            </div>
+            
+            <!-- Order Book -->
+            <div class="orderbook-container" id="orderbook-container">
+                <!-- Order book will be injected here -->
+            </div>
+            
+            <!-- System Status -->
+            <div id="system-status" class="system-status info">System initializing...</div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Imports -->
+    <script src="scripts/wallet-connector.js"></script>
+    <script src="scripts/trading-engine.js"></script>
+    <script src="scripts/zuzim-universe.js"></script>
+    
+    <!-- Utility Functions -->
+    <script>
+        // UI utility functions
+        function setMarketPrice(type) {
+            const price = type === 'buy' ? 0.056789 : 0.056789;
+            document.getElementById(`${type}-price`).value = price;
+            calculateTotal(type);
+        }
+        
+        function setMaxBuy() {
+            // In real app, would get max from wallet
+            document.getElementById('buy-amount').value = 5000;
+            calculateTotal('buy');
+        }
+        
+        function setMaxSell() {
+            // In real app, would get max from wallet
+            document.getElementById('sell-amount').value = 5000;
+            calculateTotal('sell');
+        }
+        
+        function calculateTotal(type) {
+            const price = parseFloat(document.getElementById(`${type}-price`).value) || 0;
+            const amount = parseFloat(document.getElementById(`${type}-amount`).value) || 0;
+            const total = price * amount;
+            const fee = total * 0.003;
+            
+            document.getElementById(`${type}-total`).textContent = total.toFixed(3) + ' USDT';
+            document.getElementById(`${type}-fee`).textContent = fee.toFixed(3) + ' USDT';
+        }
+        
+        function executeBuy() {
+            if (!window.zuzim?.modules?.wallet?.account) {
+                alert('Please connect wallet first');
+                return;
+            }
+            
+            const amount = document.getElementById('buy-amount').value;
+            window.zuzim.modules.dex.swap('USDT', 'ZUZ', amount, amount * 0.99);
+        }
+        
+        function executeSell() {
+            if (!window.zuzim?.modules?.wallet?.account) {
+                alert('Please connect wallet first');
+                return;
+            }
+            
+            const amount = document.getElementById('sell-amount').value;
+            window.zuzim.modules.dex.swap('ZUZ', 'USDT', amount, amount * 0.99);
+        }
+        
+        // Initialize calculations
+        document.addEventListener('DOMContentLoaded', () => {
+            ['buy', 'sell'].forEach(type => {
+                document.getElementById(`${type}-price`).addEventListener('input', () => calculateTotal(type));
+                document.getElementById(`${type}-amount`).addEventListener('input', () => calculateTotal(type));
+            });
+        });
+    </script>
+</body>
+</html>

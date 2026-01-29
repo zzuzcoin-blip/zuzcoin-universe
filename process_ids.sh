@@ -1,0 +1,2 @@
+export SERVER_PID=
+export MOBILE_PID=125

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZCOIN Dev</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .card { border: 1px solid #ccc; padding: 20px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>ZUZCOIN Development Status</h1>
+    
+    <div class="card">
+        <h2>📦 Smart Contracts</h2>
+        <p><strong>ZUZCOIN.sol:</strong> Token with 1% auto-philanthropy</p>
+        <p><strong>ZUZIMDEX.sol:</strong> Decentralized exchange</p>
+        <p>✅ Contracts ready for deployment</p>
+    </div>
+    
+    <div class="card">
+        <h2>🔧 Development Commands</h2>
+        <p>Run in terminal:</p>
+        <pre style="background: #f4f4f4; padding: 10px; border-radius: 4px;">
+1. npm install
+2. npm run compile
+3. npx hardhat node
+4. npm run deploy-local</pre>
+    </div>
+    
+    <div class="card">
+        <h2>📊 API Status</h2>
+        <div id="status">Checking...</div>
+        <button onclick="checkStatus()">Check Status</button>
+    </div>
+    
+    <script>
+        async function checkStatus() {
+            const statusDiv = document.getElementById('status');
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                statusDiv.innerHTML = `
+                    <p>✅ ${data.status}</p>
+                    <p>Project: ${data.project}</p>
+                    <p>Phase: ${data.phase}</p>
+                    <p>Contracts: ${data.contracts}</p>
+                `;
+            } catch (err) {
+                statusDiv.innerHTML = '❌ API not available';
+            }
+        }
+        checkStatus();
+    </script>
+</body>
+</html>

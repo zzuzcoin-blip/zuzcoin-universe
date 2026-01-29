@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Тест ширины - ZUZCOIN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #0a0b0d;
+            color: white;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+        .test-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 2px solid white;
+            width: 120vw; /* Намеренно делаем шире экрана */
+            max-width: 100vw; /* Но ограничиваем */
+            box-sizing: border-box;
+        }
+        .success { color: #4CAF50; font-weight: bold; }
+        .warning { color: #FF9800; }
+    </style>
+</head>
+<body>
+    <h1>📱 Тест адаптивности ZUZCOIN</h1>
+    
+    <div class="test-box">
+        <h3 class="success">✅ Этот блок НЕ должен выходить за экран</h3>
+        <p>Если вы видите весь текст без горизонтального скролла - всё работает!</p>
+    </div>
+    
+    <div style="background: #1e1f2e; padding: 15px; border-radius: 8px;">
+        <h3>📏 Проверка ширины:</h3>
+        <p id="widthInfo">Загрузка...</p>
+        <p id="scrollInfo">Загрузка...</p>
+    </div>
+    
+    <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #6c5dd3; color: white; text-decoration: none; border-radius: 5px;">
+        ← Вернуться в ZUZCOIN
+    </a>
+    
+    <script>
+        function updateSizeInfo() {
+            const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const bodyWidth = document.body.scrollWidth;
+            const hasHorizontalScroll = bodyWidth > viewportWidth;
+            
+            document.getElementById('widthInfo').innerHTML = 
+                `Ширина экрана: <strong>${viewportWidth}px</strong><br>
+                 Ширина контента: <strong>${bodyWidth}px</strong>`;
+            
+            document.getElementById('scrollInfo').innerHTML = hasHorizontalScroll ?
+                `<span style="color: red;">⚠️ ОШИБКА: Есть горизонтальный скролл!</span>` :
+                `<span style="color: #4CAF50;">✅ УСПЕХ: Нет горизонтального скролла!</span>`;
+        }
+        
+        window.addEventListener('load', updateSizeInfo);
+        window.addEventListener('resize', updateSizeInfo);
+        updateSizeInfo();
+    </script>
+</body>
+</html>

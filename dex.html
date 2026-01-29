@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZIM DEX | ZUZCOIN Universe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-tagline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .main-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* DEX LAYOUT */
+        .dex-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 1.5rem;
+        }
+        
+        /* TRADING PAIR SELECTOR */
+        .pair-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pair-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .pair-btn:hover {
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.05);
+        }
+        
+        .pair-btn.active {
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        /* TRADING CHART AREA */
+        .chart-area {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            min-height: 400px;
+        }
+        
+        /* ORDER BOOK */
+        .order-book {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .order-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .order-row.header {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .order-price.buy {
+            color: var(--success);
+        }
+        
+        .order-price.sell {
+            color: var(--danger);
+        }
+        
+        /* TRADE FORM */
+        .trade-form {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .form-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .form-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .balance-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn-buy {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-buy:hover {
+            background: #0da271;
+        }
+        
+        .btn-sell {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-sell:hover {
+            background: #dc2626;
+        }
+        
+        .btn-connect {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-connect:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* PHILANTHROPY BANNER */
+        .philanthropy-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(14, 165, 233, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        .philanthropy-text {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .dex-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🔄</div>
+                <div>
+                    <div class="logo-text">ZUZIM DEX</div>
+                    <div class="logo-tagline">1% Auto-Philanthropy Exchange</div>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link active">Trade</a>
+                <a href="#" class="nav-link">Liquidity</a>
+                <a href="#" class="nav-link">Pool</a>
+                <a href="#" class="nav-link">Farm</a>
+                <button class="btn btn-connect" id="connectWalletBtn">
+                    <i class="fas fa-wallet"></i> Connect Wallet
+                </button>
+            </nav>
+        </header>
+        
+        <!-- PHILANTHROPY BANNER -->
+        <div class="philanthropy-banner">
+            <div class="philanthropy-text">
+                <i class="fas fa-heart"></i> 1% of every trade is automatically donated to charity
+            </div>
+        </div>
+        
+        <!-- MAIN DEX LAYOUT -->
+        <div class="dex-layout">
+            <!-- LEFT COLUMN: TRADING -->
+            <div>
+                <!-- TRADING PAIR SELECTOR -->
+                <div class="pair-selector">
+                    <button class="pair-btn active" data-pair="ZUZ/ETH">
+                        ZUZ/ETH
+                    </button>
+                    <button class="pair-btn" data-pair="ZUZ/USDT">
+                        ZUZ/USDT
+                    </button>
+                    <button class="pair-btn" data-pair="ETH/USDT">
+                        ETH/USDT
+                    </button>
+                    <button class="pair-btn" data-pair="ZUZ/BNB">
+                        ZUZ/BNB
+                    </button>
+                </div>
+                
+                <!-- CHART AREA -->
+                <div class="chart-area">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 800;">ZUZ/ETH</div>
+                            <div style="color: var(--success);">$0.10 (+2.5%)</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div>24h Volume: $12,450</div>
+                            <div>24h High: $0.105</div>
+                            <div>24h Low: $0.095</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Placeholder for chart -->
+                    <div style="
+                        background: rgba(0, 0, 0, 0.2);
+                        border-radius: 12px;
+                        height: 300px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--text-muted);
+                    ">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+                            <div>Trading Chart (Integration with TradingView coming soon)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ORDER BOOK -->
+                <div class="order-book">
+                    <div class="order-row header">
+                        <div>Price (ETH)</div>
+                        <div>Size (ZUZ)</div>
+                        <div>Total</div>
+                    </div>
+                    
+                    <!-- Sell orders (red) -->
+                    <div class="order-row">
+                        <div class="order-price sell">0.00012</div>
+                        <div>1,200</div>
+                        <div>0.144</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="order-price sell">0.000115</div>
+                        <div>850</div>
+                        <div>0.09775</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="order-price sell">0.00011</div>
+                        <div>2,500</div>
+                        <div>0.275</div>
+                    </div>
+                    
+                    <!-- Market price -->
+                    <div class="order-row" style="background: rgba(14, 165, 233, 0.1);">
+                        <div style="color: var(--primary); font-weight: 600;">0.0001</div>
+                        <div style="font-weight: 600;">MARKET</div>
+                        <div style="color: var(--primary); font-weight: 600;">$0.10</div>
+                    </div>
+                    
+                    <!-- Buy orders (green) -->
+                    <div class="order-row">
+                        <div class="order-price buy">0.000095</div>
+                        <div>3,000</div>
+                        <div>0.285</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="order-price buy">0.00009</div>
+                        <div>1,800</div>
+                        <div>0.162</div>
+                    </div>
+                    <div class="order-row">
+                        <div class="order-price buy">0.000085</div>
+                        <div>2,500</div>
+                        <div>0.2125</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN: TRADE FORM -->
+            <div>
+                <div class="trade-form">
+                    <div class="form-tabs">
+                        <button class="form-tab active" data-tab="buy">Buy</button>
+                        <button class="form-tab" data-tab="sell">Sell</button>
+                        <button class="form-tab" data-tab="limit">Limit</button>
+                    </div>
+                    
+                    <!-- BUY FORM -->
+                    <div id="buyForm" class="form-content">
+                        <div class="input-group">
+                            <label class="input-label">Pay with</label>
+                            <select class="input-field">
+                                <option>ETH</option>
+                                <option>USDT</option>
+                            </select>
+                            <div class="balance-info">
+                                <span>Balance: <span id="ethBalance">0.0000</span> ETH</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Amount to buy</label>
+                            <input type="number" class="input-field" placeholder="0.0" id="buyAmount">
+                            <div class="balance-info">
+                                <span>ZUZ Balance: <span id="zuzBalance">0.0000</span></span>
+                                <span>≈ $<span id="buyValue">0.00</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Price</label>
+                            <input type="text" class="input-field" value="0.0001 ETH" readonly>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Philanthropy (1%)</label>
+                            <input type="text" class="input-field" value="Auto-deducted from trade" readonly>
+                        </div>
+                        
+                        <button class="btn btn-buy" id="buyBtn">
+                            <i class="fas fa-arrow-up"></i> Buy ZUZ
+                        </button>
+                    </div>
+                    
+                    <!-- SELL FORM (hidden by default) -->
+                    <div id="sellForm" class="form-content" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Sell ZUZ</label>
+                            <input type="number" class="input-field" placeholder="0.0" id="sellAmount">
+                            <div class="balance-info">
+                                <span>Balance: <span id="zuzBalanceSell">0.0000</span> ZUZ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Receive</label>
+                            <select class="input-field">
+                                <option>ETH</option>
+                                <option>USDT</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Price</label>
+                            <input type="text" class="input-field" value="0.0001 ETH" readonly>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Philanthropy (1%)</label>
+                            <input type="text" class="input-field" value="Auto-deducted from trade" readonly>
+                        </div>
+                        
+                        <button class="btn btn-sell" id="sellBtn">
+                            <i class="fas fa-arrow-down"></i> Sell ZUZ
+                        </button>
+                    </div>
+                    
+                    <!-- WALLET INFO -->
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-muted);">Connected Wallet:</span>
+                            <span id="walletAddress">Not connected</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-muted);">Network:</span>
+                            <span style="color: var(--success);">Sepolia Testnet</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RECENT TRADES -->
+                <div style="background: var(--bg-card); border-radius: 16px; padding: 1rem; margin-top: 1.5rem; border: 1px solid var(--border);">
+                    <div style="font-weight: 600; margin-bottom: 1rem;">Recent Trades</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); text-align: center; padding: 2rem;">
+                        No trades yet. Connect wallet and start trading!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEX JAVASCRIPT -->
+    <script>
+    // ===== ZUZIM DEX FUNCTIONALITY =====
+    const ZUZCOIN_CONTRACT = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+    
+    // 1. INITIALIZE DEX
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("🚀 ZUZIM DEX Initialized");
+        
+        // Initialize all components
+        initTradingPairs();
+        initFormTabs();
+        initConnectButton();
+        initTradeButtons();
+        
+        // Check if wallet already connected
+        if (window.ethereum?.selectedAddress) {
+            updateWalletDisplay();
+            updateBalances();
+        }
+    });
+    
+    // 2. TRADING PAIR SELECTION
+    function initTradingPairs() {
+        const pairButtons = document.querySelectorAll('.pair-btn');
+        pairButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                pairButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const pair = this.getAttribute('data-pair');
+                console.log(`Selected trading pair: ${pair}`);
+                
+                // Update chart and order book based on pair
+                updateMarketData(pair);
+            });
+        });
+    }
+    
+    // 3. FORM TABS
+    function initFormTabs() {
+        const tabs = document.querySelectorAll('.form-tab');
+        const forms = {
+            buy: document.getElementById('buyForm'),
+            sell: document.getElementById('sellForm'),
+            limit: document.getElementById('buyForm') // Using same for demo
+        };
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabId = this.getAttribute('data-tab');
+                
+                // Show corresponding form
+                Object.values(forms).forEach(form => {
+                    if (form) form.style.display = 'none';
+                });
+                
+                if (forms[tabId]) {
+                    forms[tabId].style.display = 'block';
+                }
+            });
+        });
+    }
+    
+    // 4. WALLET CONNECTION
+    function initConnectButton() {
+        const btn = document.getElementById('connectWalletBtn');
+        if (!btn) return;
+        
+        btn.addEventListener('click', async function() {
+            if (!window.ethereum) {
+                alert('Please install MetaMask to trade on ZUZIM DEX');
+                return;
+            }
+            
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+                
+                const address = accounts[0];
+                updateWalletDisplay(address);
+                updateBalances(address);
+                
+                btn.innerHTML = '<i class="fas fa-check"></i> Connected';
+                btn.style.background = 'var(--success)';
+                
+                console.log(`✅ Wallet connected to DEX: ${address}`);
+                
+            } catch (error) {
+                console.error('DEX connection error:', error);
+                btn.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+                alert('Connection failed: ' + error.message);
+            }
+        });
+    }
+    
+    // 5. TRADE BUTTONS
+    function initTradeButtons() {
+        // Buy button
+        const buyBtn = document.getElementById('buyBtn');
+        if (buyBtn) {
+            buyBtn.addEventListener('click', async function() {
+                if (!window.ethereum?.selectedAddress) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
+                
+                const amount = document.getElementById('buyAmount').value;
+                if (!amount || parseFloat(amount) <= 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+                
+                const philanthropy = (amount * 0.01).toFixed(4);
+                const netAmount = (amount * 0.99).toFixed(4);
+                
+                if (confirm(`Buy ${amount} ZUZ?\n\n` +
+                           `You receive: ${netAmount} ZUZ\n` +
+                           `Philanthropy (1%): ${philanthropy} ZUZ\n` +
+                           `Estimated cost: ${(amount * 0.0001).toFixed(6)} ETH`)) {
+                    
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    this.disabled = true;
+                    
+                    // Simulate trade (in real DEX would call smart contract)
+                    setTimeout(() => {
+                        alert(`✅ Trade executed!\n\n` +
+                              `Bought: ${netAmount} ZUZ\n` +
+                              `Philanthropy: ${philanthropy} ZUZ donated\n` +
+                              `Transaction: 0x...${Math.random().toString(36).substr(2, 8)}`);
+                        
+                        this.innerHTML = '<i class="fas fa-arrow-up"></i> Buy ZUZ';
+                        this.disabled = false;
+                        
+                        // Update balances
+                        updateBalances(window.ethereum.selectedAddress);
+                    }, 2000);
+                }
+            });
+        }
+        
+        // Sell button
+        const sellBtn = document.getElementById('sellBtn');
+        if (sellBtn) {
+            sellBtn.addEventListener('click', async function() {
+                if (!window.ethereum?.selectedAddress) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
+                
+                const amount = document.getElementById('sellAmount').value;
+                if (!amount || parseFloat(amount) <= 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+                
+                const philanthropy = (amount * 0.01).toFixed(4);
+                const netAmount = (amount * 0.99).toFixed(4);
+                
+                if (confirm(`Sell ${amount} ZUZ?\n\n` +
+                           `You receive: ${(netAmount * 0.0001).toFixed(6)} ETH\n` +
+                           `Philanthropy (1%): ${philanthropy} ZUZ`)) {
+                    
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    this.disabled = true;
+                    
+                    // Simulate trade
+                    setTimeout(() => {
+                        alert(`✅ Trade executed!\n\n` +
+                              `Sold: ${netAmount} ZUZ\n` +
+                              `Philanthropy: ${philanthropy} ZUZ donated\n` +
+                              `Received: ${(netAmount * 0.0001).toFixed(6)} ETH`);
+                        
+                        this.innerHTML = '<i class="fas fa-arrow-down"></i> Sell ZUZ';
+                        this.disabled = false;
+                        
+                        // Update balances
+                        updateBalances(window.ethereum.selectedAddress);
+                    }, 2000);
+                }
+            });
+        }
+    }
+    
+    // 6. UPDATE MARKET DATA (simulated)
+    function updateMarketData(pair) {
+        console.log(`Updating market data for: ${pair}`);
+        // In real DEX, this would fetch from API
+    }
+    
+    // 7. UPDATE WALLET DISPLAY
+    function updateWalletDisplay(address = null) {
+        const addrElement = document.getElementById('walletAddress');
+        if (!addrElement) return;
+        
+        if (address) {
+            addrElement.textContent = address.slice(0, 10) + '...' + address.slice(-8);
+            addrElement.style.color = 'var(--primary)';
+        } else {
+            addrElement.textContent = 'Not connected';
+            addrElement.style.color = 'var(--text-muted)';
+        }
+    }
+    
+    // 8. UPDATE BALANCES
+    async function updateBalances(address = null) {
+        if (!address && window.ethereum?.selectedAddress) {
+            address = window.ethereum.selectedAddress;
+        }
+        
+        if (!address) return;
+        
+        try {
+            // Update ETH balance
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const ethBalance = await provider.getBalance(address);
+            const ethElement = document.getElementById('ethBalance');
+            if (ethElement) {
+                ethElement.textContent = parseFloat(ethers.utils.formatEther(ethBalance)).toFixed(4);
+            }
+            
+            // Update ZUZ balance
+            const contract = new ethers.Contract(
+                ZUZCOIN_CONTRACT,
+                ["function balanceOf(address) view returns (uint256)"],
+                provider
+            );
+            
+            const zuzBalance = await contract.balanceOf(address);
+            const zuzFormatted = ethers.utils.formatUnits(zuzBalance, 18);
+            
+            // Update all ZUZ balance displays
+            const zuzElements = document.querySelectorAll('[id*="zuzBalance"]');
+            zuzElements.forEach(el => {
+                el.textContent = parseFloat(zuzFormatted).toFixed(4);
+            });
+            
+            console.log(`✅ DEX Balances updated: ${parseFloat(zuzFormatted).toFixed(4)} ZUZ`);
+            
+        } catch (error) {
+            console.error('DEX balance update error:', error);
+        }
+    }
+    
+    // 9. META MASK EVENTS
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length > 0) {
+                updateWalletDisplay(accounts[0]);
+                updateBalances(accounts[0]);
+            } else {
+                updateWalletDisplay(null);
+                document.getElementById('connectWalletBtn').innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+                document.getElementById('connectWalletBtn').style.background = '';
+            }
+        });
+    }
+    
+    // Export for console
+    window.zuzimDEX = {
+        connect: () => document.getElementById('connectWalletBtn').click(),
+        updateBalances: updateBalances,
+        selectPair: (pair) => {
+            const btn = document.querySelector(`[data-pair="${pair}"]`);
+            if (btn) btn.click();
+        }
+    };
+    
+    console.log("✅ ZUZIM DEX Ready");
+    console.log("💡 Commands: zuzimDEX.connect(), zuzimDEX.updateBalances()");
+    </script>
+</body>
+</html>

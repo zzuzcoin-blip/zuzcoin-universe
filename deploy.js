@@ -1,41 +1,68 @@
-const Web3 = require('web3');
-const fs = require('fs');
+cat > deploy.js << "EOF";
+const Web3 = require("web3");
+const fs = require("fs");
+const path = require("path");
 
-const web3 = new Web3('http://localhost:8547');
-const abi = JSON.parse(fs.readFileSync('DigitalNotaryABI.json', 'utf8'));
-const bytecode = fs.readFileSync('DigitalNotaryBytecode.txt', 'utf8');
+// Подключение к Polygon Mumbai
+const web3 = new Web3("https://polygon-mumbai.g.alchemy.com/v2/demo");
+
+// Чтение ABI и байткода (после компиляции)
+const contractPath = path.join(__dirname, "ZUZCOIN.json");
+let contractData = {};
+
+if (fs.existsSync(contractPath)) {
+    contractData = JSON.parse(fs.readFileSync(contractPath, "utf8"));
+} else {
+    console.error("Файл ZUZCOIN.json не найден! Сначала скомпилируй контракт.");
+    process.exit(1);
+}
 
 async function deploy() {
     try {
-        const accounts = await web3.eth.getAccounts();
-        console.log('📋 Аккаунты:', accounts.slice(0, 3), '...');
-        
-        const contract = new web3.eth.Contract(abi);
-        
-        const deployTx = contract.deploy({
-            data: bytecode,
-            arguments: []
+        console.log("🚀 Начинаю деплой контракта ZUZCOIN...");
+
+        // ЗАМЕНИ ЭТУ СТРОКУ НА СВОЙ ПРИВАТНЫЙ КЛЮЧ
+        const privateKey = "ВСТАВЬ_СЮДА_СВОЙ_ПРИВАТНЫЙ_КЛЮЧ";
+        const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+        web3.eth.accounts.wallet.add(account);
+        web3.eth.defaultAccount = account.address;
+
+        console.log("👛 Кошелек для деплоя:", account.address);
+
+        // Параметры конструктора
+        const initialOwner = account.address;
+        const charityWallet = account.address; // Можно пока использовать тот же адрес
+
+        const contract = new web3.eth.Contract(contractData.abi);
+
+        const deployment = contract.deploy({
+            data: contractData.bytecode,
+            arguments: [initialOwner, charityWallet],
         });
-        
-        const gas = await deployTx.estimateGas({ from: accounts[0] });
-        console.log('⛽ Estimated gas:', gas);
-        
-        const result = await deployTx.send({
-            from: accounts[0],
-            gas: gas + 10000
+
+        const gas = await deployment.estimateGas();
+        console.log("⛽ Примерный газ:", gas);
+
+        const tx = await deployment.send({
+            from: account.address,
+            gas: gas,
+            gasPrice: await web3.eth.getGasPrice(),
         });
-        
-        console.log('✅ Контракт развернут!');
-        console.log('Адрес контракта:', result.options.address);
-        console.log('Транзакция:', result.transactionHash);
-        
-        fs.writeFileSync('contractAddress.txt', result.options.address);
-        
-        return result.options.address;
+
+        console.log("✅ Контракт успешно деплоен!");
+        console.log("📄 Адрес контракта:", tx.options.address);
+        console.log(
+            "🔗 Explorer:",
+            `https://mumbai.polygonscan.com/address/${tx.options.address}`,
+        );
+        console.log("📝 TX Hash:", tx.transactionHash);
+
+        fs.writeFileSync("contract-address.txt", tx.options.address);
+        console.log("💾 Адрес контракта сохранен в contract-address.txt");
     } catch (error) {
-        console.error('❌ Ошибка деплоя:', error.message);
-        return null;
+        console.error("❌ Ошибка деплоя:", error);
     }
 }
 
 deploy();
+EOF;
