@@ -7,7 +7,7 @@ async function main() {
   
   // Конфигурация
   const config = {
-    ZUZ_TOKEN: "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+    ZUZ_TOKEN: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
     WETH_SEPOLIA: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
     PHILANTHROPY_WALLET: "0x742d35Cc6634C0532925a3b844Bc9e768C4E33A0",
     RPC_URL: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia.publicnode.com",

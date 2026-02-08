@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check ZUZCOIN Logo</title>
+</head>
+<body>
+    <h1>Проверка загрузки логотипа</h1>
+    
+    <div style="margin: 20px; padding: 20px; border: 2px solid blue;">
+        <h3>Тест 1: Прямой путь</h3>
+        <img src="ZUZCOIN.png" alt="Test 1" style="width: 100px; height: 100px; border: 2px solid red;">
+        <p>Путь: ZUZCOIN.png</p>
+    </div>
+    
+    <script>
+        // Проверяем загрузку
+        const img = new Image();
+        img.onload = function() {
+            console.log("✅ Логотип загружен успешно");
+            document.body.innerHTML += '<p style="color: green;">✅ Логотип загружен</p>';
+        };
+        img.onerror = function() {
+            console.log("❌ Ошибка загрузки логотипа");
+            document.body.innerHTML += '<p style="color: red;">❌ Логотип НЕ загружен</p>';
+        };
+        img.src = "ZUZCOIN.png";
+    </script>
+</body>
+</html>

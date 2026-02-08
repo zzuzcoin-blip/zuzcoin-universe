@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZIM DEX | Real Trading with 1% Charity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0e1a2d;
+            --secondary: #1a2b44;
+            --accent: #00c3ff;
+            --positive: #00d18c;
+            --negative: #ff4d4d;
+            --text: #ffffff;
+            --text-secondary: #8a9bb2;
+            --border: #2a3b54;
+            --card-bg: rgba(20, 30, 48, 0.9);
+            --talmud-gold: #d4af37;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, #0c1525 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--talmud-gold);
+        }
+        
+        .back-btn {
+            background: var(--secondary);
+            color: var(--text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        /* Chart */
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            height: 500px;
+        }
+        
+        /* Trading Panel */
+        .trading-panel {
+            background: var(--card-bg);
+            border: 2px solid var(--positive);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 209, 140, 0.3);
+        }
+        
+        .trading-panel h3 {
+            color: var(--positive);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .charity-notice {
+            background: rgba(0, 209, 140, 0.1);
+            border: 1px solid var(--positive);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        /* Buttons */
+        .btn-buy, .btn-sell {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .btn-buy {
+            background: var(--positive);
+            color: white;
+        }
+        
+        .btn-sell {
+            background: var(--negative);
+            color: white;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                Back to Ecosystem
+            </button>
+            
+            <div class="logo">
+                <i class="fas fa-exchange-alt"></i>
+                <span>ZUZIM DEX Trading</span>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <button style="background: var(--secondary); color: var(--text); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+                    ZUZ/PYUSD
+                </button>
+                <button style="background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+                    1D
+                </button>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <div class="chart-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-chart-candlestick"></i> ZUZ/PYUSD Chart</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button style="padding: 6px 12px; background: var(--secondary); border: none; border-radius: 6px; color: var(--text); cursor: pointer;">1H</button>
+                        <button style="padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; cursor: pointer;">1D</button>
+                        <button style="padding: 6px 12px; background: var(--secondary); border: none; border-radius: 6px; color: var(--text); cursor: pointer;">1W</button>
+                    </div>
+                </div>
+                <!-- TradingView Chart Placeholder -->
+                <div style="height: 90%; display: flex; align-items: center; justify-content: center; background: var(--secondary); border-radius: 8px;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chart-line" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 15px;"></i>
+                        <div style="color: var(--text-secondary);">Real-time TradingView Chart</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trading-panel">
+                <h3><i class="fas fa-exchange-alt"></i> Real DEX Trading</h3>
+                
+                <div class="charity-notice">
+                    <i class="fas fa-hand-holding-heart" style="color: var(--positive);"></i>
+                    <div style="font-size: 14px; margin-top: 5px;">Every trade automatically donates 1% to charity</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Amount (ZUZ)</label>
+                    <input type="number" class="form-input" id="amountInput" placeholder="0.00" step="0.01" value="10">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Price (PYUSD)</label>
+                    <input type="number" class="form-input" id="priceInput" placeholder="0.0110" value="0.0110" step="0.0001">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Total (PYUSD)</label>
+                    <input type="number" class="form-input" id="totalInput" placeholder="0.00" readonly>
+                </div>
+                
+                <div style="background: var(--secondary); padding: 15px; border-radius: 10px; margin: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text-secondary);">Charity Donation:</span>
+                        <span style="color: var(--positive);" id="charityAmount">0.11 PYUSD</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">You Receive:</span>
+                        <span id="receiveAmount">0.97 PYUSD</span>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                    <button class="btn-buy" onclick="executeTrade('buy')">
+                        <i class="fas fa-arrow-up"></i> Buy ZUZ
+                    </button>
+                    <button class="btn-sell" onclick="executeTrade('sell')">
+                        <i class="fas fa-arrow-down"></i> Sell ZUZ
+                    </button>
+                </div>
+                
+                <div style="text-align: center; color: var(--text-secondary); font-size: 12px; margin-top: 20px;">
+                    Trading fees: 0.3% + 1% charity donation
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update calculations
+        function updateCalculations() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const price = parseFloat(document.getElementById('priceInput').value) || 0.0110;
+            const total = amount * price;
+            
+            document.getElementById('totalInput').value = total.toFixed(4);
+            document.getElementById('charityAmount').textContent = (total * 0.01).toFixed(2) + " PYUSD";
+            document.getElementById('receiveAmount').textContent = (total * 0.987).toFixed(2) + " PYUSD";
+        }
+        
+        function executeTrade(type) {
+            const amount = document.getElementById('amountInput').value;
+            const price = document.getElementById('priceInput').value;
+            
+            alert(`${type === 'buy' ? 'Buy' : 'Sell'} order: ${amount} ZUZ at ${price} PYUSD\n1% will be donated to charity.`);
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            document.getElementById('amountInput').addEventListener('input', updateCalculations);
+            document.getElementById('priceInput').addEventListener('input', updateCalculations);
+            updateCalculations();
+        });
+    </script>
+</body>
+</html>

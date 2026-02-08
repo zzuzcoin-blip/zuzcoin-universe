@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZCOIN Universe | Real DEX Trading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0e1a2d;
+            --secondary: #1a2b44;
+            --accent: #00c3ff;
+            --positive: #00d18c;
+            --negative: #ff4d4d;
+            --text: #ffffff;
+            --text-secondary: #8a9bb2;
+            --border: #2a3b54;
+            --card-bg: rgba(20, 30, 48, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, #0c1525 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--accent);
+            font-size: 28px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav a:hover, .nav a.active {
+            background: var(--secondary);
+            color: var(--text);
+        }
+        
+        .wallet-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .balance-container {
+            display: flex;
+            gap: 20px;
+            background: var(--secondary);
+            padding: 12px 20px;
+            border-radius: 10px;
+        }
+        
+        .balance-item {
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .balance-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .balance-value.eth {
+            color: #627eea;
+        }
+        
+        .balance-value.zuz {
+            color: var(--positive);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            height: 500px;
+        }
+        
+        .trading-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            background: var(--secondary);
+            border: none;
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: var(--accent);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .btn-buy, .btn-sell {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .btn-buy {
+            background: var(--positive);
+            color: white;
+        }
+        
+        .btn-sell {
+            background: var(--negative);
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin: 40px 0 20px;
+            color: var(--text);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .real-dex-banner {
+            background: linear-gradient(90deg, var(--positive), #00b377);
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .dex-status {
+            display: flex;
+            justify-content: space-between;
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .status-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .status-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .status-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--positive);
+        }
+        
+        .real-trading-panel {
+            background: var(--card-bg);
+            border: 2px solid var(--positive);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 209, 140, 0.3);
+    
+/* МОБИЛЬНЫЕ ИСПРАВЛЕНИЯ - НЕ МЕНЯЕМ ВЕБ ВЕРСИЮ */
+
+@media (max-width: 768px) {
+  /* 1. Убираем горизонтальный скролл */
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    width: 100%;
+    padding: 0 15px;
+  }
+  
+  /* 2. Адаптируем контейнеры */
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+  }
+  
+  /* 3. Адаптируем DEX интерфейс */
+  .dex-interface {
+    padding: 15px;
+  }
+  
+  .swap-box, .liquidity-box {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  /* 4. Адаптируем таблицы */
+  .tradingview-widget-container {
+    height: 300px !important;
+  }
+  
+  /* 5. Адаптируем кнопки */
+  .connect-wallet-btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  /* 6. Адаптируем навигацию */
+  .nav-menu {
+    flex-wrap: wrap;
+  }
+  
+  .nav-links {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* 7. Скрываем сложные элементы на мобильных */
+  .tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-btn {
+    flex: 1 0 45%;
+    margin-bottom: 5px;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .token-input-group {
+    flex-direction: column;
+  }
+  
+  .token-input {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+}
+
+/* ДОПОЛНИТЕЛЬНЫЕ МОБИЛЬНЫЕ ИСПРАВЛЕНИЯ */
+
+@media (max-width: 768px) {
+  /* Фиксируем все контейнеры */
+  * {
+    max-width: 100vw;
+  }
+  
+  /* Исправляем TradingView график */
+  .tradingview-widget-container iframe {
+    min-height: 300px !important;
+  }
+  
+  /* Исправляем кнопки обмена */
+  .swap-button {
+    width: 100% !important;
+    padding: 12px !important;
+  }
+  
+  /* Адаптируем статистику ликвидности */
+  .liquidity-stats {
+    flex-direction: column;
+  }
+  
+  .stat-box {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+  
+  /* Исправляем навигацию */
+  nav {
+    flex-wrap: wrap;
+  }
+  
+  .wallet-section {
+    order: 3;
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* Адаптируем вкладки */
+  .tabs-content {
+    padding: 10px;
+  }
+}
+
+/* Экстремально маленькие экраны */
+@media (max-width: 360px) {
+  .hero {
+    padding: 20px 10px !important;
+  }
+  
+  .token-select-btn {
+    font-size: 12px !important;
+    padding: 5px 8px !important;
+  }
+}
+    /* МОБИЛЬНЫЕ СТИЛИ ДОБАВЛЕНЫ */
+        }
+    </style>
+    <style>
+    /* MOBILE FORCE STYLES - TEST */
+</head>
+    </style>
+/* СИЛЬНЫЕ МОБИЛЬНЫЕ СТИЛИ - ПЕРЕОПРЕДЕЛЯЮТ ВСЁ */
+
+/* 1. ГАРАНТИЯ отсутствия горизонтального скролла */
+html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+}
+
+/* 2. БАЗОВЫЕ стили для всех элементов */
+* {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 3. МОБИЛЬНАЯ ВЕРСИЯ - ТЕЛЕФОНЫ */
+@media screen and (max-width: 768px) {
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        padding: 10px !important;
+    }
+    
+    /* ЯВНЫЕ изменения - будут заметны сразу */
+    .container, .dex-interface, .swap-box {
+        width: 100vw !important;
+        margin: 0 !important;
+        padding: 10px !important;
+    }
+    
+    /* Изменяем цвета для проверки */
+    .connect-wallet-btn {
+        background: #ff0000 !important; /* Ярко-красный для теста */
+        color: white !important;
+        font-size: 18px !important;
+        padding: 15px !important;
+        width: 100% !important;
+    }
+    
+    /* Hero секция */
+    .hero {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+        padding: 30px 15px !important;
+    }
+    
+    .hero h1 {
+        color: white !important;
+        font-size: 28px !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+    }
+}
+
+/* 4. ОЧЕНЬ маленькие экраны */
+@media screen and (max-width: 480px) {
+    body {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    }
+    
+    .hero h1 {
+        font-size: 22px !important;
+    }
+    
+    .connect-wallet-btn {
+        background: #00ff00 !important; /* Ярко-зеленый */
+        font-size: 16px !important;
+    }
+}
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <span>ZUZCOIN Universe</span>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="active"><i class="fas fa-chart-line"></i> Trade</a>
+                <a href="#token-factory"><i class="fas fa-industry"></i> Token Factory</a>
+                <a href="#digital-notary"><i class="fas fa-file-contract"></i> Digital Notary</a>
+                <a href="#proofchain"><i class="fas fa-link"></i> ProofChain</a>
+            </nav>
+            
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="balance-container" id="balanceContainer" style="display: none;">
+                    <div class="balance-item">
+                        <div class="balance-label">ETH Balance</div>
+                        <div class="balance-value eth" id="ethBalance">0.00 ETH</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">ZUZ Balance</div>
+                        <div class="balance-value zuz" id="zuzBalance">0 ZUZ</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">Network</div>
+                        <div class="balance-value" id="networkName">Not Connected</div>
+                    </div>
+                </div>
+                
+                <button class="wallet-btn" id="connectWalletBtn">
+                    <i class="fas fa-wallet"></i>
+                    <span>Connect Wallet</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Баннер реального DEX -->
+        <div class="real-dex-banner" id="realDexBanner" style="display: none;">
+            <i class="fas fa-rocket"></i>
+            <strong>🚀 REAL DEX LIVE!</strong> ZUZIM DEX: 0x09970975aa48c718e17db4a18128ebf6806e1f2c
+            <i class="fas fa-rocket"></i>
+        </div>
+        
+        <!-- Статус DEX -->
+        <div class="dex-status" id="dexStatus" style="display: none;">
+            <div class="status-item">
+                <div class="status-label">DEX Contract</div>
+                <div class="status-value">✅ Deployed</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">ZUZ/PYUSD Pair</div>
+                <div class="status-value" id="pairStatus">Checking...</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Liquidity</div>
+                <div class="status-value" id="liquidityStatus">Checking...</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">1% Auto-Donate</div>
+                <div class="status-value">✅ Active</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Левая колонка: График -->
+            <div class="chart-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3><i class="fas fa-chart-candlestick"></i> ZUZ/PYUSD Chart</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button style="padding: 6px 12px; background: var(--secondary); border: none; border-radius: 6px; color: var(--text); cursor: pointer;">1H</button>
+                        <button style="padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; cursor: pointer;">1D</button>
+                        <button style="padding: 6px 12px; background: var(--secondary); border: none; border-radius: 6px; color: var(--text); cursor: pointer;">1W</button>
+                    </div>
+                </div>
+                <div id="tradingview_chart" style="height: 90%;"></div>
+            </div>
+
+            <!-- Правая колонка: Торговая панель -->
+            <div class="real-trading-panel">
+                <h3><i class="fas fa-exchange-alt"></i> REAL DEX Trading</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Trade ZUZ/PYUSD with 1% auto-donation to charity. Connected to real DEX contract.
+                </p>
+                
+                <div class="tab-container">
+                    <button class="tab active" onclick="switchTab('market')">Market</button>
+                    <button class="tab" onclick="switchTab('limit')">Limit</button>
+                    <button class="tab" onclick="switchTab('dex')">DEX Functions</button>
+                </div>
+                
+                <div id="marketTab">
+                    <div class="form-group">
+                        <label class="form-label">Amount (ZUZ)</label>
+                        <input type="number" class="form-input" id="amountInput" placeholder="0.00" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Price (PYUSD)</label>
+                        <input type="number" class="form-input" id="priceInput" placeholder="0.0961" value="0.0961" step="0.0001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Total (PYUSD)</label>
+                        <input type="number" class="form-input" id="totalInput" placeholder="0.00" readonly>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                        <button class="btn-buy" onclick="placeRealOrder('buy')">
+                            <i class="fas fa-arrow-up"></i> Buy ZUZ (Real DEX)
+                        </button>
+                        <button class="btn-sell" onclick="placeRealOrder('sell')">
+                            <i class="fas fa-arrow-down"></i> Sell ZUZ (Real DEX)
+                        </button>
+                    </div>
+                    
+                    <div style="text-align: center; color: var(--text-secondary); font-size: 12px; margin-top: 20px;">
+                        <i class="fas fa-hand-holding-heart"></i> 1% of every trade goes to charity automatically
+                    </div>
+                </div>
+                
+                <div id="dexTab" style="display: none;">
+                    <h4><i class="fas fa-cogs"></i> DEX Management</h4>
+                    
+                    <div style="background: var(--secondary); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <p style="margin-bottom: 10px;"><strong>ZUZ/PYUSD Pair Status</strong></p>
+                        <button class="btn-buy" onclick="checkPairStatus()" style="padding: 10px; width: 100%;">
+                            <i class="fas fa-sync"></i> Check Pair Status
+                        </button>
+                        <div id="pairInfo" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div style="background: var(--secondary); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <p style="margin-bottom: 10px;"><strong>Add Liquidity</strong></p>
+                        <input type="number" class="form-input" id="liquidityZUZ" placeholder="ZUZ Amount" style="margin-bottom: 10px;">
+                        <input type="number" class="form-input" id="liquidityPYUSD" placeholder="PYUSD Amount" style="margin-bottom: 10px;">
+                        <button class="btn-buy" onclick="addLiquidity()" style="padding: 10px; width: 100%;">
+                            <i class="fas fa-plus-circle"></i> Add Liquidity
+                        </button>
+                    </div>
+                    
+                    <div style="background: var(--secondary); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <p style="margin-bottom: 10px;"><strong>Real Swap</strong></p>
+                        <input type="number" class="form-input" id="realSwapAmount" placeholder="Amount" style="margin-bottom: 10px;" value="10">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <button class="btn-buy" onclick="realSwap('ZUZtoPYUSD')">
+                                ZUZ → PYUSD
+                            </button>
+                            <button class="btn-sell" onclick="realSwap('PYUSDtoZUZ')">
+                                PYUSD → ZUZ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция Token Factory -->
+        <h2 class="section-title" id="token-factory">
+            <i class="fas fa-industry"></i> Token Factory
+        </h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h4>Create Token</h4>
+                <p>Deploy your own ERC20 token with custom name, symbol and supply</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <h4>Charity % Slider</h4>
+                <p>Set automatic charity percentage for your token transactions</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h4>Token Analytics</h4>
+                <p>Track your token performance and transactions</p>
+            </div>
+        </div>
+
+        <!-- Секция Digital Notary -->
+        <h2 class="section-title" id="digital-notary">
+            <i class="fas fa-file-contract"></i> Digital Notary
+        </h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h4>Upload Files</h4>
+                <p>Securely timestamp and store documents on blockchain</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <h4>Create Hash</h4>
+                <p>Generate unique cryptographic hash for your files</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4>Verify Integrity</h4>
+                <p>Prove file authenticity and timestamp</p>
+            </div>
+        </div>
+
+        <!-- Секция ProofChain -->
+        <h2 class="section-title" id="proofchain">
+            <i class="fas fa-link"></i> ProofChain Ecosystem
+        </h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h4>Charity Tracking</h4>
+                <p>Transparent tracking of all charity donations</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h4>Secure Voting</h4>
+                <p>Community governance and voting system</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h4>Global Impact</h4>
+                <p>Track real-world impact of donations</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="https://unpkg.com/web3@1.7.0/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    
+    <script>
+        // Конфигурация реального DEX
+        const DEX_CONFIG = {
+            address: "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            zuzToken: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            pyusdToken: "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9",
+            tradingFee: 0.3,
+            charityFee: 1.0
+        };
+        
+        // ABI для DEX
+        const DEX_ABI = [
+            "function getSwapQuote(address tokenIn, address tokenOut, uint256 amountIn) view returns (uint256 amountOut, uint256 charityAmount)",
+            "function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)",
+            "function getReserves(address tokenA, address tokenB) view returns (uint256 reserveA, uint256 reserveB)",
+            "function charityWallet() view returns (address)",
+            "function totalCharityDonated() view returns (uint256)"
+        ];
+        
+        // ABI для ERC20
+        const ERC20_ABI = [
+            "function approve(address spender, uint256 amount) returns (bool)",
+            "function balanceOf(address account) view returns (uint256)",
+            "function decimals() view returns (uint8)",
+            "function transfer(address to, uint256 amount) returns (bool)"
+        ];
+        
+        let provider, signer, userAddress;
+        let dexContract, zuzContract, pyusdContract;
+        
+        // Инициализация TradingView
+        function initTradingView() {
+            if (typeof TradingView === 'undefined') return;
+            
+            new TradingView.widget({
+                "container_id": "tradingview_chart",
+                "width": "100%",
+                "height": "100%",
+                "symbol": "ETHUSD",
+                "interval": "D",
+                "timezone": "exchange",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#0e1a2d",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "details": true,
+                "studies": ["RSI@tv-basicstudies"],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            });
+        }
+        
+        // Подключение кошелька
+        async function connectMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("Please install MetaMask!");
+                return;
+            }
+            
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                // Показываем балансы
+                document.getElementById('balanceContainer').style.display = 'flex';
+                document.getElementById('connectWalletBtn').innerHTML = '<i class="fas fa-wallet"></i><span>Connected</span>';
+                
+                // Загружаем балансы
+                await loadBalances();
+                
+                // Инициализируем реальный DEX
+                await initRealDEX();
+                
+                // Показываем баннер DEX
+                document.getElementById('realDexBanner').style.display = 'block';
+                document.getElementById('dexStatus').style.display = 'flex';
+                
+                // Проверяем статус пары
+                checkPairStatus();
+                
+            } catch (error) {
+                alert("Error connecting wallet: " + error.message);
+            }
+        }
+        
+        // Инициализация реального DEX
+        async function initRealDEX() {
+            try {
+                // Создаем контракты
+                dexContract = new ethers.Contract(DEX_CONFIG.address, DEX_ABI, signer);
+                zuzContract = new ethers.Contract(DEX_CONFIG.zuzToken, ERC20_ABI, signer);
+                pyusdContract = new ethers.Contract(DEX_CONFIG.pyusdToken, ERC20_ABI, signer);
+                
+                console.log("✅ Real DEX initialized");
+                
+            } catch (error) {
+                console.error("Error initializing DEX:", error);
+            }
+        }
+        
+        // Загрузка балансов
+        async function loadBalances() {
+            try {
+                // ETH баланс
+                const ethBalance = await provider.getBalance(userAddress);
+                document.getElementById('ethBalance').textContent = 
+                    ethers.utils.formatEther(ethBalance).substring(0, 8) + ' ETH';
+                
+                // ZUZ баланс
+                const zuzBalance = await zuzContract.balanceOf(userAddress);
+                const zuzDecimals = await zuzContract.decimals();
+                document.getElementById('zuzBalance').textContent = 
+                    ethers.utils.formatUnits(zuzBalance, zuzDecimals).split('.')[0] + ' ZUZ';
+                
+                // Сеть
+                const network = await provider.getNetwork();
+                document.getElementById('networkName').textContent = 
+                    network.name.charAt(0).toUpperCase() + network.name.slice(1);
+                
+            } catch (error) {
+                console.error("Error loading balances:", error);
+            }
+        }
+        
+        // Проверка статуса пары
+        async function checkPairStatus() {
+            try {
+                document.getElementById('pairStatus').textContent = "⏳ Checking...";
+                document.getElementById('liquidityStatus').textContent = "⏳ Checking...";
+                
+                const reserves = await dexContract.getReserves(DEX_CONFIG.zuzToken, DEX_CONFIG.pyusdToken);
+                
+                const zuzDecimals = await zuzContract.decimals();
+                const pyusdDecimals = await pyusdContract.decimals();
+                
+                const zuzReserve = ethers.utils.formatUnits(reserves[0], zuzDecimals);
+                const pyusdReserve = ethers.utils.formatUnits(reserves[1], pyusdDecimals);
+                
+                document.getElementById('pairStatus').textContent = "✅ Active";
+                document.getElementById('liquidityStatus').textContent = 
+                    `${parseFloat(zuzReserve).toFixed(2)} ZUZ / ${parseFloat(pyusdReserve).toFixed(2)} PYUSD`;
+                
+                document.getElementById('pairInfo').innerHTML = `
+                    <div style="color: #00d18c;">
+                        ✅ Pair active<br>
+                        ZUZ Reserve: ${parseFloat(zuzReserve).toFixed(2)}<br>
+                        PYUSD Reserve: ${parseFloat(pyusdReserve).toFixed(2)}<br>
+                        Price: 1 ZUZ = ${(pyusdReserve / zuzReserve).toFixed(4)} PYUSD
+                    </div>
+                `;
+                
+            } catch (error) {
+                document.getElementById('pairStatus').textContent = "❌ Error";
+                document.getElementById('liquidityStatus').textContent = "❌ Error";
+                document.getElementById('pairInfo').innerHTML = `
+                    <div style="color: #ff4d4d;">
+                        ❌ Error checking pair: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Реальные свапы
+        async function placeRealOrder(type) {
+            if (!signer) {
+                alert("Connect wallet first!");
+                return;
+            }
+            
+            try {
+                const amount = document.getElementById('amountInput').value;
+                if (!amount || amount <= 0) {
+                    alert("Enter amount!");
+                    return;
+                }
+                
+                const tokenIn = type === 'buy' ? DEX_CONFIG.pyusdToken : DEX_CONFIG.zuzToken;
+                const tokenOut = type === 'buy' ? DEX_CONFIG.zuzToken : DEX_CONFIG.pyusdToken;
+                const description = type === 'buy' ? "PYUSD → ZUZ" : "ZUZ → PYUSD";
+                
+                // Получаем decimals
+                const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
+                const decimals = await tokenInContract.decimals();
+                const amountIn = ethers.utils.parseUnits(amount, decimals);
+                
+                // Даем approve
+                const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
+                await approveTx.wait();
+                
+                // Получаем котировку
+                const [quoteAmount, charityAmount] = await dexContract.getSwapQuote(tokenIn, tokenOut, amountIn);
+                
+                // Выполняем свап
+                const swapTx = await dexContract.swap(tokenIn, tokenOut, amountIn);
+                
+                alert(`🚀 ${description} swap sent!\nHash: ${swapTx.hash}\n1% going to charity.`);
+                
+                await swapTx.wait();
+                
+                alert(`✅ Swap completed!\n1% donated to charity.`);
+                
+                // Обновляем балансы и статус
+                await loadBalances();
+                await checkPairStatus();
+                
+            } catch (error) {
+                alert(`❌ Swap error: ${error.message}`);
+            }
+        }
+        
+        // Другие функции DEX
+        async function addLiquidity() {
+            const zuzAmount = document.getElementById('liquidityZUZ').value;
+            const pyusdAmount = document.getElementById('liquidityPYUSD').value;
+            
+            if (!zuzAmount || !pyusdAmount) {
+                alert("Enter amounts!");
+                return;
+            }
+            
+            alert("Use the separate liquidity interface for now.");
+        }
+        
+        async function realSwap(direction) {
+            const amount = document.getElementById('realSwapAmount').value;
+            if (!amount) {
+                alert("Enter amount!");
+                return;
+            }
+            
+            const type = direction === 'ZUZtoPYUSD' ? 'sell' : 'buy';
+            document.getElementById('amountInput').value = amount;
+            await placeRealOrder(type);
+        }
+        
+        // Переключение табов
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('marketTab').style.display = tabName === 'market' ? 'block' : 'none';
+            document.getElementById('dexTab').style.display = tabName === 'dex' ? 'block' : 'none';
+        }
+        
+        // Авто-подключение при загрузке
+        window.addEventListener('load', () => {
+            initTradingView();
+            
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                connectMetaMask();
+            }
+            
+            document.getElementById('connectWalletBtn').addEventListener('click', connectMetaMask);
+            
+            // Авто-расчет total
+            document.getElementById('amountInput').addEventListener('input', updateTotal);
+            document.getElementById('priceInput').addEventListener('input', updateTotal);
+        });
+        
+        function updateTotal() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const price = parseFloat(document.getElementById('priceInput').value) || 0;
+            document.getElementById('totalInput').value = (amount * price).toFixed(4);
+        }
+    </script>
+</body>
+</html>

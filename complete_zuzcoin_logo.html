@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Полный логотип ZUZCOIN</title>
+    <style>
+        body { 
+            background: #0e1a2d; 
+            color: white; 
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .logo-box { 
+            background: #1a2b44; 
+            padding: 30px; 
+            border-radius: 15px; 
+            margin: 20px 0;
+            text-align: center;
+        }
+        .logo-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gold-coin {
+            width: 60px;
+            height: 60px;
+            background: #000000;
+            border: 3px solid #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            flex-shrink: 0;
+        }
+        .logo-text {
+            text-align: left;
+        }
+        .logo-main {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+        }
+        .logo-sub {
+            font-size: 16px;
+            color: #8a9bb2;
+            font-weight: 400;
+        }
+        .logo-glow {
+            width: 70px;
+            height: 70px;
+            background: #000000;
+            border: 3px solid #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-size: 36px;
+            font-weight: bold;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+            100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        }
+        .code-block {
+            background: #2a3b54;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .btn-blue {
+            background: #00c3ff;
+            color: white;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-palette" style="color:#FFD700;"></i> Полный логотип ZUZCOIN</h1>
+        <p>Желтая монета с буквой Z + текст "ZUZCOIN Universe"</p>
+        
+        <div class="logo-box">
+            <h2>Основной логотип для хедера:</h2>
+            <div class="logo-preview">
+                <div class="logo-glow">Z</div>
+                <div class="logo-text">
+                    <div class="logo-main">ZUZCOIN</div>
+                    <div class="logo-sub">Universe</div>
+                </div>
+            </div>
+        </div>
+        
+        <h3>Код для вставки в index.html:</h3>
+        <div class="code-block" id="fullLogoCode">
+<!-- Полный логотип ZUZCOIN Universe -->
+<div class="logo" style="display: flex; align-items: center; gap: 15px;">
+    <!-- Желтая монета с буквой Z -->
+    <div style="
+        width: 50px;
+        height: 50px;
+        background: #000000;
+        border: 2px solid #FFD700;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FFD700;
+        font-size: 26px;
+        font-weight: bold;
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    ">
+        Z
+    </div>
+    
+    <!-- Текст ZUZCOIN Universe -->
+    <div style="display: flex; flex-direction: column; line-height: 1.2;">
+        <span style="
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        ">
+            ZUZCOIN
+        </span>
+        <span style="
+            font-size: 14px;
+            color: #8a9bb2;
+            font-weight: 400;
+        ">
+            Universe
+        </span>
+    </div>
+</div>
+        </div>
+        <button class="btn" onclick="copyCode('fullLogoCode')">
+            <i class="fas fa-copy"></i> Копировать полный логотип
+        </button>
+        
+        <h3>Упрощенная версия (только монета):</h3>
+        <div class="code-block" id="coinOnlyCode">
+<!-- Только желтая монета -->
+<div style="
+    width: 40px;
+    height: 40px;
+    background: #000000;
+    border: 2px solid #FFD700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFD700;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+">
+    Z
+</div>
+        </div>
+        <button class="btn" onclick="copyCode('coinOnlyCode')">
+            <i class="fas fa-copy"></i> Копировать только монету
+        </button>
+        
+        <h3>Фавиконка (SVG):</h3>
+        <div class="code-block" id="faviconCode">
+<!-- Фавиконка для вкладки -->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE0IiBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiNGRkQ3MDAiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHRleHQgeD0iMTYiIHk9IjIwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZENzAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIj5aPC90ZXh0Pgo8L3N2Zz4=" type="image/svg+xml">
+        </div>
+        <button class="btn" onclick="copyCode('faviconCode')">
+            <i class="fas fa-copy"></i> Копировать фавиконку
+        </button>
+    </div>
+    
+    <script>
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent || element.innerText;
+            
+            // Удаляем начальные и конечные пробелы
+            const cleanText = text.trim();
+            
+            navigator.clipboard.writeText(cleanText).then(() => {
+                alert('✅ Код скопирован в буфер обмена!');
+            }).catch(err => {
+                // Fallback для старых браузеров
+                const textArea = document.createElement('textarea');
+                textArea.value = cleanText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Код скопирован (старый метод)');
+            });
+        }
+    </script>
+</body>
+</html>

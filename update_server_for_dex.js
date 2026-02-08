@@ -28,7 +28,7 @@ app.get('/api/status', (req, res) => {
         ecosystem: "ZUZCOIN Universe v3.0",
         network: "Sepolia Testnet",
         chainId: 11155111,
-        contract: "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+        contract: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
         dex: "ZUZIM DEX Active",
         features: ["ZUZCOIN Token", "ZUZIM DEX", "Token Factory", "Digital Notary", "KYC", "1% Auto-Philanthropy"],
         timestamp: new Date().toISOString()
@@ -41,7 +41,7 @@ app.get('/api/balance/:address', async (req, res) => {
         const ethers = require('ethers');
         const provider = new ethers.providers.JsonRpcProvider("https://ethereum-sepolia.publicnode.com");
         const contract = new ethers.Contract(
-            "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+            "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
             ["function balanceOf(address) view returns (uint256)"],
             provider
         );

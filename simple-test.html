@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple MetaMask Test</title>
+  <script>
+  async function connectSimple() {
+    console.log('Trying to connect...');
+    
+    if (typeof window.ethereum === 'undefined') {
+      alert('Please install MetaMask!');
+      return;
+    }
+    
+    try {
+      // ЭТО ДОЛЖНО ВЫЗВАТЬ ВСПЛЫВАЮЩЕЕ ОКНО META MASK!
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+      
+      alert('Connected: ' + accounts[0]);
+      document.getElementById('result').innerHTML = 
+        '✅ Connected: ' + accounts[0].substring(0, 6) + '...' + accounts[0].substring(38);
+        
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
+  </script>
+</head>
+<body style="background: #222; color: white; padding: 50px; text-align: center;">
+  <h1>🦊 Simple MetaMask Test</h1>
+  <p>This should open MetaMask popup when you click the button:</p>
+  
+  <button onclick="connectSimple()" style="
+    background: #F6851B;
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 20px;
+  ">
+    🔗 Connect MetaMask
+  </button>
+  
+  <div id="result" style="margin-top: 30px; font-size: 18px;"></div>
+  
+  <p style="margin-top: 50px; color: #aaa;">
+    If popup doesn't appear, check:<br>
+    1. MetaMask is installed<br>
+    2. You're not already connected<br>
+    3. Check browser console (F12)
+  </p>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<html>
+<head>
+    <title>Add Liquidity ZUZ/PYUSD</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<h2>Add Liquidity ZUZ/PYUSD</h2>
+
+<button onclick="connectWallet()">🔗 1. Connect MetaMask</button>
+<br><br>
+
+<button id="btn1" disabled onclick="approveZUZ()">2. Approve ZUZ (500 ZUZ)</button><br>
+<button id="btn2" disabled onclick="approvePYUSD()">3. Approve PYUSD (50 PYUSD)</button><br>
+<button id="btn3" disabled onclick="addLiquidity()">4. Add Liquidity</button>
+
+<p id="result">Status: Ready</p>
+
+<script>
+let signer;
+
+async function connectWallet() {
+    if (!window.ethereum) {
+        document.getElementById('result').innerHTML = "❌ Install MetaMask!";
+        return;
+    }
+    
+    try {
+        document.getElementById('result').innerHTML = "⏳ Connecting...";
+        
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
+        const address = await signer.getAddress();
+        document.getElementById('result').innerHTML = "✅ Connected: " + address.substring(0, 10) + "...";
+        
+        document.getElementById('btn1').disabled = false;
+        document.getElementById('btn2').disabled = false;
+        document.getElementById('btn3').disabled = false;
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approveZUZ() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving ZUZ...";
+        
+        const zuzAddress = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        const amount = "500000000000000000000"; // 500 ZUZ (18 decimals)
+        
+        const abi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const contract = new ethers.Contract(zuzAddress, abi, signer);
+        
+        const tx = await contract.approve(dexAddress, amount);
+        document.getElementById('result').innerHTML = "✅ ZUZ Approval sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ ZUZ Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approvePYUSD() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving PYUSD...";
+        
+        const pyusdAddress = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        const amount = "50000000"; // 50 PYUSD (6 decimals предположительно)
+        
+        const abi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const contract = new ethers.Contract(pyusdAddress, abi, signer);
+        
+        const tx = await contract.approve(dexAddress, amount);
+        document.getElementById('result').innerHTML = "✅ PYUSD Approval sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ PYUSD Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function addLiquidity() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Adding liquidity...";
+        
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        const zuzAddress = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        const pyusdAddress = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
+        
+        const zuzAmount = "500000000000000000000"; // 500 ZUZ
+        const pyusdAmount = "50000000"; // 50 PYUSD
+        
+        const abi = ["function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB)"];
+        const contract = new ethers.Contract(dexAddress, abi, signer);
+        
+        const tx = await contract.addLiquidity(zuzAddress, pyusdAddress, zuzAmount, pyusdAmount);
+        document.getElementById('result').innerHTML = "✅ Liquidity transaction sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "🎉 SUCCESS! Liquidity added to DEX!";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+</script>
+</body>
+</html>

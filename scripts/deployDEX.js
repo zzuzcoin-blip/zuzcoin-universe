@@ -5,7 +5,7 @@ async function main() {
   console.log("🚀 Deploying ZUZIM DEX to Sepolia...");
   
   // Настройки
-  const ZUZ_TOKEN = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+  const ZUZ_TOKEN = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
   const PHILANTHROPY_WALLET = "0x742d35Cc6634C0532925a3b844Bc9e768C4E33A0"; // Пример адреса
   
   // Получаем signer

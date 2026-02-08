@@ -1,0 +1,41 @@
+{
+  "contract_name": "ZUZCOIN",
+  "contract_address": "0x21b66A1160714119FC1f222EEcAb7e4C9cD15874",
+  "deployer_address": "0xF89CE65B635DA29be08c659e313D6C250750bC73",
+  "network": "sepolia",
+  "compiler_settings": {
+    "version": "0.8.19",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evm_version": "paris",
+    "via_ir": false
+  },
+  "source_files": [
+    "contracts/ZUZCOIN_HISTORICAL_FULL.sol"
+  ],
+  "license": "MIT",
+  "etherscan_url": "https://sepolia.etherscan.io/address/0x21b66A1160714119FC1f222EEcAb7e4C9cD15874#code",
+  "verification_steps": [
+    "1. Go to Etherscan URL above",
+    "2. Click 'Verify and Publish'",
+    "3. Select: Solidity (Single file)",
+    "4. Compiler Version: 0.8.19",
+    "5. Optimization: YES, 200 runs",
+    "6. License: MIT",
+    "7. Paste ENTIRE code from ZUZCOIN_HISTORICAL_FULL.sol",
+    "8. Constructor Arguments: LEAVE EMPTY"
+  ],
+  "project": "ZUZCOIN Universe",
+  "philosophy": "Talmudic Tzedakah - 1% auto-charity",
+  "ecosystem": [
+    "ZUZIM DEX (Ethical Trading)",
+    "ProofChain (Copyright Protection)",
+    "Digital Notary",
+    "Academy",
+    "The Giving Pledge Integration"
+  ],
+  "deployment_time": "2026-02-02T20:37:13.956Z",
+  "deployment_block": 10178197
+}

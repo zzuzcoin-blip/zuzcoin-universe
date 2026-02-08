@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ZUZCOIN {
+    string public constant name = "ZUZCOIN";
+    string public constant symbol = "ZUZ";
+    uint8 public constant decimals = 18;
+    uint256 public totalSupply;
+    
+    address public owner;
+    address public constant PHILANTHROPY_WALLET = 0x742d35Cc6634c0532925A3b844bC9e5F2A5dF2E3;
+    
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+    
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+    
+    constructor() {
+        owner = msg.sender;
+        totalSupply = 10000000 * 10**decimals;
+        balanceOf[msg.sender] = totalSupply;
+        emit Transfer(address(0), msg.sender, totalSupply);
+    }
+    
+    function transfer(address to, uint256 amount) public returns (bool) {
+        require(balanceOf[msg.sender] >= amount, "Insufficient balance");
+        
+        uint256 donation = amount / 100; // 1%
+        uint256 transferAmount = amount - donation;
+        
+        balanceOf[msg.sender] -= amount;
+        balanceOf[PHILANTHROPY_WALLET] += donation;
+        balanceOf[to] += transferAmount;
+        
+        emit Transfer(msg.sender, PHILANTHROPY_WALLET, donation);
+        emit Transfer(msg.sender, to, transferAmount);
+        
+        return true;
+    }
+    
+    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
+        require(balanceOf[from] >= amount, "Insufficient balance");
+        require(allowance[from][msg.sender] >= amount, "Allowance exceeded");
+        
+        uint256 donation = amount / 100; // 1%
+        uint256 transferAmount = amount - donation;
+        
+        balanceOf[from] -= amount;
+        allowance[from][msg.sender] -= amount;
+        balanceOf[PHILANTHROPY_WALLET] += donation;
+        balanceOf[to] += transferAmount;
+        
+        emit Transfer(from, PHILANTHROPY_WALLET, donation);
+        emit Transfer(from, to, transferAmount);
+        
+        return true;
+    }
+    
+    function approve(address spender, uint256 amount) public returns (bool) {
+        allowance[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+        return true;
+    }
+    
+    function mint(address to, uint256 amount) public onlyOwner {
+        totalSupply += amount;
+        balanceOf[to] += amount;
+        emit Transfer(address(0), to, amount);
+    }
+}

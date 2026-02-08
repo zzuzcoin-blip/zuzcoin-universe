@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Button Click</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { padding: 50px; background: #0e1a2d; color: white; font-family: Arial; }
+        button { 
+            background: #00c3ff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 20px;
+        }
+        .connected { background: #00d18c; }
+    </style>
+</head>
+<body>
+    <h1>Test: Does button work?</h1>
+    
+    <button id="connectWalletBtn">
+        <i class="fas fa-wallet"></i> Connect Wallet
+    </button>
+    
+    <script>
+    console.log("Test page loaded");
+    
+    // Простая функция для теста
+    function showWalletModal() {
+        console.log("Button clicked!");
+        alert("Button works! Modal would open here.");
+    }
+    
+    // Назначаем обработчик
+    const btn = document.getElementById('connectWalletBtn');
+    if (btn) {
+        btn.onclick = showWalletModal;
+        console.log("Button handler set");
+    } else {
+        console.error("Button not found!");
+    }
+    </script>
+</body>
+</html>

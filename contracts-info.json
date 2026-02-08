@@ -1,0 +1,15 @@
+{
+  "zuz_token": {
+    "address": "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+    "network": "Sepolia Testnet",
+    "explorer": "https://sepolia.etherscan.io/address/0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+    "type": "ERC-20",
+    "supply": "1000000 ZUZ",
+    "owner_wallet": "твой кошелёк"
+  },
+  "other_contracts_needed": {
+    "dex": "Нужно создать",
+    "token_factory": "Нужно создать",
+    "digital_notary": "Нужно создать"
+  }
+}

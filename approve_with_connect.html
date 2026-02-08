@@ -1,0 +1,125 @@
+<html>
+<body>
+<h2>Approve Tokens for DEX</h2>
+
+<button onclick="connectWallet()">🔗 Connect MetaMask First</button>
+<br><br>
+
+<button id="btn1" disabled onclick="approveZUZ()">1. Approve ZUZ</button><br>
+<button id="btn2" disabled onclick="approveUSDT()">2. Approve USDT</button><br>
+<button id="btn3" disabled onclick="addLiquidity()">3. Add Liquidity</button>
+
+<p id="result"></p>
+
+<script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+<script>
+let signer;
+
+async function connectWallet() {
+    if (!window.ethereum) {
+        alert("Install MetaMask!");
+        return;
+    }
+    
+    try {
+        // Запрашиваем подключение
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Создаем провайдер
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
+        
+        // Получаем адрес
+        const address = await signer.getAddress();
+        document.getElementById('result').innerHTML = "✅ Connected: " + address.substring(0, 10) + "...";
+        
+        // Включаем кнопки
+        document.getElementById('btn1').disabled = false;
+        document.getElementById('btn2').disabled = false;
+        document.getElementById('btn3').disabled = false;
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approveZUZ() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving ZUZ...";
+        
+        const contract = new ethers.Contract(
+            "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            ["function approve(address spender, uint256 amount) returns (bool)"],
+            signer
+        );
+        
+        const tx = await contract.approve(
+            "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            "1000000000000000000000"
+        );
+        
+        document.getElementById('result').innerHTML = "✅ ZUZ Approval sent! Hash: " + tx.hash;
+        
+        // Ждем подтверждения
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ ZUZ Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approveUSDT() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving USDT...";
+        
+        const contract = new ethers.Contract(
+            "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06",
+            ["function approve(address spender, uint256 amount) returns (bool)"],
+            signer
+        );
+        
+        const tx = await contract.approve(
+            "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            "500000000"
+        );
+        
+        document.getElementById('result').innerHTML = "✅ USDT Approval sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ USDT Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function addLiquidity() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Adding liquidity...";
+        
+        const contract = new ethers.Contract(
+            "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            ["function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB)"],
+            signer
+        );
+        
+        const tx = await contract.addLiquidity(
+            "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06",
+            "1000000000000000000000",
+            "500000000"
+        );
+        
+        document.getElementById('result').innerHTML = "✅ Liquidity transaction sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "🎉 SUCCESS! Liquidity added to DEX!";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+</script>
+</body>
+</html>

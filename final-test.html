@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FINAL ZUZ Balance Test</title>
+    <style>
+        body { font-family: Arial; background: #0f172a; color: white; padding: 20px; }
+        .test-result { 
+            padding: 20px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            background: #1e293b; 
+        }
+        .success { border-left: 5px solid #10B981; }
+        .fail { border-left: 5px solid #EF4444; }
+        button { 
+            background: #2d6df6; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            margin: 10px; 
+            cursor: pointer; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 FINAL ZUZ Balance Test</h1>
+    
+    <div class="test-result" id="test1">
+        <h3>Test 1: Проверка API</h3>
+        <div id="apiResult">Выполняется...</div>
+    </div>
+    
+    <div class="test-result" id="test2">
+        <h3>Test 2: Проверка контракта</h3>
+        <div id="contractResult">Выполняется...</div>
+    </div>
+    
+    <div class="test-result" id="test3">
+        <h3>Test 3: Ваш баланс ZUZ</h3>
+        <div id="balanceResult" style="font-size: 32px; color: #2d6df6;">Загрузка...</div>
+        <button onclick="checkMyBalance()">Проверить мой баланс</button>
+    </div>
+    
+    <div id="debugInfo"></div>
+    
+    <script>
+        const ZUZ_TOKEN_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        
+        // Test 1: API
+        fetch('/api/status')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('apiResult');
+                el.innerHTML = `<strong>✅ API работает!</strong><br>
+                    Status: ${data.status}<br>
+                    Contract: ${data.tokenContract}<br>
+                    Network: ${data.network}`;
+                document.getElementById('test1').classList.add('success');
+            })
+            .catch(err => {
+                document.getElementById('apiResult').textContent = '❌ API ошибка: ' + err.message;
+                document.getElementById('test1').classList.add('fail');
+            });
+        
+        // Test 2: Contract info
+        fetch('/api/token-info')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('contractResult');
+                const supply = (parseInt(data.totalSupply) / 1e18).toLocaleString();
+                el.innerHTML = `<strong>✅ Контракт найден!</strong><br>
+                    Name: ${data.name}<br>
+                    Symbol: ${data.symbol}<br>
+                    Total Supply: ${supply} ${data.symbol}<br>
+                    Address: ${data.address}`;
+                document.getElementById('test2').classList.add('success');
+            })
+            .catch(err => {
+                document.getElementById('contractResult').textContent = '❌ Ошибка контракта: ' + err.message;
+                document.getElementById('test2').classList.add('fail');
+            });
+        
+        // Test 3: User balance
+        async function checkMyBalance() {
+            if (typeof window.ethereum === 'undefined') {
+                document.getElementById('balanceResult').textContent = 'MetaMask не найден';
+                document.getElementById('test3').classList.add('fail');
+                return;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const address = accounts[0];
+                
+                const response = await fetch(`/api/balance/${address}`);
+                const data = await response.json();
+                
+                const formatted = parseFloat(data.formatted).toLocaleString();
+                document.getElementById('balanceResult').innerHTML = 
+                    `<strong>${formatted} ZUZ</strong>`;
+                
+                document.getElementById('debugInfo').innerHTML = `
+                    <div class="test-result success">
+                        <strong>🎉 УСПЕХ!</strong><br>
+                        Ваш реальный баланс: ${formatted} ZUZ<br>
+                        Адрес: ${address}<br>
+                        Контракт: ${data.tokenAddress}<br>
+                        <strong>Если видите 10,000,000 ZUZ - ВСЁ РАБОТАЕТ!</strong>
+                    </div>
+                `;
+                
+                document.getElementById('test3').classList.add('success');
+            } catch (error) {
+                document.getElementById('balanceResult').textContent = 'Ошибка: ' + error.message;
+                document.getElementById('test3').classList.add('fail');
+            }
+        }
+        
+        // Авто-проверка если MetaMask уже подключен
+        if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+            setTimeout(checkMyBalance, 1000);
+        }
+    </script>
+</body>
+</html>

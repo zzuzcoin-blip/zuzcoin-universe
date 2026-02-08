@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Логотип ZUZCOIN Base64</title>
+    <style>
+        body { background: #0e1a2d; color: white; padding: 20px; }
+        .logo-container { 
+            background: linear-gradient(135deg, #1a2b44, #0c1525); 
+            padding: 30px; 
+            border-radius: 15px;
+            margin: 20px;
+            text-align: center;
+        }
+        .logo-img { 
+            max-width: 300px; 
+            margin: 20px auto;
+            border: 3px solid #00c3ff;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Логотип ZUZCOIN (Base64 версия)</h1>
+    
+    <div class="logo-container">
+        <h2>Основной логотип:</h2>
+        <img id="zuzLogo" class="logo-img" alt="ZUZCOIN Logo">
+        <p>Этот логотип можно использовать в интерфейсе</p>
+    </div>
+    
+    <script>
+        // Base64 кодированное изображение логотипа ZUZCOIN
+        // Простая версия с текстом и стилем проекта
+        const svgLogo = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+            <defs>
+                <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0e1a2d"/>
+                    <stop offset="100%" stop-color="#1a2b44"/>
+                </linearGradient>
+                <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00c3ff"/>
+                    <stop offset="100%" stop-color="#0099cc"/>
+                </linearGradient>
+            </defs>
+            
+            <rect width="400" height="200" fill="url(#bgGrad)" rx="20"/>
+            
+            <!-- Монета/круг -->
+            <circle cx="100" cy="100" r="50" fill="url(#coinGrad)" stroke="#ffffff" stroke-width="3"/>
+            <text x="100" y="110" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="48" font-weight="bold">Z</text>
+            
+            <!-- Текст ZUZCOIN -->
+            <text x="220" y="90" fill="white" font-family="Arial, sans-serif" font-size="36" font-weight="bold">ZUZCOIN</text>
+            <text x="220" y="140" fill="#00d18c" font-family="Arial, sans-serif" font-size="24">CREATING FUTURE</text>
+            
+            <!-- Акцентные элементы -->
+            <circle cx="370" cy="30" r="8" fill="#00d18c"/>
+            <circle cx="30" cy="170" r="8" fill="#00c3ff"/>
+        </svg>
+        `;
+        
+        // Конвертируем SVG в base64
+        const base64Logo = 'data:image/svg+xml;base64,' + btoa(svgLogo);
+        document.getElementById('zuzLogo').src = base64Logo;
+        
+        // Также создаем файл для скачивания
+        console.log("✅ Логотип создан в формате SVG");
+        console.log("Размер: 400×200 пикселей");
+        console.log("Цвета: #00c3ff (акцент), #00d18c (зеленый), #0e1a2d (фон)");
+    </script>
+</body>
+</html>

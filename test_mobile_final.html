@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Layout Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0f172a;
+            color: white;
+        }
+        .test-block {
+            background: #1e293b;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid transparent;
+        }
+        .test-block.good {
+            border-color: #10b981;
+        }
+        .test-block.bad {
+            border-color: #ef4444;
+        }
+        @media (max-width: 768px) {
+            .test-block {
+                background: #334155;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>📱 Mobile Layout Test</h2>
+    
+    <div class="test-block good">
+        <h3>✅ Правильная мобильная адаптация:</h3>
+        <ul>
+            <li>Все элементы вертикально</li>
+            <li>Нет горизонтального скролла</li>
+            <li>Кнопки большие для пальцев</li>
+            <li>Веб-версия не меняется</li>
+        </ul>
+    </div>
+    
+    <div class="test-block">
+        <h3>🔄 Проверка:</h3>
+        <p>1. Откройте DevTools (F12)</p>
+        <p>2. Включите мобильный режим (Ctrl+Shift+M)</p>
+        <p>3. Выберите iPhone SE (375px)</p>
+        <p>4. Проверьте нет ли горизонтального скролла</p>
+    </div>
+    
+    <a href="/" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 20px;">
+        ← Проверить ZUZIM Universe
+    </a>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZ Balance Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; background: #0f172a; color: white; padding: 20px; }
+        .balance { font-size: 48px; color: #2d6df6; margin: 20px 0; }
+        .address { font-family: monospace; background: #1e293b; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 ZUZ Balance Test</h1>
+    
+    <div>
+        <button id="connectBtn">Подключить MetaMask</button>
+        <button id="checkBtn">Проверить баланс</button>
+    </div>
+    
+    <div class="balance" id="balanceDisplay">0 ZUZ</div>
+    
+    <div class="address">
+        <strong>Текущий адрес контракта:</strong><br>
+        <span id="contractAddress">Загрузка...</span>
+    </div>
+    
+    <div id="debugInfo" style="margin-top: 20px; color: #94a3b8;"></div>
+    
+    <script>
+        // НОВЫЙ адрес контракта
+        const ZUZ_TOKEN_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        
+        document.getElementById('contractAddress').textContent = ZUZ_TOKEN_ADDRESS;
+        
+        async function checkRealBalance() {
+            try {
+                const response = await fetch('/api/token-info');
+                const tokenInfo = await response.json();
+                
+                document.getElementById('debugInfo').innerHTML = `
+                    <strong>API Response:</strong><br>
+                    Name: ${tokenInfo.name}<br>
+                    Symbol: ${tokenInfo.symbol}<br>
+                    Address: ${tokenInfo.address}<br>
+                    Total Supply: ${(parseInt(tokenInfo.totalSupply) / 1e18).toLocaleString()} ${tokenInfo.symbol}
+                `;
+                
+                if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                    const address = window.ethereum.selectedAddress;
+                    const balanceResponse = await fetch(`/api/balance/${address}`);
+                    const balanceData = await balanceResponse.json();
+                    
+                    document.getElementById('balanceDisplay').textContent = 
+                        `${parseFloat(balanceData.formatted).toLocaleString()} ZUZ`;
+                }
+            } catch (error) {
+                document.getElementById('debugInfo').textContent = 'Ошибка: ' + error.message;
+            }
+        }
+        
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    alert('Подключено: ' + accounts[0]);
+                    checkRealBalance();
+                } catch (error) {
+                    alert('Ошибка подключения: ' + error.message);
+                }
+            } else {
+                alert('MetaMask не найден!');
+            }
+        });
+        
+        document.getElementById('checkBtn').addEventListener('click', checkRealBalance);
+        
+        // Автоматическая проверка при загрузке
+        checkRealBalance();
+    </script>
+</body>
+</html>

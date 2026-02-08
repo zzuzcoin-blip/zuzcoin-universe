@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Liquidity to ZUZIM DEX</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        button { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #45a049; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .success { color: green; }
+        .error { color: red; }
+        .step { margin: 15px 0; }
+        .step-number { background: #4CAF50; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Add Liquidity to ZUZIM DEX</h1>
+    
+    <div class="section">
+        <h3>Wallet Status</h3>
+        <button onclick="connectWallet()">Connect MetaMask</button>
+        <p id="walletStatus">Not connected</p>
+        <p id="balances">-</p>
+    </div>
+    
+    <div class="section">
+        <h3>Step-by-Step Liquidity Addition</h3>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <span>Approve ZUZ Tokens</span>
+            <button onclick="approveZUZ()" id="approveZUZBtn" disabled>Approve 1000 ZUZ</button>
+            <span id="zuzApprovalStatus"></span>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <span>Approve USDT Tokens</span>
+            <button onclick="approveUSDT()" id="approveUSDTBtn" disabled>Approve 500 USDT</button>
+            <span id="usdtApprovalStatus"></span>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">3</div>
+            <span>Add Liquidity to DEX</span>
+            <button onclick="addLiquidity()" id="addLiquidityBtn" disabled>Add Liquidity (1000 ZUZ + 500 USDT)</button>
+            <span id="liquidityStatus"></span>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">4</div>
+            <span>Verify Liquidity</span>
+            <button onclick="verifyLiquidity()">Check Reserves</button>
+            <span id="verifyStatus"></span>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h3>Transaction History</h3>
+        <div id="txHistory"></div>
+    </div>
+
+    <script>
+        // Контрактные адреса
+        const CONTRACTS = {
+            DEX: "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            ZUZ: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            USDT: "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06"
+        };
+        
+        // ABI
+        const ERC20_ABI = [
+            "function approve(address spender, uint256 amount) external returns (bool)",
+            "function balanceOf(address account) external view returns (uint256)",
+            "function decimals() external view returns (uint8)",
+            "function allowance(address owner, address spender) external view returns (uint256)"
+        ];
+        
+        const DEX_ABI = [
+            "function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external",
+            "function getReserves(address tokenA, address tokenB) external view returns (uint256 reserveA, uint256 reserveB)"
+        ];
+        
+        // Amounts
+        const ZUZ_AMOUNT = "1000000000000000000000"; // 1000 ZUZ (18 decimals)
+        const USDT_AMOUNT = "500000000"; // 500 USDT (6 decimals)
+        
+        let provider, signer, userAddress;
+        let zuzContract, usdtContract, dexContract;
+        
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert("Install MetaMask!");
+                return;
+            }
+            
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                // Initialize contracts
+                zuzContract = new ethers.Contract(CONTRACTS.ZUZ, ERC20_ABI, signer);
+                usdtContract = new ethers.Contract(CONTRACTS.USDT, ERC20_ABI, signer);
+                dexContract = new ethers.Contract(CONTRACTS.DEX, DEX_ABI, signer);
+                
+                // Update UI
+                document.getElementById('walletStatus').innerHTML = 
+                    `<span class="success">✅ Connected: ${userAddress.substring(0, 10)}...</span>`;
+                
+                // Enable buttons
+                document.getElementById('approveZUZBtn').disabled = false;
+                document.getElementById('approveUSDTBtn').disabled = false;
+                
+                // Load balances
+                await loadBalances();
+                
+            } catch (error) {
+                document.getElementById('walletStatus').innerHTML = 
+                    `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function loadBalances() {
+            try {
+                // Get ZUZ balance
+                const zuzBalance = await zuzContract.balanceOf(userAddress);
+                const zuzDecimals = await zuzContract.decimals();
+                const zuzFormatted = ethers.formatUnits(zuzBalance, zuzDecimals);
+                
+                // Get USDT balance
+                const usdtBalance = await usdtContract.balanceOf(userAddress);
+                const usdtDecimals = await usdtContract.decimals();
+                const usdtFormatted = ethers.formatUnits(usdtBalance, usdtDecimals);
+                
+                // Get ETH balance
+                const ethBalance = await provider.getBalance(userAddress);
+                const ethFormatted = ethers.formatEther(ethBalance);
+                
+                document.getElementById('balances').innerHTML = `
+                    ETH: ${parseFloat(ethFormatted).toFixed(4)}<br>
+                    ZUZ: ${parseFloat(zuzFormatted).toLocaleString()}<br>
+                    USDT: ${parseFloat(usdtFormatted).toLocaleString()}
+                `;
+                
+                // Check if we have enough tokens
+                if (parseFloat(zuzFormatted) < 1000) {
+                    document.getElementById('zuzApprovalStatus').innerHTML = 
+                        `<span class="error">❌ Need at least 1000 ZUZ</span>`;
+                    document.getElementById('approveZUZBtn').disabled = true;
+                }
+                
+                if (parseFloat(usdtFormatted) < 500) {
+                    document.getElementById('usdtApprovalStatus').innerHTML = 
+                        `<span class="error">❌ Need at least 500 USDT</span>`;
+                    document.getElementById('approveUSDTBtn').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error("Error loading balances:", error);
+            }
+        }
+        
+        async function approveZUZ() {
+            try {
+                document.getElementById('zuzApprovalStatus').innerHTML = "⏳ Approving...";
+                
+                const tx = await zuzContract.approve(CONTRACTS.DEX, ZUZ_AMOUNT);
+                addToHistory(`ZUZ Approval sent: ${tx.hash}`);
+                
+                document.getElementById('zuzApprovalStatus').innerHTML = 
+                    `⏳ Waiting for confirmation...`;
+                
+                await tx.wait();
+                
+                document.getElementById('zuzApprovalStatus').innerHTML = 
+                    `<span class="success">✅ ZUZ approved!</span>`;
+                
+                // Check if USDT also approved
+                const usdtAllowance = await usdtContract.allowance(userAddress, CONTRACTS.DEX);
+                if (usdtAllowance >= BigInt(USDT_AMOUNT)) {
+                    document.getElementById('addLiquidityBtn').disabled = false;
+                }
+                
+            } catch (error) {
+                document.getElementById('zuzApprovalStatus').innerHTML = 
+                    `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function approveUSDT() {
+            try {
+                document.getElementById('usdtApprovalStatus').innerHTML = "⏳ Approving...";
+                
+                const tx = await usdtContract.approve(CONTRACTS.DEX, USDT_AMOUNT);
+                addToHistory(`USDT Approval sent: ${tx.hash}`);
+                
+                document.getElementById('usdtApprovalStatus').innerHTML = 
+                    `⏳ Waiting for confirmation...`;
+                
+                await tx.wait();
+                
+                document.getElementById('usdtApprovalStatus').innerHTML = 
+                    `<span class="success">✅ USDT approved!</span>`;
+                
+                // Check if ZUZ also approved
+                const zuzAllowance = await zuzContract.allowance(userAddress, CONTRACTS.DEX);
+                if (zuzAllowance >= BigInt(ZUZ_AMOUNT)) {
+                    document.getElementById('addLiquidityBtn').disabled = false;
+                }
+                
+            } catch (error) {
+                document.getElementById('usdtApprovalStatus').innerHTML = 
+                    `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function addLiquidity() {
+            try {
+                document.getElementById('liquidityStatus').innerHTML = "⏳ Adding liquidity...";
+                
+                const tx = await dexContract.addLiquidity(
+                    CONTRACTS.ZUZ,
+                    CONTRACTS.USDT,
+                    ZUZ_AMOUNT,
+                    USDT_AMOUNT
+                );
+                
+                addToHistory(`Add Liquidity sent: ${tx.hash}`);
+                
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `⏳ Transaction: ${tx.hash.substring(0, 20)}...`;
+                
+                await tx.wait();
+                
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `<span class="success">✅ Liquidity added successfully!</span>`;
+                
+                // Refresh balances
+                await loadBalances();
+                
+            } catch (error) {
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function verifyLiquidity() {
+            try {
+                document.getElementById('verifyStatus').innerHTML = "⏳ Checking...";
+                
+                const reserves = await dexContract.getReserves(CONTRACTS.ZUZ, CONTRACTS.USDT);
+                
+                const zuzReserve = ethers.formatUnits(reserves[0], 18);
+                const usdtReserve = ethers.formatUnits(reserves[1], 6);
+                
+                document.getElementById('verifyStatus').innerHTML = `
+                    <span class="success">
+                        ✅ Reserves:<br>
+                        ZUZ: ${zuzReserve}<br>
+                        USDT: ${usdtReserve}
+                    </span>
+                `;
+                
+            } catch (error) {
+                document.getElementById('verifyStatus').innerHTML = 
+                    `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        function addToHistory(message) {
+            const history = document.getElementById('txHistory');
+            const entry = document.createElement('div');
+            entry.style.margin = '5px 0';
+            entry.style.padding = '5px';
+            entry.style.background = '#f5f5f5';
+            entry.style.borderRadius = '5px';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            history.prepend(entry);
+        }
+        
+        // Auto-connect if already connected
+        window.addEventListener('load', () => {
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                connectWallet();
+            }
+        });
+    </script>
+</body>
+</html>

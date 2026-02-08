@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZIM Universe - Test Phase 5</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #0a0b0d; color: white; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .btn { background: #2d6df6; color: white; border: none; padding: 12px 24px; 
+               margin: 10px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        .result { background: #1a1d28; padding: 15px; border-radius: 8px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔰 ZUZIM Universe - Phase 5 Test</h1>
+        <p>Проверка функционала кнопок и API</p>
+        
+        <button class="btn" onclick="testAPI()">✅ Проверить API</button>
+        <button class="btn" onclick="testDEX()">🔄 Тест DEX</button>
+        <button class="btn" onclick="testWallets()">👛 Тест кошельков</button>
+        
+        <div id="result" class="result">Результаты появятся здесь...</div>
+        
+        <h3>🔗 Полезные ссылки:</h3>
+        <ul>
+            <li><a href="/" style="color: #2d6df6;">Главный интерфейс</a></li>
+            <li><a href="/api/status" style="color: #2d6df6;">Статус API</a></li>
+            <li><a href="/api/data" style="color: #2d6df6;">Данные системы</a></li>
+        </ul>
+    </div>
+    
+    <script>
+    async function testAPI() {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('result').innerHTML = 
+            `<h4>✅ API работает:</h4><pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+    
+    async function testDEX() {
+        const res = await fetch('/api/dex/swap', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                from: 'ZUZ',
+                to: 'ETH',
+                amount: '100',
+                wallet: 'test_wallet_0x123'
+            })
+        });
+        const data = await res.json();
+        document.getElementById('result').innerHTML = 
+            `<h4>✅ DEX тест:</h4>
+             <p>ID транзакции: ${data.tx.id}</p>
+             <p>Филантропия: ${data.tx.charity} ZUZ</p>
+             <p>Сообщение: ${data.message}</p>`;
+    }
+    
+    function testWallets() {
+        document.getElementById('result').innerHTML = 
+            `<h4>👛 Поддерживаемые кошельки:</h4>
+             <ul>
+                <li>🦊 MetaMask</li>
+                <li>🔗 WalletConnect</li>
+                <li>🏦 Coinbase Wallet</li>
+                <li>👻 Phantom</li>
+                <li>🛡️ Trust Wallet</li>
+             </ul>
+             <p>Откройте главный интерфейс и нажмите "ZUZIM DEX" для выбора кошелька</p>`;
+    }
+    </script>
+</body>
+</html>

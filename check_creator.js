@@ -1,6 +1,6 @@
 const ethers = require('ethers');
 
-const CONTRACT_ADDRESS = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+const CONTRACT_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
 const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/demo";
 
 const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
@@ -15,7 +15,7 @@ async function checkCreator() {
         // Альтернативно: проверим несколько вероятных адресов
         console.log("=".repeat(50));
         console.log("ПРОВЕРЬТЕ ВРУЧНУЮ НА ETHERSCAN:");
-        console.log("1. Откройте: https://sepolia.etherscan.io/address/0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31");
+        console.log("1. Откройте: https://sepolia.etherscan.io/address/0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3");
         console.log("2. Нажмите вкладку 'Contract'");
         console.log("3. Нажмите 'Read Contract'");
         console.log("4. Найдите функцию 'balanceOf'");

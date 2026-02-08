@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Logo 2</title>
+</head>
+<body>
+    <h1>Тест с разными путями</h1>
+    
+    <div style="margin: 10px; padding: 10px; border: 1px solid black;">
+        <h3>Тест 1: ZUZCOIN.png</h3>
+        <img src="ZUZCOIN.png" alt="Test 1" style="width: 50px; height: 50px; background: yellow;">
+    </div>
+    
+    <div style="margin: 10px; padding: 10px; border: 1px solid black;">
+        <h3>Тест 2: logo_test.png (копия)</h3>
+        <img src="logo_test.png" alt="Test 2" style="width: 50px; height: 50px; background: lightblue;">
+    </div>
+    
+    <div style="margin: 10px; padding: 10px; border: 1px solid black;">
+        <h3>Тест 3: Абсолютный путь</h3>
+        <div id="absPathTest">Загрузка...</div>
+    </div>
+    
+    <script>
+        console.log("Starting logo tests...");
+        
+        // Тест с абсолютным путем
+        fetch('ZUZCOIN.png')
+            .then(response => {
+                console.log("Response status:", response.status);
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error('HTTP ' + response.status);
+            })
+            .then(blob => {
+                console.log("File loaded, size:", blob.size, "bytes");
+                const url = URL.createObjectURL(blob);
+                document.getElementById('absPathTest').innerHTML = 
+                    `<img src="${url}" alt="Loaded" style="width: 50px; height: 50px;">`;
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                document.getElementById('absPathTest').innerHTML = 
+                    '❌ Ошибка: ' + error.message;
+            });
+    </script>
+</body>
+</html>

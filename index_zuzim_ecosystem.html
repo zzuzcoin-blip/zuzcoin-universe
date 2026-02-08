@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUZIM Universe | Blockchain Philanthropy Ecosystem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0e1a2d;
+            --secondary: #1a2b44;
+            --accent: #00c3ff;
+            --positive: #00d18c;
+            --negative: #ff4d4d;
+            --text: #ffffff;
+            --text-secondary: #8a9bb2;
+            --border: #2a3b54;
+            --card-bg: rgba(20, 30, 48, 0.9);
+            --talmud-gold: #d4af37;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, #0c1525 100%);
+            color: var(--text);
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--talmud-gold);
+            font-size: 28px;
+        }
+        
+        .logo-text {
+            background: linear-gradient(45deg, var(--talmud-gold), #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav a:hover, .nav a.active {
+            background: var(--secondary);
+            color: var(--text);
+        }
+        
+        /* Wallet section */
+        .wallet-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .balance-container {
+            display: flex;
+            gap: 15px;
+            background: var(--secondary);
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .balance-item {
+            text-align: center;
+        }
+        
+        .balance-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .balance-value {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .balance-value.eth { color: #627eea; }
+        .balance-value.zuz { color: var(--talmud-gold); }
+        .balance-value.pyusd { color: #00a3ff; }
+        
+        .connect-btn, .disconnect-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .disconnect-btn { background: var(--negative); display: none; }
+        .connected-address { 
+            background: var(--positive); 
+            color: white; 
+            padding: 8px 15px; 
+            border-radius: 10px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            display: none; 
+        }
+        
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border: 2px solid var(--talmud-gold);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--talmud-gold);
+        }
+        
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        
+        /* Ecosystem Grid */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .ecosystem-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .ecosystem-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--talmud-gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+        
+        .ecosystem-icon {
+            font-size: 48px;
+            color: var(--talmud-gold);
+            margin-bottom: 20px;
+        }
+        
+        .ecosystem-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .ecosystem-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .status-badge {
+            background: var(--positive);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        /* DEX Section */
+        .dex-section {
+            background: var(--card-bg);
+            border: 2px solid var(--positive);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .dex-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .dex-title {
+            font-size: 24px;
+            color: var(--positive);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .dex-stats {
+            display: flex;
+            gap: 30px;
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--positive);
+        }
+        
+        /* Talmudic Wisdom */
+        .talmud-section {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(20, 30, 48, 0.9));
+            border: 1px solid var(--talmud-gold);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .talmud-quote {
+            font-size: 18px;
+            font-style: italic;
+            color: var(--talmud-gold);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .talmud-source {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--primary);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+        }
+        
+        /* Mobile */
+        @media (max-width: 1100px) {
+            .ecosystem-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .wallet-section {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .balance-container {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .ecosystem-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dex-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero-title {
+                font-size: 24px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-star-of-david"></i>
+                <div>
+                    <div class="logo-text">ZUZIM UNIVERSE</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Blockchain Philanthropy Ecosystem</div>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+                <a href="#dex"><i class="fas fa-exchange-alt"></i> ZUZIM DEX</a>
+                <a href="#proofchain"><i class="fas fa-link"></i> ProofChain</a>
+                <a href="#token-factory"><i class="fas fa-industry"></i> Token Factory</a>
+                <a href="#notary"><i class="fas fa-file-contract"></i> Digital Notary</a>
+                <a href="#philanthropy"><i class="fas fa-hand-holding-heart"></i> Philanthropy</a>
+            </nav>
+            
+            <div class="wallet-section">
+                <div class="balance-container" id="balanceContainer">
+                    <div class="balance-item">
+                        <div class="balance-label">ETH</div>
+                        <div class="balance-value eth" id="ethBalance">0.00</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">ZUZ</div>
+                        <div class="balance-value zuz" id="zuzBalance">0</div>
+                    </div>
+                    <div class="balance-item">
+                        <div class="balance-label">PYUSD</div>
+                        <div class="balance-value pyusd" id="pyusdBalance">0</div>
+                    </div>
+                </div>
+                
+                <div class="connected-address" id="connectedAddress">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="walletAddress"></span>
+                </div>
+                
+                <button class="connect-btn" id="connectBtn">
+                    <i class="fas fa-wallet"></i>
+                    <span>Connect Wallet</span>
+                </button>
+                
+                <button class="disconnect-btn" id="disconnectBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Disconnect</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <h1 class="hero-title">Ancient Wisdom. Modern Technology.</h1>
+            <p class="hero-subtitle">
+                ZUZIM Universe integrates Talmudic principles of Tzedakah (charity) with blockchain technology. 
+                Every transaction automatically contributes 1% to philanthropy, creating sustainable impact through automated, transparent giving.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <button onclick="showDemo()" style="background: var(--talmud-gold); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-play-circle"></i> Watch Demo
+                </button>
+                <button onclick="openDex()" style="background: var(--positive); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-exchange-alt"></i> Start Trading
+                </button>
+            </div>
+        </div>
+
+        <!-- Ecosystem Grid -->
+        <div class="ecosystem-grid">
+            <div class="ecosystem-card" onclick="openDex()">
+                <div class="ecosystem-icon"><i class="fas fa-exchange-alt"></i></div>
+                <h3>ZUZIM DEX</h3>
+                <p>Decentralized exchange with Talmudic trading rules. Every transaction includes 1% automatic donation to charity.</p>
+                <div class="status-badge">LIVE</div>
+            </div>
+            
+            <div class="ecosystem-card" onclick="openProofChain()">
+                <div class="ecosystem-icon"><i class="fas fa-link"></i></div>
+                <h3>ProofChain 7777</h3>
+                <p>Dedicated blockchain network for digital notary services, coin creation, and immutable record keeping.</p>
+                <div class="status-badge">ACTIVE</div>
+            </div>
+            
+            <div class="ecosystem-card" onclick="openTokenFactory()">
+                <div class="ecosystem-icon"><i class="fas fa-industry"></i></div>
+                <h3>Token Factory</h3>
+                <p>Create your own cryptocurrencies with built-in charity mechanisms. 500 ZUZ to deploy, automatic DEX listing.</p>
+                <div class="status-badge">READY</div>
+            </div>
+            
+            <div class="ecosystem-card" onclick="openDigitalNotary()">
+                <div class="ecosystem-icon"><i class="fas fa-file-contract"></i></div>
+                <h3>Digital Notary</h3>
+                <p>Secure document timestamping and copyright protection on blockchain. 100 ZUZ per document.</p>
+                <div class="status-badge">OPERATIONAL</div>
+            </div>
+            
+            <div class="ecosystem-card" onclick="openPhilanthropy()">
+                <div class="ecosystem-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                <h3>Philanthropy Dashboard</h3>
+                <p>Track every donation in real-time. Transparent impact reporting and NFT certificates of contribution.</p>
+                <div class="status-badge">LIVE</div>
+            </div>
+            
+            <div class="ecosystem-card" onclick="openAcademy()">
+                <div class="ecosystem-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Talmudic Academy</h3>
+                <p>Learn about the ethical foundations: Tzedakah, business ethics, and social responsibility in Jewish wisdom.</p>
+                <div class="status-badge">COMING SOON</div>
+            </div>
+        </div>
+
+        <!-- DEX Section -->
+        <div class="dex-section" id="dex">
+            <div class="dex-header">
+                <div class="dex-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    ZUZIM DEX - Real Trading with 1% Auto-Donation
+                </div>
+                <button onclick="openDexTrading()" style="background: var(--positive); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-chart-line"></i> Trade Now
+                </button>
+            </div>
+            
+            <div class="dex-stats">
+                <div class="stat-item">
+                    <div class="stat-label">ZUZ/PYUSD Price</div>
+                    <div class="stat-value" id="currentPrice">0.0110</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">24h Volume</div>
+                    <div class="stat-value" id="dailyVolume">$1,250</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Charity</div>
+                    <div class="stat-value" id="totalCharity">$12.50</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Active Traders</div>
+                    <div class="stat-value" id="activeTraders">47</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i>
+                    Every trade automatically donates 1% to charity. Transparent, automated, sustainable philanthropy.
+                </p>
+            </div>
+        </div>
+
+        <!-- Talmudic Wisdom -->
+        <div class="talmud-section">
+            <div class="talmud-quote">
+                "Who is rich? He who is happy with his portion. But greater than this is he who ensures others have a portion to be happy with."
+            </div>
+            <div class="talmud-source">- Talmudic Wisdom on Wealth and Charity</div>
+            <div style="margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
+                ZUZ was an ancient Jewish coin mentioned in Talmudic discussions about Tzedakah, business ethics, and social responsibility.
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="logo" style="justify-content: center; margin-bottom: 20px;">
+                <i class="fas fa-star-of-david"></i>
+                <div style="text-align: center;">
+                    <div class="logo-text">ZUZIM UNIVERSE</div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Blockchain Philanthropy Ecosystem</div>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <a href="#" class="footer-link">Whitepaper</a>
+                <a href="#" class="footer-link">API Documentation</a>
+                <a href="#" class="footer-link">Smart Contracts</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">GitHub</a>
+            </div>
+            
+            <div class="copyright">
+                © 2024 ZUZIM Universe. Integrating Talmudic wisdom with blockchain technology for automated philanthropy.
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div class="modal" id="walletModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; text-align: center;">Connect Wallet</h3>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+                Choose your wallet to access the ZUZIM Universe
+            </p>
+            
+            <div style="margin-bottom: 20px;">
+                <button onclick="connectMetaMask()" style="width: 100%; padding: 15px; background: var(--secondary); border: none; border-radius: 10px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <i class="fab fa-ethereum" style="font-size: 24px; color: var(--accent);"></i>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 600;">MetaMask</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Browser extension</div>
+                    </div>
+                </button>
+                
+                <button onclick="connectWalletConnect()" style="width: 100%; padding: 15px; background: var(--secondary); border: none; border-radius: 10px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <i class="fas fa-qrcode" style="font-size: 24px; color: var(--accent);"></i>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 600;">WalletConnect</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Mobile wallets</div>
+                    </div>
+                </button>
+            </div>
+            
+            <button onclick="closeWalletModal()" style="width: 100%; padding: 12px; background: var(--secondary); border: none; border-radius: 10px; color: var(--text); cursor: pointer;">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    
+    <script>
+        // Configuration
+        const CONFIG = {
+            ZUZ_TOKEN: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            PYUSD_TOKEN: "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9",
+            DEX_CONTRACT: "0x09970975aa48c718e17db4a18128ebf6806e1f2c"
+        };
+        
+        let provider, signer, userAddress;
+        
+        // Navigation Functions
+        function openDex() {
+            window.location.href = "dex.html";
+        }
+        
+        function openProofChain() {
+            alert("ProofChain 7777 interface coming soon!");
+        }
+        
+        function openTokenFactory() {
+            alert("Token Factory interface coming soon!");
+        }
+        
+        function openDigitalNotary() {
+            alert("Digital Notary interface coming soon!");
+        }
+        
+        function openPhilanthropy() {
+            alert("Philanthropy Dashboard coming soon!");
+        }
+        
+        function openAcademy() {
+            alert("Talmudic Academy coming soon!");
+        }
+        
+        function openDexTrading() {
+            window.location.href = "dex_trading.html";
+        }
+        
+        function showDemo() {
+            alert("Platform demonstration video would play here");
+        }
+        
+        // Wallet Modal
+        function showWalletModal() {
+            document.getElementById('walletModal').style.display = 'flex';
+        }
+        
+        function closeWalletModal() {
+            document.getElementById('walletModal').style.display = 'none';
+        }
+        
+        // Connect MetaMask
+        async function connectMetaMask() {
+            closeWalletModal();
+            await connectWallet();
+        }
+        
+        async function connectWalletConnect() {
+            closeWalletModal();
+            alert("WalletConnect integration coming soon!");
+        }
+        
+        // Main Connect Function
+        async function connectWallet() {
+            try {
+                document.getElementById('connectBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                document.getElementById('connectBtn').disabled = true;
+                
+                if (typeof window.ethereum === 'undefined') {
+                    throw new Error('Please install MetaMask!');
+                }
+                
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                // Update UI
+                document.getElementById('connectBtn').style.display = 'none';
+                document.getElementById('disconnectBtn').style.display = 'flex';
+                document.getElementById('connectedAddress').style.display = 'flex';
+                document.getElementById('balanceContainer').style.display = 'flex';
+                
+                document.getElementById('walletAddress').textContent = 
+                    userAddress.substring(0, 6) + '...' + userAddress.substring(38);
+                
+                await loadBalances();
+                
+            } catch (error) {
+                console.error("Connection error:", error);
+                alert("Connection failed: " + error.message);
+                resetConnectButton();
+            }
+        }
+        
+        // Disconnect Wallet
+        function disconnectWallet() {
+            provider = null;
+            signer = null;
+            userAddress = null;
+            
+            document.getElementById('connectBtn').style.display = 'flex';
+            document.getElementById('disconnectBtn').style.display = 'none';
+            document.getElementById('connectedAddress').style.display = 'none';
+            document.getElementById('balanceContainer').style.display = 'none';
+            
+            resetConnectButton();
+        }
+        
+        function resetConnectButton() {
+            document.getElementById('connectBtn').innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+            document.getElementById('connectBtn').disabled = false;
+        }
+        
+        // Load Balances
+        async function loadBalances() {
+            try {
+                // ETH Balance
+                const ethBalance = await provider.getBalance(userAddress);
+                document.getElementById('ethBalance').textContent = 
+                    parseFloat(ethers.utils.formatEther(ethBalance)).toFixed(4);
+                
+                // ZUZ Balance
+                const zuzContract = new ethers.Contract(CONFIG.ZUZ_TOKEN, ["function balanceOf(address) view returns (uint256)"], provider);
+                const zuzBalance = await zuzContract.balanceOf(userAddress);
+                document.getElementById('zuzBalance').textContent = 
+                    parseFloat(ethers.utils.formatUnits(zuzBalance, 18)).toLocaleString();
+                
+                // PYUSD Balance
+                const pyusdContract = new ethers.Contract(CONFIG.PYUSD_TOKEN, ["function balanceOf(address) view returns (uint256)"], provider);
+                const pyusdBalance = await pyusdContract.balanceOf(userAddress);
+                document.getElementById('pyusdBalance').textContent = 
+                    parseFloat(ethers.utils.formatUnits(pyusdBalance, 6)).toFixed(2);
+                
+            } catch (error) {
+                console.error("Balance error:", error);
+            }
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            document.getElementById('connectBtn').onclick = showWalletModal;
+            document.getElementById('disconnectBtn').onclick = disconnectWallet;
+            
+            // Auto-connect if MetaMask already connected
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                setTimeout(() => connectWallet(), 1000);
+            }
+            
+            // Close modal on outside click
+            document.getElementById('walletModal').addEventListener('click', function(e) {
+                if (e.target === this) closeWalletModal();
+            });
+        });
+    </script>
+</body>
+</html>

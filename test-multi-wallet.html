@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Multi-Wallet Connection</title>
+    <style>
+        body { background: #0a0a0a; color: white; padding: 50px; text-align: center; }
+        .wallet-options { display: flex; flex-direction: column; gap: 15px; max-width: 300px; margin: 30px auto; }
+        .wallet-btn { 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: none; 
+            font-size: 16px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .metamask { background: #F6851B; color: white; }
+        .walletconnect { background: #3B99FC; color: white; }
+        .coinbase { background: #0052FF; color: white; }
+        .wallet-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        #result { margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🔗 Test Multi-Wallet Connection</h1>
+    <p>Select a wallet to connect:</p>
+    
+    <div class="wallet-options">
+        <button class="wallet-btn metamask" onclick="connectMetaMask()">
+            🦊 MetaMask
+        </button>
+        <button class="wallet-btn walletconnect" onclick="connectWalletConnect()">
+            🔗 WalletConnect
+        </button>
+        <button class="wallet-btn coinbase" onclick="connectCoinbase()">
+            ⚡ Coinbase Wallet
+        </button>
+    </div>
+    
+    <div id="result">
+        <p>Status: <span id="status">Not connected</span></p>
+        <p>Address: <span id="address">-</span></p>
+        <p>Balance: <span id="balance">-</span></p>
+        <p>ZUZ Balance: <span id="zuzBalance">-</span></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script>
+    let provider = null;
+    let signer = null;
+    let account = null;
+    
+    // MetaMask
+    async function connectMetaMask() {
+        if (typeof window.ethereum === 'undefined') {
+            alert('Please install MetaMask!');
+            return;
+        }
+        
+        try {
+            // Это вызовет всплывающее окно MetaMask!
+            const accounts = await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+            
+            if (accounts.length > 0) {
+                account = accounts[0];
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                updateUI();
+                updateBalances();
+                alert('✅ MetaMask connected!');
+            }
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+        }
+    }
+    
+    // WalletConnect (симуляция)
+    async function connectWalletConnect() {
+        alert('WalletConnect would open QR code modal\n(needs WalletConnect library)');
+    }
+    
+    // Coinbase Wallet (симуляция)
+    async function connectCoinbase() {
+        alert('Coinbase Wallet would open connection\n(needs Coinbase SDK)');
+    }
+    
+    async function updateBalances() {
+        if (!provider || !account) return;
+        
+        try {
+            // ETH баланс
+            const ethBalance = await provider.getBalance(account);
+            document.getElementById('balance').textContent = 
+                ethers.formatEther(ethBalance) + ' ETH';
+            
+            // ZUZ баланс (реальный контракт!)
+            const zuzAddress = '0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3';
+            const zuzABI = ['function balanceOf(address) view returns (uint256)'];
+            const zuzContract = new ethers.Contract(zuzAddress, zuzABI, provider);
+            
+            const zuzBalance = await zuzContract.balanceOf(account);
+            document.getElementById('zuzBalance').textContent = 
+                ethers.formatUnits(zuzBalance, 18) + ' ZUZ';
+            
+        } catch (error) {
+            console.error('Balance error:', error);
+        }
+    }
+    
+    function updateUI() {
+        document.getElementById('status').textContent = 'Connected';
+        document.getElementById('address').textContent = 
+            account.substring(0, 6) + '...' + account.substring(38);
+    }
+    </script>
+</body>
+</html>

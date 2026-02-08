@@ -1,0 +1,4 @@
+Адрес TokenFactory: 0xf72E8c17cf782A8a664792e2634C7eA7e8DBBC89
+Etherscan: https://sepolia.etherscan.io/address/0xf72E8c17cf782A8a664792e2634C7eA7e8DBBC89
+Deployer: 0xF89CE65B635DA29be08c659e313D6C250750bC73
+Timestamp: 2026-02-02T17:37:16.438Z

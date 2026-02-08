@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тест нашего логотипа</title>
+    <style>
+        body { background: #0e1a2d; color: white; font-family: Arial; padding: 20px; }
+        .test-area { margin: 20px 0; padding: 20px; background: #1a2b44; border-radius: 10px; }
+        .logo-preview { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+        .logo-item { text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>Тест логотипов ZUZCOIN</h1>
+    
+    <div class="test-area">
+        <h2>Base64 SVG логотип (рекомендуется):</h2>
+        <div class="logo-preview">
+            <div class="logo-item">
+                <h3>Большой (300px)</h3>
+                <img id="logoLarge" style="width:300px;">
+            </div>
+            <div class="logo-item">
+                <h3>Средний (150px)</h3>
+                <img id="logoMedium" style="width:150px;">
+            </div>
+            <div class="logo-item">
+                <h3>Маленький (50px)</h3>
+                <img id="logoSmall" style="width:50px;">
+            </div>
+            <div class="logo-item">
+                <h3>Иконка (32px)</h3>
+                <img id="logoIcon" style="width:32px;">
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-area">
+        <h2>Код для вставки в index.html:</h2>
+        <textarea id="codeSnippet" rows="6" style="width:100%; background:#2a3b54; color:white; border:1px solid #00c3ff; padding:10px; font-family:monospace;">
+<!-- Логотип ZUZCOIN SVG Base64 -->
+<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNDAwIDIwMCI+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwZTFhMmQiLz4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMWEyYjQ0Ii8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImNvaW5HcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzNmZiIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDk5Y2MiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjaW5jbHVkZS1iZ0dyYWQpIiByeD0iMjAiLz4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNTAiIGZpbGw9InVybCgjaW5jbHVkZS1jb2luR3JhZCkiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8dGV4dCB4PSIxMDAiIHk9IjExMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9ImJvbGQiPlo8L3RleHQ+CiAgICA8dGV4dCB4PSIyMjAiIHk9IjkwIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iYm9sZCI+WlVaQ09JTjwvdGV4dD4KICAgIDx0ZXh0IHg9IjIyMCIgeT0iMTQwIiBmaWxsPSIjMDBkMThjIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiPkNSRUFUSU5HIEZVVFVSRTwvdGV4dD4KPC9zdmc+" 
+     alt="ZUZCOIN" style="height: 40px; width: auto;">
+        </textarea>
+        <p><button onclick="navigator.clipboard.writeText(document.getElementById('codeSnippet').value).then(()=>alert('Скопировано!'))">Копировать код</button></p>
+    </div>
+    
+    <script>
+        // SVG логотип в base64
+        const svgLogo = `PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNDAwIDIwMCI+CiAgICA8ZGVmcz4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwZTFhMmQiLz4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMWEyYjQ0Ii8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImNvaW5HcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYzNmZiIvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDk5Y2MiLz4KICAgICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjaW5jbHVkZS1iZ0dyYWQpIiByeD0iMjAiLz4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNTAiIGZpbGw9InVybCgjaW5jbHVkZS1jb2luR3JhZCkiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8dGV4dCB4PSIxMDAiIHk9IjExMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9ImJvbGQiPlo8L3RleHQ+CiAgICA8dGV4dCB4PSIyMjAiIHk9IjkwIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iYm9sZCI+WlVaQ09JTjwvdGV4dD4KICAgIDx0ZXh0IHg9IjIyMCIgeT0iMTQwIiBmaWxsPSIjMDBkMThjIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiPkNSRUFUSU5HIEZVVFVSRTwvdGV4dD4KPC9zdmc+`;
+        
+        const base64URL = 'data:image/svg+xml;base64,' + svgLogo;
+        
+        // Устанавливаем логотипы разных размеров
+        document.getElementById('logoLarge').src = base64URL;
+        document.getElementById('logoMedium').src = base64URL;
+        document.getElementById('logoSmall').src = base64URL;
+        document.getElementById('logoIcon').src = base64URL;
+        
+        console.log('✅ Тестовый логотип загружен');
+    </script>
+</body>
+</html>

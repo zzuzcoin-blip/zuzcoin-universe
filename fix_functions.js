@@ -53,7 +53,7 @@ function restoreButtonHandlers() {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
                     const signer = provider.getSigner();
                     const contract = new ethers.Contract(
-                        "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+                        "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
                         ["function transfer(address to, uint256 amount) returns (bool)", "function decimals() view returns (uint8)"],
                         signer
                     );
@@ -102,7 +102,7 @@ async function updateBalances(address) {
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const contract = new ethers.Contract(
-            "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31",
+            "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
             ["function balanceOf(address) view returns (uint256)", "function symbol() view returns (string)"],
             provider
         );

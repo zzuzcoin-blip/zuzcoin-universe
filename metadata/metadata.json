@@ -1,0 +1,104 @@
+{
+  "compiler": {
+    "version": "0.8.20+commit.a1b79de6"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          {"internalType": "address", "name": "_zuzToken", "type": "address"},
+          {"internalType": "address", "name": "_charityWallet", "type": "address"}
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {"indexed": true, "internalType": "address", "name": "to", "type": "address"},
+          {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
+        ],
+        "name": "CharitySent",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {"indexed": true, "internalType": "address", "name": "user", "type": "address"},
+          {"indexed": false, "internalType": "uint256", "name": "zuzAmount", "type": "uint256"},
+          {"indexed": false, "internalType": "uint256", "name": "ethAmount", "type": "uint256"},
+          {"indexed": false, "internalType": "uint256", "name": "charity", "type": "uint256"}
+        ],
+        "name": "Swapped",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "name": "CHARITY_PERCENT",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "charityWallet",
+        "outputs": [{"internalType": "address", "name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getContractZUZBalance",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{"internalType": "address", "name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{"internalType": "address", "name": "to", "type": "address"}, {"internalType": "uint256", "name": "amount", "type": "uint256"}],
+        "name": "transfer",
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "withdrawETH",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "withdrawZUZ",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "zuzToken",
+        "outputs": [{"internalType": "contract IZUZToken", "name": "", "type": "address"}],
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]
+  },
+  "settings": {
+    "optimizer": {"enabled": false, "runs": 200},
+    "outputSelection": {"*": {"*": ["*"], "": ["*"]}}
+  },
+  "sources": {
+    "ZUZIMDEX.sol": {
+      "content": "$(cat contracts/ZUZIMDEX.sol | sed 's/"/\\"/g')"
+    }
+  },
+  "version": 1
+}

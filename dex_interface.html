@@ -1,1005 +1,250 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUZIM DEX | ZUZCOIN Universe</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>ZUZIM DEX Interface</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
     <style>
-        /* BYBIT STYLES */
-        :root {
-            --bybit-bg: #0b0e18;
-            --bybit-card: #131722;
-            --bybit-card-light: #1c2030;
-            --bybit-border: #2a2f42;
-            --bybit-border-light: #3a3f57;
-            --bybit-text: #e4e5e8;
-            --bybit-text-muted: #848e9c;
-            --bybit-green: #00c087;
-            --bybit-red: #f6465d;
-            --bybit-blue: #0ea5e9;
-            --bybit-yellow: #f0b90b;
-            --bybit-gradient: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: var(--bybit-bg);
-            color: var(--bybit-text);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 13px;
-        }
-        
-        /* BYBIT TOP BAR */
-        .top-bar {
-            height: 56px;
-            background: var(--bybit-card);
-            border-bottom: 1px solid var(--bybit-border);
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-        
-        .logo {
-            font-size: 22px;
-            font-weight: 800;
-            background: var(--bybit-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-right: 40px;
-        }
-        
-        .nav-main {
-            display: flex;
-            gap: 2px;
-            height: 40px;
-            align-items: center;
-        }
-        
-        .nav-item {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            color: var(--bybit-text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        
-        .nav-item.active {
-            color: var(--bybit-text);
-            background: rgba(14, 165, 233, 0.1);
-            position: relative;
-        }
-        
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--bybit-blue);
-        }
-        
-        /* DEX SPECIFIC STYLES */
-        .dex-container {
-            margin-top: 56px;
-            padding: 24px;
-        }
-        
-        .dex-header {
-            margin-bottom: 24px;
-        }
-        
-        .dex-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .dex-subtitle {
-            color: var(--bybit-text-muted);
-        }
-        
-        /* DEX TABS */
-        .dex-tabs {
-            display: flex;
-            gap: 4px;
-            background: var(--bybit-card-light);
-            border-radius: 6px;
-            padding: 4px;
-            margin-bottom: 24px;
-            max-width: 400px;
-        }
-        
-        .dex-tab {
-            flex: 1;
-            padding: 10px 16px;
-            background: transparent;
-            border: none;
-            color: var(--bybit-text-muted);
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .dex-tab.active {
-            background: var(--bybit-card);
-            color: var(--bybit-text);
-        }
-        
-        /* POOLS GRID */
-        .pools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        
-        .pool-card {
-            background: var(--bybit-card);
-            border: 1px solid var(--bybit-border);
-            border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-        
-        .pool-card:hover {
-            border-color: var(--bybit-border-light);
-            transform: translateY(-2px);
-        }
-        
-        .pool-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .pool-tokens {
-            display: flex;
-            align-items: center;
-        }
-        
-        .token-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--bybit-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 14px;
-        }
-        
-        .token-icon:nth-child(2) {
-            margin-left: -8px;
-            background: var(--bybit-green);
-        }
-        
-        .pool-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .pool-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-item {
-            background: var(--bybit-bg);
-            border-radius: 6px;
-            padding: 12px;
-        }
-        
-        .stat-label {
-            color: var(--bybit-text-muted);
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        
-        .stat-value {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .pool-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        
-        /* FORMS */
-        .form-container {
-            background: var(--bybit-card);
-            border: 1px solid var(--bybit-border);
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--bybit-text-muted);
-            font-weight: 500;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bybit-bg);
-            border: 1px solid var(--bybit-border);
-            border-radius: 6px;
-            color: var(--bybit-text);
-            font-size: 14px;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: var(--bybit-blue);
-        }
-        
-        .token-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--bybit-bg);
-            border: 1px solid var(--bybit-border);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        
-        /* BUTTONS */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background: var(--bybit-blue);
-            color: white;
-        }
-        
-        .btn-success {
-            background: var(--bybit-green);
-            color: white;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--bybit-border);
-            color: var(--bybit-text);
-        }
-        
-        .btn-full {
-            width: 100%;
-        }
-        
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(11, 14, 24, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: var(--bybit-card);
-            border: 1px solid var(--bybit-border);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        /* UTILITIES */
-        .hidden { display: none; }
-        .text-green { color: var(--bybit-green); }
-        .text-red { color: var(--bybit-red); }
-        .text-center { text-align: center; }
-        .mt-4 { margin-top: 16px; }
-        .mb-4 { margin-bottom: 16px; }
-        .w-full { width: 100%; }
-        
-        /* LOADING */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: var(--bybit-blue);
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        body { font-family: Arial; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; }
+        button { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .success { color: green; }
+        .error { color: red; }
     </style>
 </head>
 <body>
-    <!-- BYBIT TOP BAR -->
-    <div class="top-bar">
-        <div class="logo">ZUZCOIN</div>
-        <nav class="nav-main">
-            <div class="nav-item" onclick="navigate('dashboard')">Dashboard</div>
-            <div class="nav-item" onclick="navigate('trade')">Trade</div>
-            <div class="nav-item active" onclick="navigate('dex')">DEX</div>
-            <div class="nav-item" onclick="navigate('factory')">Factory</div>
-            <div class="nav-item" onclick="navigate('wallet')">Wallet</div>
-        </nav>
+    <h1>ZUZIM DEX Interface</h1>
+    
+    <div class="section">
+        <h2>1. Подключение кошелька</h2>
+        <button onclick="connectWallet()">Connect MetaMask</button>
+        <p id="walletStatus">Не подключен</p>
     </div>
     
-    <!-- DEX MAIN CONTENT -->
-    <div class="dex-container">
-        <div class="dex-header">
-            <h1 class="dex-title">ZUZIM Decentralized Exchange</h1>
-            <p class="dex-subtitle">Provide liquidity and earn trading fees with 1% auto-philanthropy</p>
-        </div>
-        
-        <!-- DEX TABS -->
-        <div class="dex-tabs">
-            <button class="dex-tab active" onclick="showTab('pools')">Liquidity Pools</button>
-            <button class="dex-tab" onclick="showTab('add')">Add Liquidity</button>
-            <button class="dex-tab" onclick="showTab('remove')">Remove Liquidity</button>
-            <button class="dex-tab" onclick="showTab('swap')">Swap Tokens</button>
-        </div>
-        
-        <!-- POOLS TAB -->
-        <div id="poolsTab" class="tab-content">
-            <div class="pools-grid" id="poolsContainer">
-                <!-- Pools will be loaded here -->
-            </div>
-            
-            <div class="form-container" id="noPoolsMessage" style="display: none;">
-                <div class="text-center">
-                    <i class="fas fa-water" style="font-size: 48px; color: var(--bybit-text-muted); margin-bottom: 16px;"></i>
-                    <h3>No Liquidity Pools Yet</h3>
-                    <p class="dex-subtitle mb-4">Be the first to add liquidity and earn trading fees!</p>
-                    <button class="btn btn-primary" onclick="showTab('add')">
-                        <i class="fas fa-plus"></i> Add Liquidity
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- ADD LIQUIDITY TAB -->
-        <div id="addTab" class="tab-content hidden">
-            <div class="form-container">
-                <h2 class="mb-4">Add Liquidity</h2>
-                
-                <div class="form-group">
-                    <label class="form-label">Select Pool</label>
-                    <select class="form-input" id="poolSelect">
-                        <option value="zuz_eth">ZUZ/ETH</option>
-                        <option value="zuz_usdt">ZUZ/USDT</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">ZUZ Amount</div>
-                    <div class="flex" style="gap: 8px;">
-                        <input type="number" class="form-input" id="zuzAmount" placeholder="1000" min="0" step="1">
-                        <button class="btn btn-outline" style="white-space: nowrap;" onclick="setMaxZuz()">MAX</button>
-                    </div>
-                    <div style="font-size: 12px; color: var(--bybit-text-muted); margin-top: 4px;">
-                        Balance: <span id="zuzBalance">0</span> ZUZ
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label" id="pairedTokenLabel">ETH Amount</div>
-                    <div class="flex" style="gap: 8px;">
-                        <input type="number" class="form-input" id="pairedAmount" placeholder="0.1" min="0" step="0.001">
-                        <button class="btn btn-outline" style="white-space: nowrap;" onclick="setMaxPaired()">MAX</button>
-                    </div>
-                    <div style="font-size: 12px; color: var(--bybit-text-muted); margin-top: 4px;">
-                        Balance: <span id="pairedBalance">0</span> <span id="pairedSymbol">ETH</span>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">Estimated LP Tokens</div>
-                    <input type="text" class="form-input" id="lpTokens" value="0" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">Share of Pool</div>
-                    <input type="text" class="form-input" id="poolShare" value="0%" readonly>
-                </div>
-                
-                <button class="btn btn-success btn-full mt-4" id="addLiquidityBtn" onclick="addLiquidity()">
-                    <i class="fas fa-plus"></i> Add Liquidity
-                </button>
-                
-                <div class="text-center mt-4">
-                    <small style="color: var(--bybit-text-muted);">
-                        By adding liquidity, you'll earn 0.3% of all trades proportional to your share of the pool.
-                    </small>
-                </div>
-            </div>
-        </div>
-        
-        <!-- SWAP TAB -->
-        <div id="swapTab" class="tab-content hidden">
-            <div class="form-container">
-                <h2 class="mb-4">Swap Tokens</h2>
-                
-                <div class="form-group">
-                    <label class="form-label">From</label>
-                    <div class="token-selector" onclick="openTokenModal('from')">
-                        <div class="token-icon">ZUZ</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600;">ZUZCOIN</div>
-                            <div style="font-size: 12px; color: var(--bybit-text-muted);">Balance: <span id="fromBalance">0</span></div>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <input type="number" class="form-input mt-2" id="fromAmount" placeholder="0.0" min="0">
-                </div>
-                
-                <div class="text-center my-2">
-                    <button class="btn btn-outline" onclick="switchTokens()" style="padding: 8px;">
-                        <i class="fas fa-exchange-alt"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">To</label>
-                    <div class="token-selector" onclick="openTokenModal('to')">
-                        <div class="token-icon" style="background: var(--bybit-green);">ETH</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600;">Ethereum</div>
-                            <div style="font-size: 12px; color: var(--bybit-text-muted);">Balance: <span id="toBalance">0</span></div>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <input type="text" class="form-input mt-2" id="toAmount" placeholder="0.0" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">Price Impact</div>
-                    <input type="text" class="form-input" id="priceImpact" value="< 0.1%" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">1% Philanthropy Donation</div>
-                    <input type="text" class="form-input" id="swapDonation" value="0.00 ZUZ" readonly style="color: #ec4899;">
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-label">Minimum Received</div>
-                    <input type="text" class="form-input" id="minReceived" value="0.0 ETH" readonly>
-                </div>
-                
-                <button class="btn btn-primary btn-full mt-4" id="swapBtn" onclick="executeSwap()">
-                    <i class="fas fa-exchange-alt"></i> Swap Tokens
-                </button>
-            </div>
-        </div>
+    <div class="section">
+        <h2>2. Создание пары ZUZ/USDT</h2>
+        <p><strong>ZUZ Token:</strong> 0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3</p>
+        <p><strong>USDT (Sepolia):</strong> 0x7169D38820dfd117C3FA1f22a697dBA58d90BA06</p>
+        <button onclick="createPair()">Create ZUZ/USDT Pair</button>
+        <p id="pairStatus"></p>
     </div>
     
-    <!-- TOKEN SELECT MODAL -->
-    <div class="modal" id="tokenModal">
-        <div class="modal-content">
-            <h2 class="mb-4">Select Token</h2>
-            <div id="tokenList">
-                <div class="token-selector mb-2" onclick="selectToken('ZUZ')">
-                    <div class="token-icon">ZUZ</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600;">ZUZCOIN</div>
-                        <div style="font-size: 12px; color: var(--bybit-text-muted);">Balance: 0</div>
-                    </div>
-                </div>
-                <div class="token-selector mb-2" onclick="selectToken('ETH')">
-                    <div class="token-icon" style="background: var(--bybit-green);">ETH</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600;">Ethereum</div>
-                        <div style="font-size: 12px; color: var(--bybit-text-muted);">Balance: 0</div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-outline w-full mt-4" onclick="closeTokenModal()">Cancel</button>
-        </div>
+    <div class="section">
+        <h2>3. Добавление ликвидности</h2>
+        <p>ZUZ Amount: <input type="number" id="zuzAmount" value="1000"></p>
+        <p>USDT Amount: <input type="number" id="usdtAmount" value="500"></p>
+        <button onclick="addLiquidity()">Add Liquidity</button>
+        <p id="liquidityStatus"></p>
+    </div>
+    
+    <div class="section">
+        <h2>4. Обмен токенов</h2>
+        <p>Amount to swap: <input type="number" id="swapAmount" value="100"></p>
+        <button onclick="swapZUZtoUSDT()">Swap ZUZ → USDT</button>
+        <button onclick="swapUSDTtoZUZ()">Swap USDT → ZUZ</button>
+        <p id="swapStatus"></p>
     </div>
 
     <script>
-    // ===== ZUZIM DEX - BYBIT EDITION =====
-    class ZUZIMDEX {
-        constructor() {
-            this.user = null;
-            this.provider = null;
-            this.signer = null;
-            this.dexContract = null;
-            this.zuzContract = null;
-            
-            this.currentFromToken = 'ZUZ';
-            this.currentToToken = 'ETH';
-            this.currentTab = 'pools';
-            
-            this.init();
-        }
+        // Контрактные адреса
+        const DEX_ADDRESS = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        const ZUZ_TOKEN = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        const USDT_TOKEN = "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06";
         
-        async init() {
-            console.log("🚀 ZUZIM DEX Initializing...");
-            
-            // Initialize UI
-            this.initUI();
-            this.initEventListeners();
-            
-            // Check wallet connection
-            await this.checkConnection();
-            
-            // Load pools
-            this.loadPools();
-            
-            console.log("✅ ZUZIM DEX Ready");
-        }
+        // ABI для DEX
+        const DEX_ABI = [
+            "function createPair(address tokenA, address tokenB) external",
+            "function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB) external",
+            "function swap(address tokenIn, address tokenOut, uint256 amountIn) external returns (uint256)",
+            "function getSwapQuote(address tokenIn, address tokenOut, uint256 amountIn) external view returns (uint256 amountOut, uint256 charityAmount)",
+            "function owner() external view returns (address)",
+            "function charityWallet() external view returns (address)"
+        ];
         
-        initUI() {
-            // Show pools tab by default
-            this.showTab('pools');
-        }
+        // ABI для ERC20
+        const ERC20_ABI = [
+            "function approve(address spender, uint256 amount) external returns (bool)",
+            "function balanceOf(address account) external view returns (uint256)",
+            "function decimals() external view returns (uint8)"
+        ];
         
-        initEventListeners() {
-            // Amount inputs
-            document.getElementById('zuzAmount')?.addEventListener('input', () => this.updateLiquidityForm());
-            document.getElementById('pairedAmount')?.addEventListener('input', () => this.updateLiquidityForm());
-            document.getElementById('fromAmount')?.addEventListener('input', () => this.updateSwapForm());
-            
-            // Pool select
-            document.getElementById('poolSelect')?.addEventListener('change', () => this.updatePairedToken());
-        }
+        let provider, signer, dexContract, userAddress;
         
-        async checkConnection() {
-            if (window.ethereum?.selectedAddress) {
-                this.user = window.ethereum.selectedAddress;
-                await this.initContracts();
-                this.updateBalances();
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("Установите MetaMask!");
+                return;
             }
-        }
-        
-        async initContracts() {
-            if (!this.user || !window.ethereum) return;
             
             try {
-                this.provider = new ethers.providers.Web3Provider(window.ethereum);
-                this.signer = this.provider.getSigner();
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
                 
-                // ZUZ Token Contract
-                const ZUZ_ADDRESS = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
-                const zuzABI = [
-                    "function balanceOf(address) view returns (uint256)",
-                    "function approve(address, uint256) returns (bool)",
-                    "function allowance(address, address) view returns (uint256)"
-                ];
+                dexContract = new ethers.Contract(DEX_ADDRESS, DEX_ABI, signer);
                 
-                this.zuzContract = new ethers.Contract(ZUZ_ADDRESS, zuzABI, this.signer);
+                document.getElementById('walletStatus').innerHTML = 
+                    `<span class="success">✅ Подключен: ${userAddress.substring(0, 10)}...</span>`;
                 
-                // DEX Contract (demo address - would be real after deployment)
-                const DEX_ADDRESS = "0x..."; // Will be updated after deployment
-                const dexABI = [
-                    "function addLiquidity(address, address, uint256, uint256) returns (uint256)",
-                    "function removeLiquidity(address, address, uint256) returns (uint256, uint256)",
-                    "function swap(address, address, uint256) returns (uint256)",
-                    "function getPrice(address, address, uint256) view returns (uint256)",
-                    "function getPoolInfo(address, address) view returns (uint256, uint256, uint256)",
-                    "function getUserLiquidity(address, address, address) view returns (uint256)"
-                ];
+                // Проверяем владельца DEX
+                const owner = await dexContract.owner();
+                const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
                 
-                // For demo, we'll use simulation
-                this.dexContract = { 
-                    // Mock functions for demo
-                    addLiquidity: async () => ({ wait: async () => {} }),
-                    swap: async () => ({ wait: async () => {} })
-                };
-                
-            } catch (error) {
-                console.error("Contract init error:", error);
-            }
-        }
-        
-        // === UI FUNCTIONS ===
-        showTab(tabName) {
-            this.currentTab = tabName;
-            
-            // Update tabs
-            document.querySelectorAll('.dex-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`.dex-tab[onclick*="${tabName}"]`)?.classList.add('active');
-            
-            // Show/hide content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.getElementById(tabName + 'Tab')?.classList.remove('hidden');
-            
-            // Update form if needed
-            if (tabName === 'add') {
-                this.updateLiquidityForm();
-            } else if (tabName === 'swap') {
-                this.updateSwapForm();
-            }
-        }
-        
-        updatePairedToken() {
-            const poolSelect = document.getElementById('poolSelect');
-            if (!poolSelect) return;
-            
-            const pairedTokenLabel = document.getElementById('pairedTokenLabel');
-            const pairedSymbol = document.getElementById('pairedSymbol');
-            
-            if (poolSelect.value === 'zuz_eth') {
-                pairedTokenLabel.textContent = 'ETH Amount';
-                pairedSymbol.textContent = 'ETH';
-            } else {
-                pairedTokenLabel.textContent = 'USDT Amount';
-                pairedSymbol.textContent = 'USDT';
-            }
-            
-            this.updateLiquidityForm();
-        }
-        
-        updateLiquidityForm() {
-            const zuzAmount = parseFloat(document.getElementById('zuzAmount')?.value) || 0;
-            const pairedAmount = parseFloat(document.getElementById('pairedAmount')?.value) || 0;
-            
-            // Simple LP token calculation
-            if (zuzAmount > 0 && pairedAmount > 0) {
-                const lpTokens = Math.sqrt(zuzAmount * pairedAmount);
-                document.getElementById('lpTokens').value = lpTokens.toFixed(4);
-                
-                // Mock pool share calculation
-                const poolShare = (lpTokens / 10000) * 100; // Assuming 10000 total LP
-                document.getElementById('poolShare').value = poolShare.toFixed(2) + '%';
-            } else {
-                document.getElementById('lpTokens').value = '0';
-                document.getElementById('poolShare').value = '0%';
-            }
-        }
-        
-        updateSwapForm() {
-            const fromAmount = parseFloat(document.getElementById('fromAmount')?.value) || 0;
-            
-            if (fromAmount > 0) {
-                // Simple price calculation
-                const price = this.currentFromToken === 'ZUZ' ? 0.0001 : 10000; // 1 ZUZ = 0.0001 ETH
-                const toAmount = fromAmount * price;
-                
-                // 1% philanthropy
-                const donation = fromAmount * 0.01;
-                const received = toAmount * 0.99; // After 1% fee
-                
-                document.getElementById('toAmount').value = received.toFixed(6);
-                document.getElementById('swapDonation').value = donation.toFixed(2) + ' ' + this.currentFromToken;
-                document.getElementById('minReceived').value = (received * 0.995).toFixed(6) + ' ' + this.currentToToken;
-            } else {
-                document.getElementById('toAmount').value = '0.0';
-                document.getElementById('swapDonation').value = '0.00 ' + this.currentFromToken;
-                document.getElementById('minReceived').value = '0.0 ' + this.currentToToken;
-            }
-        }
-        
-        // === POOL MANAGEMENT ===
-        loadPools() {
-            const poolsContainer = document.getElementById('poolsContainer');
-            const noPoolsMessage = document.getElementById('noPoolsMessage');
-            
-            // Mock pools data
-            const pools = [
-                {
-                    id: 'zuz_eth',
-                    tokenA: 'ZUZ',
-                    tokenB: 'ETH',
-                    tvl: '$10,250',
-                    volume24h: '$8,450',
-                    apr: '12.5%',
-                    fees: '0.3%'
-                },
-                {
-                    id: 'zuz_usdt',
-                    tokenA: 'ZUZ',
-                    tokenB: 'USDT',
-                    tvl: '$5,120',
-                    volume24h: '$4,000',
-                    apr: '15.2%',
-                    fees: '0.3%'
+                if (isOwner) {
+                    document.getElementById('pairStatus').innerHTML = 
+                        "<span class='success'>✅ Вы владелец DEX, можете создавать пары</span>";
+                } else {
+                    document.getElementById('pairStatus').innerHTML = 
+                        "<span class='error'>❌ Вы не владелец DEX</span>";
                 }
-            ];
-            
-            if (pools.length > 0) {
-                poolsContainer.innerHTML = pools.map(pool => `
-                    <div class="pool-card">
-                        <div class="pool-header">
-                            <div class="pool-tokens">
-                                <div class="token-icon">${pool.tokenA.charAt(0)}</div>
-                                <div class="token-icon">${pool.tokenB.charAt(0)}</div>
-                            </div>
-                            <div class="pool-name">${pool.tokenA}/${pool.tokenB}</div>
-                        </div>
-                        
-                        <div class="pool-stats">
-                            <div class="stat-item">
-                                <div class="stat-label">TVL</div>
-                                <div class="stat-value">${pool.tvl}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">24h Volume</div>
-                                <div class="stat-value">${pool.volume24h}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">APR</div>
-                                <div class="stat-value text-green">${pool.apr}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Fees</div>
-                                <div class="stat-value">${pool.fees}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="pool-actions">
-                            <button class="btn btn-outline" onclick="dex.showTab('add')">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                            <button class="btn btn-outline" onclick="dex.showTab('swap')">
-                                <i class="fas fa-exchange-alt"></i> Trade
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
                 
-                noPoolsMessage.style.display = 'none';
-            } else {
-                poolsContainer.innerHTML = '';
-                noPoolsMessage.style.display = 'block';
+            } catch (error) {
+                document.getElementById('walletStatus').innerHTML = 
+                    `<span class="error">❌ Ошибка: ${error.message}</span>`;
             }
         }
         
-        // === ACTIONS ===
-        async addLiquidity() {
-            if (!this.user) {
-                this.showNotification('Connect wallet first', 'error');
-                return;
-            }
-            
-            const zuzAmount = parseFloat(document.getElementById('zuzAmount')?.value);
-            const pairedAmount = parseFloat(document.getElementById('pairedAmount')?.value);
-            
-            if (!zuzAmount || !pairedAmount || zuzAmount <= 0 || pairedAmount <= 0) {
-                this.showNotification('Enter valid amounts', 'error');
+        async function createPair() {
+            if (!signer) {
+                alert("Сначала подключите кошелек");
                 return;
             }
             
             try {
-                const btn = document.getElementById('addLiquidityBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<span class="loading"></span> Adding...';
-                btn.disabled = true;
+                document.getElementById('pairStatus').innerHTML = "⏳ Создаю пару...";
                 
-                // Simulate transaction
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                const tx = await dexContract.createPair(ZUZ_TOKEN, USDT_TOKEN);
+                document.getElementById('pairStatus').innerHTML = 
+                    `⏳ Транзакция отправлена: ${tx.hash}`;
                 
-                this.showNotification(
-                    `Liquidity added successfully!`, 
-                    'success'
-                );
-                
-                // Reset form
-                document.getElementById('zuzAmount').value = '';
-                document.getElementById('pairedAmount').value = '';
-                this.updateLiquidityForm();
-                
-                // Update pools
-                this.loadPools();
+                await tx.wait();
+                document.getElementById('pairStatus').innerHTML = 
+                    `<span class="success">✅ Пара ZUZ/USDT создана успешно!</span>`;
                 
             } catch (error) {
-                console.error('Add liquidity error:', error);
-                this.showNotification('Failed to add liquidity', 'error');
-            } finally {
-                const btn = document.getElementById('addLiquidityBtn');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                document.getElementById('pairStatus').innerHTML = 
+                    `<span class="error">❌ Ошибка: ${error.message}</span>`;
             }
         }
         
-        async executeSwap() {
-            if (!this.user) {
-                this.showNotification('Connect wallet first', 'error');
-                return;
-            }
-            
-            const fromAmount = parseFloat(document.getElementById('fromAmount')?.value);
-            
-            if (!fromAmount || fromAmount <= 0) {
-                this.showNotification('Enter valid amount', 'error');
+        async function addLiquidity() {
+            if (!signer) {
+                alert("Сначала подключите кошелек");
                 return;
             }
             
             try {
-                const btn = document.getElementById('swapBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<span class="loading"></span> Swapping...';
-                btn.disabled = true;
+                const zuzAmount = document.getElementById('zuzAmount').value;
+                const usdtAmount = document.getElementById('usdtAmount').value;
                 
-                // Simulate transaction
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                if (!zuzAmount || !usdtAmount) {
+                    alert("Введите суммы");
+                    return;
+                }
                 
-                const toAmount = parseFloat(document.getElementById('toAmount')?.value);
+                document.getElementById('liquidityStatus').innerHTML = "⏳ Добавляю ликвидность...";
                 
-                this.showNotification(
-                    `Swapped ${fromAmount} ${this.currentFromToken} for ${toAmount} ${this.currentToToken}`,
-                    'success'
+                // Получаем контракты токенов
+                const zuzContract = new ethers.Contract(ZUZ_TOKEN, ERC20_ABI, signer);
+                const usdtContract = new ethers.Contract(USDT_TOKEN, ERC20_ABI, signer);
+                
+                // Аппруваем DEX тратить наши токены
+                const zuzDecimals = await zuzContract.decimals();
+                const usdtDecimals = await usdtContract.decimals();
+                
+                const zuzAmountWei = ethers.utils.parseUnits(zuzAmount, zuzDecimals);
+                const usdtAmountWei = ethers.utils.parseUnits(usdtAmount, usdtDecimals);
+                
+                const approveZuz = await zuzContract.approve(DEX_ADDRESS, zuzAmountWei);
+                await approveZuz.wait();
+                
+                const approveUsdt = await usdtContract.approve(DEX_ADDRESS, usdtAmountWei);
+                await approveUsdt.wait();
+                
+                // Добавляем ликвидность
+                const tx = await dexContract.addLiquidity(
+                    ZUZ_TOKEN,
+                    USDT_TOKEN,
+                    zuzAmountWei,
+                    usdtAmountWei
                 );
                 
-                // Reset form
-                document.getElementById('fromAmount').value = '';
-                this.updateSwapForm();
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `⏳ Транзакция отправлена: ${tx.hash}`;
+                
+                await tx.wait();
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `<span class="success">✅ Ликвидность добавлена!</span>`;
                 
             } catch (error) {
-                console.error('Swap error:', error);
-                this.showNotification('Swap failed', 'error');
-            } finally {
-                const btn = document.getElementById('swapBtn');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                document.getElementById('liquidityStatus').innerHTML = 
+                    `<span class="error">❌ Ошибка: ${error.message}</span>`;
             }
         }
         
-        // === TOKEN SELECTION ===
-        openTokenModal(type) {
-            this.tokenSelectionType = type;
-            document.getElementById('tokenModal').classList.add('active');
+        async function swapZUZtoUSDT() {
+            await swapTokens(ZUZ_TOKEN, USDT_TOKEN, 'swapAmount', 'swapStatus');
         }
         
-        closeTokenModal() {
-            document.getElementById('tokenModal').classList.remove('active');
+        async function swapUSDTtoZUZ() {
+            await swapTokens(USDT_TOKEN, ZUZ_TOKEN, 'swapAmount', 'swapStatus');
         }
         
-        selectToken(token) {
-            if (this.tokenSelectionType === 'from') {
-                this.currentFromToken = token;
-                const icon = document.querySelector('#fromTab .token-icon');
-                const name = document.querySelector('#fromTab .token-selector > div:nth-child(2) > div:first-child');
-                
-                icon.textContent = token.charAt(0);
-                icon.style.background = token === 'ZUZ' ? 'var(--bybit-gradient)' : 'var(--bybit-green)';
-                name.textContent = token === 'ZUZ' ? 'ZUZCOIN' : 'Ethereum';
-            } else {
-                this.currentToToken = token;
-                const icon = document.querySelector('#toTab .token-icon');
-                const name = document.querySelector('#toTab .token-selector > div:nth-child(2) > div:first-child');
-                
-                icon.textContent = token.charAt(0);
-                icon.style.background = token === 'ETH' ? 'var(--bybit-green)' : 'var(--bybit-gradient)';
-                name.textContent = token === 'ETH' ? 'Ethereum' : 'ZUZCOIN';
+        async function swapTokens(tokenIn, tokenOut, amountId, statusId) {
+            if (!signer) {
+                alert("Сначала подключите кошелек");
+                return;
             }
             
-            this.closeTokenModal();
-            this.updateSwapForm();
+            try {
+                const amount = document.getElementById(amountId).value;
+                if (!amount) {
+                    alert("Введите сумму");
+                    return;
+                }
+                
+                document.getElementById(statusId).innerHTML = "⏳ Выполняю обмен...";
+                
+                const tokenContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
+                const decimals = await tokenContract.decimals();
+                const amountWei = ethers.utils.parseUnits(amount, decimals);
+                
+                // Аппруваем DEX тратить токены
+                const approveTx = await tokenContract.approve(DEX_ADDRESS, amountWei);
+                await approveTx.wait();
+                
+                // Получаем котировку
+                const [quoteAmount, charityAmount] = await dexContract.getSwapQuote(
+                    tokenIn,
+                    tokenOut,
+                    amountWei
+                );
+                
+                const quoteFormatted = ethers.utils.formatUnits(quoteAmount, decimals);
+                const charityFormatted = ethers.utils.formatUnits(charityAmount, decimals);
+                
+                // Выполняем обмен
+                const swapTx = await dexContract.swap(tokenIn, tokenOut, amountWei);
+                document.getElementById(statusId).innerHTML = 
+                    `⏳ Обмен: ${amount} → ${quoteFormatted} (донат: ${charityFormatted})`;
+                
+                await swapTx.wait();
+                document.getElementById(statusId).innerHTML = 
+                    `<span class="success">✅ Обмен выполнен! 1% отправлен на благотворительность</span>`;
+                
+            } catch (error) {
+                document.getElementById(statusId).innerHTML = 
+                    `<span class="error">❌ Ошибка: ${error.message}</span>`;
+            }
         }
         
-        switchTokens() {
-            const temp = this.currentFromToken;
-            this.currentFromToken = this.currentToToken;
-            this.currentToToken = temp;
-            
-            // Update UI
-            const fromIcon = document.querySelector('#fromTab .token-icon');
-            const fromName = document.querySelector('#fromTab .token-selector > div:nth-child(2) > div:first-child');
-            const toIcon = document.querySelector('#toTab .token-icon');
-            const toName = document.querySelector('#toTab .token-selector > div:nth-child(2) > div:first-child');
-            
-            // Swap from token
-            fromIcon.textContent = this.currentFromToken.charAt(0);
-            fromIcon.style.background = this.currentFromToken === 'ZUZ' ? 'var(--bybit-gradient)' : 'var(--bybit-green)';
-            fromName.textContent = this.currentFromToken === 'ZUZ' ? 'ZUZCOIN' : 'Ethereum';
-            
-            // Swap to token
-            toIcon.textContent = this.currentToToken.charAt(0);
-            toIcon.style.background = this.currentToToken === 'ETH' ? 'var(--bybit-green)' : 'var(--bybit-gradient)';
-            toName.textContent = this.currentToToken === 'ETH' ? 'Ethereum' : 'ZUZCOIN';
-            
-            this.updateSwapForm();
-        }
-        
-        // === UTILITIES ===
-        setMaxZuz() {
-            document.getElementById('zuzAmount').value = '1000000'; // Demo max
-            this.updateLiquidityForm();
-        }
-        
-        setMaxPaired() {
-            const pool = document.getElementById('poolSelect').value;
-            document.getElementById('pairedAmount').value = pool === 'zuz_eth' ? '0.1' : '100';
-            this.updateLiquidityForm();
-        }
-        
-        updateBalances() {
-            // Update balance displays
-            document.getElementById('zuzBalance').textContent = '1,000,000';
-            document.getElementById('pairedBalance').textContent = '0.1';
-            document.getElementById('fromBalance').textContent = '1,000,000';
-            document.getElementById('toBalance').textContent = '0.1';
-        }
-        
-        showNotification(message, type = 'info') {
-            const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-            alert(icon + ' ' + message);
-        }
-        
-        navigate(section) {
-            // Simple navigation
-            this.showNotification(`Navigate to ${section} (in full app)`);
-        }
-    }
-    
-    // Initialize DEX
-    const dex = new ZUZIMDEX();
-    
-    // Global functions for HTML onclick
-    window.navigate = (section) => dex.navigate(section);
-    window.showTab = (tab) => dex.showTab(tab);
-    window.addLiquidity = () => dex.addLiquidity();
-    window.executeSwap = () => dex.executeSwap();
-    window.setMaxZuz = () => dex.setMaxZuz();
-    window.setMaxPaired = () => dex.setMaxPaired();
-    window.openTokenModal = (type) => dex.openTokenModal(type);
-    window.closeTokenModal = () => dex.closeTokenModal();
-    window.selectToken = (token) => dex.selectToken(token);
-    window.switchTokens = () => dex.switchTokens();
-    
-    // Global access
-    window.dex = dex;
-    
-    console.log("💡 Console commands: dex.showTab('pools|add|swap'), dex.addLiquidity()");
+        // Автоподключение при загрузке
+        window.addEventListener('load', () => {
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                connectWallet();
+            }
+        });
     </script>
 </body>
 </html>

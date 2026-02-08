@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Button</title>
+    <style>
+        body { padding: 50px; }
+        button { padding: 15px 30px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <button id="connectWalletBtn" onclick="alert('Button clicked!')">
+        Test Button
+    </button>
+    
+    <script>
+        console.log("Test page loaded");
+        const btn = document.getElementById('connectWalletBtn');
+        console.log("Button found:", btn);
+        console.log("Button onclick:", btn.onclick);
+    </script>
+</body>
+</html>

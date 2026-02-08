@@ -1,58 +1,85 @@
-// Блокчейн конфигурация для ZUZCOIN
+// ZUZIM Universe - Blockchain Configuration
 const BLOCKCHAIN_CONFIG = {
-  // Polygon Mumbai (основная сеть для production)
-  polygonMumbai: {
-    rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/demo",
-    apiUrl: "https://workspace.alekseev2508.repl.co/api",
-    chainId: 80001,
-    networkName: "Polygon Mumbai Testnet",
-    explorer: "https://mumbai.polygonscan.com",
-    currency: "MATIC",
-    testnet: true
+  networks: {
+    sepolia: {
+      chainId: '0xaa36a7', // 11155111
+      chainName: 'Sepolia Testnet',
+      rpcUrls: ['https://sepolia.infura.io/v3/'],
+      blockExplorerUrls: ['https://sepolia.etherscan.io'],
+      nativeCurrency: {
+        name: 'Sepolia ETH',
+        symbol: 'ETH',
+        decimals: 18
+      }
+    }
   },
   
-  // Production Polygon Mainnet (когда будет готово)
-  polygonMainnet: {
-    rpcUrl: "https://polygon-mainnet.g.alchemy.com/v2/demo",
-    apiUrl: "https://workspace.alekseev2508.repl.co/api",
-    chainId: 137,
-    networkName: "Polygon Mainnet",
-    explorer: "https://polygonscan.com",
-    currency: "MATIC",
-    testnet: false
-  },
-  
-  // Локальная разработка (если нужно)
-  local: {
-    rpcUrl: "http://localhost:8547",
-    apiUrl: "http://localhost:3001/api",
-    chainId: 7777,
-    networkName: "ZUZCOIN ProofChain (Local)",
-    explorer: null,
-    currency: "ETH",
-    testnet: true
+  contracts: {
+    zuzToken: {
+      address: '0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3',
+      abi: [
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function decimals() view returns (uint8)",
+        "function totalSupply() view returns (uint256)",
+        "function balanceOf(address) view returns (uint256)",
+        "function transfer(address to, uint256 amount) returns (bool)",
+        "function approve(address spender, uint256 amount) returns (bool)",
+        "function allowance(address owner, address spender) view returns (uint256)",
+        "function transferFrom(address from, address to, uint256 amount) returns (bool)",
+        "event Transfer(address indexed from, address indexed to, uint256 value)",
+        "event Approval(address indexed owner, address indexed spender, uint256 value)"
+      ]
+    }
   }
 };
 
-// Получить конфигурацию по умолчанию
-const getCurrentConfig = () => {
-  // По умолчанию используем Polygon Mumbai
-  return BLOCKCHAIN_CONFIG.polygonMumbai;
-};
+// Функция для подключения к Sepolia
+async function connectToSepolia() {
+  if (window.ethereum) {
+    try {
+      // Запрашиваем подключение к аккаунту
+      const accounts = await window.ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      });
+      
+      // Переключаем на Sepolia если нужно
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: BLOCKCHAIN_CONFIG.networks.sepolia.chainId }],
+        });
+      } catch (switchError) {
+        // Если сеть не добавлена, добавляем
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [BLOCKCHAIN_CONFIG.networks.sepolia],
+          });
+        }
+      }
+      
+      return accounts[0];
+    } catch (error) {
+      console.error('Connection error:', error);
+      return null;
+    }
+  }
+  return null;
+}
 
-// Получить конфигурацию для web3
-const getWeb3Config = () => {
-  const config = getCurrentConfig();
-  return {
-    web3RpcUrl: config.rpcUrl,
-    apiBaseUrl: config.apiUrl,
-    networkName: config.networkName,
-    chainId: config.chainId
-  };
-};
+// Функция для получения баланса ZUZ
+async function getZUZBalance(walletAddress) {
+  if (!window.ethereum) return '0';
+  
+  // Здесь будет реальное взаимодействие с контрактом
+  // Пока возвращаем mock данные
+  return '1000000';
+}
 
-module.exports = { 
-  BLOCKCHAIN_CONFIG, 
-  getCurrentConfig, 
-  getWeb3Config 
-};
+// Экспортируем конфигурацию
+window.BLOCKCHAIN_CONFIG = BLOCKCHAIN_CONFIG;
+window.connectToSepolia = connectToSepolia;
+window.getZUZBalance = getZUZBalance;
+
+console.log('✅ ZUZIM Blockchain config loaded');

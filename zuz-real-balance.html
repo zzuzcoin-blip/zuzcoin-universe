@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZIM Universe - Real Balance</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        body { font-family: Arial; background: #0f172a; color: white; padding: 20px; }
+        .balance { 
+            font-size: 60px; 
+            color: #2d6df6; 
+            margin: 30px 0;
+            text-shadow: 0 0 10px rgba(45, 109, 246, 0.5);
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: #1e293b; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        button { 
+            background: #2d6df6; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin: 10px; 
+        }
+        button:hover { background: #1e4fd8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 ZUZIM Universe - Real Token Balance</h1>
+        <p>Версия с принудительным обновлением кэша</p>
+        
+        <div class="card">
+            <h2>Ваш баланс ZUZ:</h2>
+            <div class="balance" id="balanceDisplay">Загрузка...</div>
+            <button onclick="checkBalance()">🔄 Проверить баланс</button>
+            <button onclick="connectMetaMask()">🔗 Подключить MetaMask</button>
+        </div>
+        
+        <div class="card">
+            <h2>Информация о контракте:</h2>
+            <div id="contractInfo">Загрузка...</div>
+        </div>
+        
+        <div class="card">
+            <h2>Отладка:</h2>
+            <div id="debugInfo"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Версия с меткой времени для обхода кэша
+        const VERSION = Date.now();
+        const ZUZ_TOKEN_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        
+        console.log('ZUZIM Universe - Real Balance v' + VERSION);
+        console.log('Token Address:', ZUZ_TOKEN_ADDRESS);
+        
+        async function loadContractInfo() {
+            try {
+                const response = await fetch('/api/token-info?_=' + VERSION);
+                const data = await response.json();
+                
+                document.getElementById('contractInfo').innerHTML = `
+                    <strong>Название:</strong> ${data.name}<br>
+                    <strong>Символ:</strong> ${data.symbol}<br>
+                    <strong>Адрес:</strong> ${data.address}<br>
+                    <strong>Total Supply:</strong> ${(parseInt(data.totalSupply) / 1e18).toLocaleString()} ${data.symbol}<br>
+                    <strong>Сеть:</strong> ${data.network}<br>
+                    <a href="${data.etherscanUrl}" target="_blank">🔗 Открыть на Etherscan</a>
+                `;
+                
+                return data;
+            } catch (error) {
+                document.getElementById('debugInfo').innerHTML = 'Ошибка загрузки контракта: ' + error.message;
+            }
+        }
+        
+        async function checkBalance() {
+            document.getElementById('balanceDisplay').textContent = 'Проверка...';
+            
+            const contractInfo = await loadContractInfo();
+            
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                const address = window.ethereum.selectedAddress;
+                try {
+                    const response = await fetch(`/api/balance/${address}?_=` + VERSION);
+                    const data = await response.json();
+                    
+                    const formattedBalance = parseFloat(data.formatted).toLocaleString();
+                    document.getElementById('balanceDisplay').textContent = formattedBalance + ' ZUZ';
+                    
+                    document.getElementById('debugInfo').innerHTML = `
+                        <strong>Успешно!</strong><br>
+                        Кошелек: ${address}<br>
+                        Баланс: ${data.balance} wei<br>
+                        Форматированный: ${data.formatted} ZUZ<br>
+                        Контракт: ${data.tokenAddress}
+                    `;
+                } catch (error) {
+                    document.getElementById('balanceDisplay').textContent = 'Ошибка';
+                    document.getElementById('debugInfo').textContent = 'Ошибка проверки баланса: ' + error.message;
+                }
+            } else {
+                document.getElementById('balanceDisplay').textContent = 'MetaMask не подключен';
+                document.getElementById('debugInfo').textContent = 'Подключите MetaMask для проверки реального баланса';
+            }
+        }
+        
+        async function connectMetaMask() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    document.getElementById('debugInfo').innerHTML = '✅ Подключено: ' + accounts[0];
+                    checkBalance();
+                } catch (error) {
+                    document.getElementById('debugInfo').textContent = '❌ Ошибка подключения: ' + error.message;
+                }
+            } else {
+                document.getElementById('debugInfo').textContent = '❌ MetaMask не обнаружен!';
+            }
+        }
+        
+        // Автоматическая загрузка при старте
+        loadContractInfo();
+        // Проверяем если MetaMask уже подключен
+        if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+            setTimeout(checkBalance, 1000);
+        }
+    </script>
+</body>
+</html>

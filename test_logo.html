@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test ZUZCOIN Logo</title>
+    <style>
+        body {
+            background: #0e1a2d;
+            color: white;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+        .logo-box {
+            background: #1a2b44;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .logo-desc {
+            color: #8a9bb2;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест логотипа ZUZCOIN</h1>
+    <p>Логотип должен быть: желтая буква Z на черном фоне с желтым ободком (как монета)</p>
+    
+    <div class="logo-container">
+        <div class="logo-box">
+            <h3>Большой логотип (100px)</h3>
+            <img src="ZUZCOIN.png" alt="ZUZCOIN Logo" style="width: 100px; height: 100px; border-radius: 50%;">
+            <div class="logo-desc">Для заголовков и больших элементов</div>
+        </div>
+        
+        <div class="logo-box">
+            <h3>Средний логотип (32px)</h3>
+            <img src="ZUZCOIN.png" alt="ZUZCOIN Logo" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid gold;">
+            <span style="margin-left: 10px;">ZUZCOIN Universe</span>
+            <div class="logo-desc">Для шапки сайта</div>
+        </div>
+        
+        <div class="logo-box">
+            <h3>Маленький логотип (16px)</h3>
+            <div>
+                <img src="ZUZCOIN.png" alt="ZUZ" style="width: 16px; height: 16px; border-radius: 50%; vertical-align: middle;">
+                <span style="margin-left: 5px;">Баланс: 1000 ZUZ</span>
+            </div>
+            <div class="logo-desc">Для отображения баланса и inline элементов</div>
+        </div>
+        
+        <div class="logo-box">
+            <h3>Логотип в кнопках</h3>
+            <button style="background: #00d18c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                <img src="ZUZCOIN.png" alt="ZUZ" style="width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
+                Купить ZUZ
+            </button>
+            <div class="logo-desc">Для кнопок торговой панели</div>
+        </div>
+    </div>
+</body>
+</html>

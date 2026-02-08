@@ -1,9 +1,9 @@
 // Реальный контракт ZUZCOIN на Sepolia
 export const ZUZCOIN_CONFIG = {
-    address: '0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31',
+    address: '0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3',
     network: 'Sepolia',
     chainId: 11155111,
-    explorer: 'https://sepolia.etherscan.io/address/0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31',
+    explorer: 'https://sepolia.etherscan.io/address/0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3',
     owner: '0xF89CE65B635DA29be08c659e313D6C250750bC73',
     
     // ABI для нашего простого контракта

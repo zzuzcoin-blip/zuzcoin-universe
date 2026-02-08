@@ -1,0 +1,111 @@
+const fs = require('fs');
+let html = fs.readFileSync('index.html', 'utf8');
+
+// Добавляем ethers.js и наш wallet connector
+if (!html.includes('wallet-connector.js')) {
+  // Вставляем перед закрывающим </body>
+  const walletScripts = `
+    <!-- Ethers.js for blockchain interactions -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    
+    <!-- ZUZIM Wallet Connector -->
+    <script src="wallet-connector.js"></script>
+  `;
+  
+  html = html.replace('</body>', walletScripts + '</body>');
+  fs.writeFileSync('index.html', html);
+  console.log('✅ Wallet scripts added to HTML');
+}
+
+// Также создаем отдельный HTML файл для теста
+fs.writeFileSync('test-wallet.html', `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZUZIM Wallet Test</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+    <style>
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            text-align: center; 
+        }
+        h1 { color: #00ff88; }
+        .wallet-section { 
+            background: rgba(255,255,255,0.1); 
+            padding: 30px; 
+            border-radius: 15px; 
+            margin: 20px 0; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 ZUZIM Wallet Connection Test</h1>
+        <div class="wallet-section">
+            <h3>Connect Your Wallet:</h3>
+            <p>This will open MetaMask or your preferred wallet</p>
+            <button onclick="connectWallet()" style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                border-radius: 25px;
+                font-size: 18px;
+                cursor: pointer;
+                margin: 10px;
+            ">
+                🔗 Connect Wallet
+            </button>
+            <div id="walletInfo" style="margin-top: 20px; display: none;">
+                <p>✅ Connected: <span id="account"></span></p>
+                <p>📊 ETH Balance: <span id="ethBalance">0</span></p>
+                <p>🪙 ZUZ Balance: <span id="zuzBalance">0</span></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    async function connectWallet() {
+        try {
+            if (typeof window.ethereum !== 'undefined') {
+                // Request account access - это вызовет всплывающее окно MetaMask!
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                const account = accounts[0];
+                document.getElementById('account').textContent = 
+                    account.substring(0, 6) + '...' + account.substring(38);
+                
+                document.getElementById('walletInfo').style.display = 'block';
+                
+                // Get ETH balance
+                const ethBalance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [account, 'latest']
+                });
+                document.getElementById('ethBalance').textContent = 
+                    (parseInt(ethBalance) / 1e18).toFixed(4) + ' ETH';
+                
+                alert('✅ Wallet connected successfully!');
+            } else {
+                alert('⚠️ Please install MetaMask!');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('❌ Error: ' + error.message);
+        }
+    }
+    </script>
+</body>
+</html>
+`);
+
+console.log('✅ Test wallet page created: test-wallet.html');

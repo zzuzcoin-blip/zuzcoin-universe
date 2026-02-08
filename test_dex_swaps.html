@@ -1,0 +1,214 @@
+<html>
+<head>
+    <title>Test DEX Swaps</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        .buy { background: #00d18c; color: white; }
+        .sell { background: #ff4d4d; color: white; }
+        .section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+<h2>Test DEX Swaps ZUZ ↔ PYUSD</h2>
+
+<button onclick="connectWallet()">🔗 Connect Wallet</button>
+
+<div class="section">
+    <h3>1. Get Quote</h3>
+    <input type="number" id="swapAmount" placeholder="Amount" value="10">
+    <select id="swapDirection">
+        <option value="ZUZtoPYUSD">ZUZ → PYUSD</option>
+        <option value="PYUSDtoZUZ">PYUSD → ZUZ</option>
+    </select>
+    <button onclick="getQuote()">Get Quote</button>
+    <div id="quoteResult" style="margin-top: 10px;"></div>
+</div>
+
+<div class="section">
+    <h3>2. Execute Swap</h3>
+    <button class="buy" onclick="swapZUZtoPYUSD()">Swap ZUZ → PYUSD</button>
+    <button class="sell" onclick="swapPYUSDtoZUZ()">Swap PYUSD → ZUZ</button>
+    <div id="swapResult" style="margin-top: 10px;"></div>
+</div>
+
+<div class="section">
+    <h3>3. Check Reserves</h3>
+    <button onclick="checkReserves()">Check Reserves</button>
+    <div id="reservesResult" style="margin-top: 10px;"></div>
+</div>
+
+<script>
+let signer;
+const DEX_ADDRESS = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+const ZUZ_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+const PYUSD_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
+
+const DEX_ABI = [
+    "function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)",
+    "function getSwapQuote(address tokenIn, address tokenOut, uint256 amountIn) view returns (uint256 amountOut, uint256 charityAmount)",
+    "function getReserves(address tokenA, address tokenB) view returns (uint256 reserveA, uint256 reserveB)"
+];
+
+const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) returns (bool)",
+    "function balanceOf(address) view returns (uint256)",
+    "function decimals() view returns (uint8)"
+];
+
+async function connectWallet() {
+    if (!window.ethereum) {
+        alert("Install MetaMask!");
+        return;
+    }
+    
+    try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
+        const address = await signer.getAddress();
+        alert("✅ Connected: " + address.substring(0, 10) + "...");
+        
+    } catch (error) {
+        alert("❌ Error: " + error.message);
+    }
+}
+
+async function getQuote() {
+    if (!signer) {
+        alert("Connect wallet first!");
+        return;
+    }
+    
+    try {
+        const amount = document.getElementById('swapAmount').value;
+        const direction = document.getElementById('swapDirection').value;
+        
+        const tokenIn = direction === 'ZUZtoPYUSD' ? ZUZ_ADDRESS : PYUSD_ADDRESS;
+        const tokenOut = direction === 'ZUZtoPYUSD' ? PYUSD_ADDRESS : ZUZ_ADDRESS;
+        
+        // Получаем decimals
+        const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
+        const decimals = await tokenInContract.decimals();
+        const amountIn = ethers.utils.parseUnits(amount, decimals);
+        
+        // Получаем котировку
+        const dexContract = new ethers.Contract(DEX_ADDRESS, DEX_ABI, signer);
+        const [amountOut, charityAmount] = await dexContract.getSwapQuote(tokenIn, tokenOut, amountIn);
+        
+        // Форматируем результат
+        const tokenOutContract = new ethers.Contract(tokenOut, ERC20_ABI, signer);
+        const outDecimals = await tokenOutContract.decimals();
+        
+        const amountOutFormatted = ethers.utils.formatUnits(amountOut, outDecimals);
+        const charityFormatted = ethers.utils.formatUnits(charityAmount, decimals);
+        
+        document.getElementById('quoteResult').innerHTML = `
+            <div style="color: green;">
+                <strong>Quote:</strong><br>
+                Input: ${amount} ${direction === 'ZUZtoPYUSD' ? 'ZUZ' : 'PYUSD'}<br>
+                Output: ${amountOutFormatted} ${direction === 'ZUZtoPYUSD' ? 'PYUSD' : 'ZUZ'}<br>
+                Charity: ${charityFormatted} ${direction === 'ZUZtoPYUSD' ? 'ZUZ' : 'PYUSD'} (1%)<br>
+                Fee: 0.3% trading fee
+            </div>
+        `;
+        
+    } catch (error) {
+        document.getElementById('quoteResult').innerHTML = `<div style="color: red;">❌ Error: ${error.message}</div>`;
+    }
+}
+
+async function swapZUZtoPYUSD() {
+    await executeSwap(ZUZ_ADDRESS, PYUSD_ADDRESS, "ZUZ → PYUSD");
+}
+
+async function swapPYUSDtoZUZ() {
+    await executeSwap(PYUSD_ADDRESS, ZUZ_ADDRESS, "PYUSD → ZUZ");
+}
+
+async function executeSwap(tokenIn, tokenOut, description) {
+    if (!signer) {
+        alert("Connect wallet first!");
+        return;
+    }
+    
+    try {
+        const amount = document.getElementById('swapAmount').value;
+        if (!amount || amount <= 0) {
+            alert("Enter amount!");
+            return;
+        }
+        
+        document.getElementById('swapResult').innerHTML = "⏳ Processing...";
+        
+        // Получаем decimals
+        const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
+        const decimals = await tokenInContract.decimals();
+        const amountIn = ethers.utils.parseUnits(amount, decimals);
+        
+        // Даем approve
+        const approveTx = await tokenInContract.approve(DEX_ADDRESS, amountIn);
+        await approveTx.wait();
+        
+        // Выполняем свап
+        const dexContract = new ethers.Contract(DEX_ADDRESS, DEX_ABI, signer);
+        const swapTx = await dexContract.swap(tokenIn, tokenOut, amountIn);
+        
+        document.getElementById('swapResult').innerHTML = `⏳ Swap sent: ${swapTx.hash}`;
+        
+        await swapTx.wait();
+        
+        document.getElementById('swapResult').innerHTML = `
+            <div style="color: green;">
+                ✅ ${description} successful!<br>
+                1% sent to charity automatically.
+            </div>
+        `;
+        
+        // Обновляем резервы
+        checkReserves();
+        
+    } catch (error) {
+        document.getElementById('swapResult').innerHTML = `<div style="color: red;">❌ Error: ${error.message}</div>`;
+    }
+}
+
+async function checkReserves() {
+    if (!signer) {
+        alert("Connect wallet first!");
+        return;
+    }
+    
+    try {
+        const dexContract = new ethers.Contract(DEX_ADDRESS, DEX_ABI, signer);
+        const [reserveA, reserveB] = await dexContract.getReserves(ZUZ_ADDRESS, PYUSD_ADDRESS);
+        
+        // Получаем decimals
+        const zuzContract = new ethers.Contract(ZUZ_ADDRESS, ERC20_ABI, signer);
+        const pyusdContract = new ethers.Contract(PYUSD_ADDRESS, ERC20_ABI, signer);
+        
+        const zuzDecimals = await zuzContract.decimals();
+        const pyusdDecimals = await pyusdContract.decimals();
+        
+        const zuzReserve = ethers.utils.formatUnits(reserveA, zuzDecimals);
+        const pyusdReserve = ethers.utils.formatUnits(reserveB, pyusdDecimals);
+        const price = (pyusdReserve / zuzReserve).toFixed(4);
+        
+        document.getElementById('reservesResult').innerHTML = `
+            <div style="color: blue;">
+                <strong>Current Reserves:</strong><br>
+                ZUZ: ${zuzReserve}<br>
+                PYUSD: ${pyusdReserve}<br>
+                Price: 1 ZUZ = ${price} PYUSD
+            </div>
+        `;
+        
+    } catch (error) {
+        document.getElementById('reservesResult').innerHTML = `<div style="color: red;">❌ Error: ${error.message}</div>`;
+    }
+}
+</script>
+</body>
+</html>

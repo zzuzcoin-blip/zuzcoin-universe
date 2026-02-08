@@ -1,0 +1,59 @@
+<html>
+<body>
+<h2>Approve Tokens for DEX</h2>
+<button onclick="approveZUZ()">1. Approve ZUZ</button><br>
+<button onclick="approveUSDT()">2. Approve USDT</button><br>
+<button onclick="addLiquidity()">3. Add Liquidity</button>
+<p id="result"></p>
+
+<script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+<script>
+async function approveZUZ() {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(
+        "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+        ["function approve(address spender, uint256 amount) returns (bool)"],
+        signer
+    );
+    const tx = await contract.approve(
+        "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+        "1000000000000000000000"
+    );
+    document.getElementById('result').innerHTML = "ZUZ Approved: " + tx.hash;
+}
+
+async function approveUSDT() {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(
+        "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06",
+        ["function approve(address spender, uint256 amount) returns (bool)"],
+        signer
+    );
+    const tx = await contract.approve(
+        "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+        "500000000"
+    );
+    document.getElementById('result').innerHTML = "USDT Approved: " + tx.hash;
+}
+
+async function addLiquidity() {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(
+        "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+        ["function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB)"],
+        signer
+    );
+    const tx = await contract.addLiquidity(
+        "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+        "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06",
+        "1000000000000000000000",
+        "500000000"
+    );
+    document.getElementById('result').innerHTML = "Liquidity Added: " + tx.hash;
+}
+</script>
+</body>
+</html>

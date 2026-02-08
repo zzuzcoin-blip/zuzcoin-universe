@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Mobile View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .test-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .test-item {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .viewport-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .test-item {
+                background: #2196F3;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .test-item {
+                background: #FF9800;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-info" id="viewportInfo"></div>
+    
+    <div class="test-info">
+        <h2>📱 Тест мобильной адаптации</h2>
+        <p>Если блоки меняют цвет - адаптация работает!</p>
+        <p><strong>Текущий URL:</strong> <span id="currentUrl"></span></p>
+    </div>
+    
+    <div class="test-item">Блок 1: Должен быть синим на планшетах</div>
+    <div class="test-item">Блок 2: Должен быть оранжевым на телефонах</div>
+    <div class="test-item">Блок 3: Проверка viewport тега</div>
+    
+    <div style="margin-top: 30px;">
+        <h3>Ссылки для тестирования:</h3>
+        <p><a href="index_mobile_responsive.html">index_mobile_responsive.html</a> - адаптивная версия</p>
+        <p><a href="index.html">index.html</a> - оригинальная версия</p>
+    </div>
+
+    <script>
+        // Показываем информацию о viewport
+        function updateViewportInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const dpr = window.devicePixelRatio;
+            
+            document.getElementById('viewportInfo').innerHTML = 
+                `${width}×${height}<br>DPR: ${dpr}`;
+            
+            document.getElementById('currentUrl').textContent = window.location.href;
+        }
+        
+        updateViewportInfo();
+        window.addEventListener('resize', updateViewportInfo);
+    </script>
+</body>
+</html>

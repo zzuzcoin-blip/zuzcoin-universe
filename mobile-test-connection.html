@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mobile Connection Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .success { color: green; }
+        .fail { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Mobile CSS Connection Test</h2>
+    <p id="status">Testing...</p>
+    <script>
+        // Проверяем подключен ли mobile-fix.css
+        const links = Array.from(document.styleSheets)
+            .filter(sheet => sheet.href && sheet.href.includes('mobile-fix.css'));
+        
+        const status = document.getElementById('status');
+        if (links.length > 0) {
+            status.innerHTML = '<span class="success">✅ mobile-fix.css подключен</span>';
+            status.innerHTML += '<br>✅ Медиазапросы активны';
+        } else {
+            status.innerHTML = '<span class="fail">❌ mobile-fix.css НЕ подключен</span>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>Check Status</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<h2>Check Token Status</h2>
+
+<button onclick="connectAndCheck()">🔗 Connect & Check</button>
+
+<div id="status" style="margin: 20px; padding: 15px; background: #f5f5f5; border-radius: 10px;"></div>
+
+<script>
+async function connectAndCheck() {
+    if (!window.ethereum) {
+        document.getElementById('status').innerHTML = "❌ Install MetaMask!";
+        return;
+    }
+    
+    try {
+        document.getElementById('status').innerHTML = "⏳ Connecting...";
+        
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        
+        let html = `<strong>✅ Connected:</strong> ${address}<br><br>`;
+        
+        // Проверяем балансы
+        html += await checkBalance("ETH", null, provider, address, 18);
+        html += await checkBalance("ZUZ", "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3", provider, address, 18);
+        html += await checkBalance("USDT", "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06", provider, address, 6);
+        
+        // Проверяем approve
+        html += await checkApprove("ZUZ", "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3", "0x09970975aa48c718e17db4a18128ebf6806e1f2c", provider, address);
+        html += await checkApprove("USDT", "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06", "0x09970975aa48c718e17db4a18128ebf6806e1f2c", provider, address);
+        
+        document.getElementById('status').innerHTML = html;
+        
+    } catch (error) {
+        document.getElementById('status').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function checkBalance(tokenName, tokenAddress, provider, userAddress, decimals) {
+    try {
+        let balance;
+        
+        if (tokenName === "ETH") {
+            balance = await provider.getBalance(userAddress);
+        } else {
+            const abi = ["function balanceOf(address) view returns (uint256)"];
+            const contract = new ethers.Contract(tokenAddress, abi, provider);
+            balance = await contract.balanceOf(userAddress);
+        }
+        
+        const formatted = ethers.utils.formatUnits(balance, decimals);
+        const color = parseFloat(formatted) > 0 ? "green" : "red";
+        
+        return `<div style="color: ${color};">${tokenName} Balance: ${formatted}</div>`;
+        
+    } catch (error) {
+        return `<div style="color: red;">${tokenName} Error: ${error.message}</div>`;
+    }
+}
+
+async function checkApprove(tokenName, tokenAddress, spenderAddress, provider, ownerAddress) {
+    try {
+        const abi = ["function allowance(address owner, address spender) view returns (uint256)"];
+        const contract = new ethers.Contract(tokenAddress, abi, provider);
+        const allowance = await contract.allowance(ownerAddress, spenderAddress);
+        
+        const needed = tokenName === "ZUZ" ? "1000000000000000000000" : "500000000";
+        const hasEnough = allowance >= ethers.BigNumber.from(needed);
+        const color = hasEnough ? "green" : "red";
+        const status = hasEnough ? "✅ Approved" : "❌ Not approved";
+        
+        return `<div style="color: ${color};">${tokenName} ${status}: ${ethers.utils.formatUnits(allowance, tokenName === "ZUZ" ? 18 : 6)}</div>`;
+        
+    } catch (error) {
+        return `<div style="color: red;">${tokenName} Approve Check Error: ${error.message}</div>`;
+    }
+}
+</script>
+</body>
+</html>

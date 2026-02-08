@@ -1,0 +1,134 @@
+<html>
+<head>
+    <title>Approve Tokens for DEX</title>
+    <!-- Загружаем ethers из надежного источника -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<h2>Approve Tokens for DEX</h2>
+
+<button onclick="connectWallet()">🔗 1. Connect MetaMask</button>
+<br><br>
+
+<button id="btn1" disabled onclick="approveZUZ()">2. Approve ZUZ</button><br>
+<button id="btn2" disabled onclick="approveUSDT()">3. Approve USDT</button><br>
+<button id="btn3" disabled onclick="addLiquidity()">4. Add Liquidity</button>
+
+<p id="result">Status: Ready</p>
+
+<script>
+let signer;
+
+async function connectWallet() {
+    if (!window.ethereum) {
+        document.getElementById('result').innerHTML = "❌ Install MetaMask!";
+        return;
+    }
+    
+    try {
+        document.getElementById('result').innerHTML = "⏳ Connecting...";
+        
+        // Запрашиваем аккаунты
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Создаем провайдер
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        
+        // Получаем адрес
+        const address = await signer.getAddress();
+        document.getElementById('result').innerHTML = "✅ Connected: " + address.substring(0, 10) + "...";
+        
+        // Включаем кнопки
+        document.getElementById('btn1').disabled = false;
+        document.getElementById('btn2').disabled = false;
+        document.getElementById('btn3').disabled = false;
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approveZUZ() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving ZUZ...";
+        
+        // ABI для функции approve
+        const abi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        
+        // Адрес ZUZ токена
+        const zuzAddress = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        
+        // Создаем контракт
+        const contract = new ethers.Contract(zuzAddress, abi, signer);
+        
+        // Адрес DEX
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        
+        // 1000 ZUZ с 18 decimals
+        const amount = "1000000000000000000000";
+        
+        // Отправляем транзакцию
+        const tx = await contract.approve(dexAddress, amount);
+        
+        document.getElementById('result').innerHTML = "✅ ZUZ Approval sent! Hash: " + tx.hash;
+        
+        // Ждем подтверждения
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ ZUZ Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function approveUSDT() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Approving USDT...";
+        
+        const abi = ["function approve(address spender, uint256 amount) returns (bool)"];
+        const usdtAddress = "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06";
+        const contract = new ethers.Contract(usdtAddress, abi, signer);
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        
+        // 500 USDT с 6 decimals
+        const amount = "500000000";
+        
+        const tx = await contract.approve(dexAddress, amount);
+        document.getElementById('result').innerHTML = "✅ USDT Approval sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "✅ USDT Approved! Transaction confirmed.";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+
+async function addLiquidity() {
+    try {
+        document.getElementById('result').innerHTML = "⏳ Adding liquidity...";
+        
+        const abi = ["function addLiquidity(address tokenA, address tokenB, uint256 amountA, uint256 amountB)"];
+        const dexAddress = "0x09970975aa48c718e17db4a18128ebf6806e1f2c";
+        const contract = new ethers.Contract(dexAddress, abi, signer);
+        
+        const zuzAddress = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
+        const usdtAddress = "0x7169D38820dfd117C3FA1f22a697dBA58d90BA06";
+        
+        const zuzAmount = "1000000000000000000000"; // 1000 ZUZ
+        const usdtAmount = "500000000"; // 500 USDT
+        
+        const tx = await contract.addLiquidity(zuzAddress, usdtAddress, zuzAmount, usdtAmount);
+        document.getElementById('result').innerHTML = "✅ Liquidity transaction sent! Hash: " + tx.hash;
+        
+        await tx.wait();
+        document.getElementById('result').innerHTML = "🎉 SUCCESS! Liquidity added to DEX!";
+        
+    } catch (error) {
+        document.getElementById('result').innerHTML = "❌ Error: " + error.message;
+    }
+}
+</script>
+</body>
+</html>

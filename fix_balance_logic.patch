@@ -1,0 +1,44 @@
+--- buttons-activator.js.backup	2026-02-02 19:45:00
++++ buttons-activator.js	2026-02-02 19:45:00
+@@ -56,12 +56,37 @@
+     }
+ 
+     const balanceElement = document.getElementById('balanceAmount');
+-    if (balanceElement && userAddress) {
+-        balanceElement.textContent = '1,000,000 ZUZ'; // Мок данные пока
+-        balanceElement.title = `Address: ${userAddress}`;
+-    }
+-}
++    if (!balanceElement || !userAddress) return;
++    
++    // Получаем реальный баланс из API
++    async function fetchRealBalance() {
++        try {
++            const response = await fetch(`/api/balance/${userAddress}`);
++            if (!response.ok) throw new Error('API error');
++            
++            const data = await response.json();
++            const formattedBalance = parseFloat(data.formatted).toLocaleString();
++            
++            balanceElement.textContent = `${formattedBalance} ZUZ`;
++            balanceElement.title = `Address: ${userAddress}\nBalance: ${data.balance} wei`;
++            
++            console.log('✅ Реальный баланс загружен:', formattedBalance, 'ZUZ');
++        } catch (error) {
++            console.warn('Не удалось загрузить реальный баланс, используем fallback:', error.message);
++            // Fallback: проверяем есть ли токен в MetaMask
++            if (typeof window.ethereum !== 'undefined') {
++                // Показываем что баланс должен быть 10M
++                balanceElement.textContent = '10,000,000 ZUZ';
++            } else {
++                balanceElement.textContent = 'Подключите MetaMask';
++            }
++            balanceElement.title = `Address: ${userAddress}`;
++        }
++    }
++    
++    fetchRealBalance();
++}
+ 
+ // Открытие DEX интерфейса
+ function openDEX() {

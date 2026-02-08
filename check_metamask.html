@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaMask Test</title>
+</head>
+<body>
+    <h2>MetaMask Connection Test</h2>
+    <button onclick="checkMetaMask()">Test MetaMask</button>
+    <div id="result" style="margin-top:20px;padding:10px;background:#f0f0f0;"></div>
+    
+    <script>
+        async function checkMetaMask() {
+            const result = document.getElementById('result');
+            
+            if (typeof window.ethereum === 'undefined') {
+                result.innerHTML = "❌ MetaMask NOT DETECTED<br>Please install MetaMask extension";
+                result.style.background = '#ffcccc';
+                return;
+            }
+            
+            result.innerHTML = "✅ MetaMask DETECTED<br>Trying to connect...";
+            result.style.background = '#ccffcc';
+            
+            try {
+                // Try to get accounts
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                result.innerHTML += `<br>✅ CONNECTED: ${accounts[0]}`;
+                
+                // Check network
+                const chainId = await window.ethereum.request({ 
+                    method: 'eth_chainId' 
+                });
+                
+                result.innerHTML += `<br>📡 Network ID: ${chainId}`;
+                
+                // Get balance
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [accounts[0], 'latest']
+                });
+                
+                const ethBalance = parseInt(balance) / 1e18;
+                result.innerHTML += `<br>💰 Balance: ${ethBalance.toFixed(4)} ETH`;
+                
+            } catch (error) {
+                result.innerHTML += `<br>❌ ERROR: ${error.message}`;
+                result.style.background = '#ffcccc';
+            }
+        }
+        
+        // Auto-check on load
+        window.onload = function() {
+            document.getElementById('result').innerHTML = 
+                "Auto-checking MetaMask...<br>" +
+                "MetaMask detected: " + (typeof window.ethereum !== 'undefined' ? "✅ YES" : "❌ NO");
+        };
+    </script>
+</body>
+</html>

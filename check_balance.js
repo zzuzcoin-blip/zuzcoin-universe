@@ -1,6 +1,6 @@
 const ethers = require('ethers');
 
-const CONTRACT_ADDRESS = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+const CONTRACT_ADDRESS = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
 const USER_ADDRESS = "0xf89ce65b789a3c7b1f8a5c8d3c4e9f2b1a0d8c7b"; // Ваш адрес
 // Используем альтернативный RPC (Alchemy бесплатный для Sepolia)
 const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/demo"; 

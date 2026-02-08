@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZUZCOIN Universe | Mobile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0e1a2d;
+            --secondary: #1a2b44;
+            --accent: #00c3ff;
+            --positive: #00d18c;
+            --negative: #ff4d4d;
+            --text: #ffffff;
+            --text-secondary: #8a9bb2;
+            --border: #2a3b54;
+            --card-bg: rgba(20, 30, 48, 0.9);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, #0c1525 100%);
+            color: var(--text);
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .mobile-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+        }
+        
+        /* Мобильный хедер */
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            background: var(--secondary);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .mobile-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .mobile-logo i {
+            color: var(--accent);
+            font-size: 20px;
+        }
+        
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        /* Мобильный баланс */
+        .mobile-balance-container {
+            display: flex;
+            justify-content: space-between;
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .mobile-balance-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .mobile-balance-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .mobile-balance-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .mobile-balance-value.eth {
+            color: #627eea;
+        }
+        
+        .mobile-balance-value.zuz {
+            color: var(--positive);
+        }
+        
+        /* Мобильный DEX статус */
+        .mobile-dex-banner {
+            background: linear-gradient(90deg, var(--positive), #00b377);
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        
+        .mobile-dex-status {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .mobile-status-item {
+            background: var(--secondary);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .mobile-status-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .mobile-status-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--positive);
+        }
+        
+        /* Мобильная торговая панель */
+        .mobile-trading-panel {
+            background: var(--card-bg);
+            border: 2px solid var(--positive);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 209, 140, 0.2);
+        }
+        
+        .mobile-panel-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mobile-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .mobile-form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .mobile-form-input {
+            width: 100%;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .mobile-btn-buy, .mobile-btn-sell {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+        
+        .mobile-btn-buy {
+            background: var(--positive);
+            color: white;
+        }
+        
+        .mobile-btn-sell {
+            background: var(--negative);
+            color: white;
+        }
+        
+        /* Мобильные секции */
+        .mobile-section {
+            margin-bottom: 25px;
+        }
+        
+        .mobile-section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mobile-features-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .mobile-feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .mobile-feature-icon {
+            font-size: 30px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+        
+        .mobile-feature-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .mobile-feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        
+        /* Мобильная навигация */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--secondary);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 11px;
+        }
+        
+        .mobile-nav-item.active {
+            color: var(--accent);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        
+        /* Адаптивные медиа-запросы */
+        @media (min-width: 768px) {
+            .mobile-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Анимации */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        /* Утилиты */
+        .mobile-text-center {
+            text-align: center;
+        }
+        
+        .mobile-text-small {
+            font-size: 12px;
+        }
+        
+        .mobile-text-secondary {
+            color: var(--text-secondary);
+        }
+        
+        .mobile-mt-10 {
+            margin-top: 10px;
+        }
+        
+        .mobile-mb-10 {
+            margin-bottom: 10px;
+        }
+        
+        .mobile-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Мобильный хедер -->
+        <header class="mobile-header">
+            <div class="mobile-logo">
+                <i class="fas fa-coins"></i>
+                <span>ZUZCOIN</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        
+        <!-- Баланс кошелька -->
+        <div class="mobile-balance-container" id="mobileBalanceContainer" style="display: none;">
+            <div class="mobile-balance-item">
+                <div class="mobile-balance-label">ETH Balance</div>
+                <div class="mobile-balance-value eth" id="mobileEthBalance">0.00 ETH</div>
+            </div>
+            <div class="mobile-balance-item">
+                <div class="mobile-balance-label">ZUZ Balance</div>
+                <div class="mobile-balance-value zuz" id="mobileZuzBalance">0 ZUZ</div>
+            </div>
+            <div class="mobile-balance-item">
+                <div class="mobile-balance-label">Network</div>
+                <div class="mobile-balance-value" id="mobileNetworkName">Not Connected</div>
+            </div>
+        </div>
+        
+        <!-- Кнопка подключения кошелька -->
+        <button class="mobile-btn-buy" id="mobileConnectBtn" onclick="connectWallet()">
+            <i class="fas fa-wallet"></i>
+            Connect Wallet
+        </button>
+        
+        <!-- Баннер DEX -->
+        <div class="mobile-dex-banner" id="mobileDexBanner" style="display: none;">
+            <i class="fas fa-rocket"></i>
+            <strong>REAL DEX LIVE</strong> - 1% Auto-Donation
+            <i class="fas fa-rocket"></i>
+        </div>
+        
+        <!-- Статус DEX -->
+        <div class="mobile-dex-status" id="mobileDexStatus" style="display: none;">
+            <div class="mobile-status-item">
+                <div class="mobile-status-label">DEX Contract</div>
+                <div class="mobile-status-value">✅ Deployed</div>
+            </div>
+            <div class="mobile-status-item">
+                <div class="mobile-status-label">ZUZ/PYUSD Pair</div>
+                <div class="mobile-status-value" id="mobilePairStatus">Checking...</div>
+            </div>
+            <div class="mobile-status-item">
+                <div class="mobile-status-label">Liquidity</div>
+                <div class="mobile-status-value" id="mobileLiquidityStatus">Checking...</div>
+            </div>
+            <div class="mobile-status-item">
+                <div class="mobile-status-label">Auto-Donate</div>
+                <div class="mobile-status-value">✅ 1% Active</div>
+            </div>
+        </div>
+        
+        <!-- Торговая панель -->
+        <div class="mobile-trading-panel">
+            <div class="mobile-panel-title">
+                <i class="fas fa-exchange-alt"></i>
+                REAL DEX Trading
+            </div>
+            
+            <p class="mobile-text-secondary mobile-mb-10">
+                Trade ZUZ/PYUSD with 1% auto-donation
+            </p>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">Amount (ZUZ)</label>
+                <input type="number" class="mobile-form-input" id="mobileAmountInput" placeholder="0.00" step="0.01" value="10">
+            </div>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">Price (PYUSD)</label>
+                <input type="number" class="mobile-form-input" id="mobilePriceInput" placeholder="0.0961" value="0.0961" step="0.0001">
+            </div>
+            
+            <div class="mobile-form-group">
+                <label class="mobile-form-label">Total (PYUSD)</label>
+                <input type="number" class="mobile-form-input" id="mobileTotalInput" placeholder="0.00" readonly>
+            </div>
+            
+            <button class="mobile-btn-buy" onclick="mobilePlaceOrder('buy')">
+                <i class="fas fa-arrow-up"></i>
+                Buy ZUZ (Real DEX)
+            </button>
+            
+            <button class="mobile-btn-sell" onclick="mobilePlaceOrder('sell')">
+                <i class="fas fa-arrow-down"></i>
+                Sell ZUZ (Real DEX)
+            </button>
+            
+            <div class="mobile-text-center mobile-text-secondary mobile-mt-10 mobile-text-small">
+                <i class="fas fa-hand-holding-heart"></i>
+                1% of every trade goes to charity
+            </div>
+        </div>
+        
+        <!-- Секция Token Factory -->
+        <div class="mobile-section">
+            <h3 class="mobile-section-title">
+                <i class="fas fa-industry"></i>
+                Token Factory
+            </h3>
+            
+            <div class="mobile-features-grid">
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Create Token</h4>
+                    <p class="mobile-feature-desc">Deploy your own ERC20 token with custom settings</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Charity % Slider</h4>
+                    <p class="mobile-feature-desc">Set automatic charity percentage for transactions</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Token Analytics</h4>
+                    <p class="mobile-feature-desc">Track your token performance and transactions</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция Digital Notary -->
+        <div class="mobile-section">
+            <h3 class="mobile-section-title">
+                <i class="fas fa-file-contract"></i>
+                Digital Notary
+            </h3>
+            
+            <div class="mobile-features-grid">
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Upload Files</h4>
+                    <p class="mobile-feature-desc">Securely timestamp documents on blockchain</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Create Hash</h4>
+                    <p class="mobile-feature-desc">Generate unique cryptographic hash for files</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Verify Integrity</h4>
+                    <p class="mobile-feature-desc">Prove file authenticity and timestamp</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Секция ProofChain -->
+        <div class="mobile-section">
+            <h3 class="mobile-section-title">
+                <i class="fas fa-link"></i>
+                ProofChain Ecosystem
+            </h3>
+            
+            <div class="mobile-features-grid">
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Charity Tracking</h4>
+                    <p class="mobile-feature-desc">Transparent tracking of all donations</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Secure Voting</h4>
+                    <p class="mobile-feature-desc">Community governance and voting system</p>
+                </div>
+                
+                <div class="mobile-feature-card">
+                    <div class="mobile-feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h4 class="mobile-feature-title">Global Impact</h4>
+                    <p class="mobile-feature-desc">Track real-world impact of donations</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Нижняя навигация -->
+        <nav class="mobile-nav">
+            <a href="#" class="mobile-nav-item active">
+                <i class="fas fa-chart-line mobile-nav-icon"></i>
+                Trade
+            </a>
+            <a href="#token-factory" class="mobile-nav-item">
+                <i class="fas fa-industry mobile-nav-icon"></i>
+                Factory
+            </a>
+            <a href="#digital-notary" class="mobile-nav-item">
+                <i class="fas fa-file-contract mobile-nav-icon"></i>
+                Notary
+            </a>
+            <a href="#proofchain" class="mobile-nav-item">
+                <i class="fas fa-link mobile-nav-icon"></i>
+                ProofChain
+            </a>
+        </nav>
+        
+        <!-- Отступ для навигации -->
+        <div style="height: 70px;"></div>
+    </div>
+    
+    <!-- Скрипты -->
+    <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+    <script>
+        // Конфигурация DEX
+        const DEX_CONFIG = {
+            address: "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
+            zuzToken: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
+            pyusdToken: "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9"
+        };
+        
+        const DEX_ABI = [
+            "function getSwapQuote(address tokenIn, address tokenOut, uint256 amountIn) view returns (uint256 amountOut, uint256 charityAmount)",
+            "function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)",
+            "function getReserves(address tokenA, address tokenB) view returns (uint256 reserveA, uint256 reserveB)"
+        ];
+        
+        const ERC20_ABI = [
+            "function approve(address spender, uint256 amount) returns (bool)",
+            "function balanceOf(address account) view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
+        
+        let mobileProvider, mobileSigner, mobileUserAddress;
+        let mobileDexContract, mobileZuzContract, mobilePyusdContract;
+        
+        // Подключение кошелька
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("Please install MetaMask!");
+                return;
+            }
+            
+            try {
+                document.getElementById('mobileConnectBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+                
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                mobileProvider = new ethers.providers.Web3Provider(window.ethereum);
+                mobileSigner = mobileProvider.getSigner();
+                mobileUserAddress = await mobileSigner.getAddress();
+                
+                // Показываем элементы
+                document.getElementById('mobileBalanceContainer').style.display = 'flex';
+                document.getElementById('mobileDexBanner').style.display = 'block';
+                document.getElementById('mobileDexStatus').style.display = 'grid';
+                document.getElementById('mobileConnectBtn').innerHTML = '<i class="fas fa-check"></i> Connected';
+                document.getElementById('mobileConnectBtn').style.background = '#2a3b54';
+                document.getElementById('mobileConnectBtn').disabled = true;
+                
+                // Инициализируем контракты
+                await initMobileContracts();
+                
+                // Загружаем балансы
+                await loadMobileBalances();
+                
+                // Проверяем статус DEX
+                await checkMobilePairStatus();
+                
+            } catch (error) {
+                document.getElementById('mobileConnectBtn').innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
+                alert("Connection error: " + error.message);
+            }
+        }
+        
+        // Инициализация контрактов
+        async function initMobileContracts() {
+            try {
+                mobileDexContract = new ethers.Contract(DEX_CONFIG.address, DEX_ABI, mobileSigner);
+                mobileZuzContract = new ethers.Contract(DEX_CONFIG.zuzToken, ERC20_ABI, mobileSigner);
+                mobilePyusdContract = new ethers.Contract(DEX_CONFIG.pyusdToken, ERC20_ABI, mobileSigner);
+            } catch (error) {
+                console.error("Contract init error:", error);
+            }
+        }
+        
+        // Загрузка балансов
+        async function loadMobileBalances() {
+            try {
+                // ETH баланс
+                const ethBalance = await mobileProvider.getBalance(mobileUserAddress);
+                document.getElementById('mobileEthBalance').textContent = 
+                    parseFloat(ethers.utils.formatEther(ethBalance)).toFixed(4) + ' ETH';
+                
+                // ZUZ баланс
+                const zuzBalance = await mobileZuzContract.balanceOf(mobileUserAddress);
+                const zuzDecimals = await mobileZuzContract.decimals();
+                document.getElementById('mobileZuzBalance').textContent = 
+                    parseFloat(ethers.utils.formatUnits(zuzBalance, zuzDecimals)).toFixed(2) + ' ZUZ';
+                
+                // Сеть
+                const network = await mobileProvider.getNetwork();
+                document.getElementById('mobileNetworkName').textContent = 
+                    network.name.charAt(0).toUpperCase() + network.name.slice(1);
+                
+            } catch (error) {
+                console.error("Balance load error:", error);
+            }
+        }
+        
+        // Проверка статуса пары
+        async function checkMobilePairStatus() {
+            try {
+                document.getElementById('mobilePairStatus').textContent = "⏳ Checking...";
+                document.getElementById('mobileLiquidityStatus').textContent = "⏳ Checking...";
+                
+                const reserves = await mobileDexContract.getReserves(DEX_CONFIG.zuzToken, DEX_CONFIG.pyusdToken);
+                
+                const zuzDecimals = await mobileZuzContract.decimals();
+                const pyusdDecimals = await mobilePyusdContract.decimals();
+                
+                const zuzReserve = ethers.utils.formatUnits(reserves[0], zuzDecimals);
+                const pyusdReserve = ethers.utils.formatUnits(reserves[1], pyusdDecimals);
+                
+                document.getElementById('mobilePairStatus').textContent = "✅ Active";
+                document.getElementById('mobileLiquidityStatus').textContent = 
+                    `${parseFloat(zuzReserve).toFixed(0)} ZUZ`;
+                
+            } catch (error) {
+                document.getElementById('mobilePairStatus').textContent = "❌ Error";
+                document.getElementById('mobileLiquidityStatus').textContent = "❌ Error";
+            }
+        }
+        
+        // Размещение ордера
+        async function mobilePlaceOrder(type) {
+            if (!mobileSigner) {
+                alert("Connect wallet first!");
+                return;
+            }
+            
+            try {
+                const amount = document.getElementById('mobileAmountInput').value;
+                if (!amount || amount <= 0) {
+                    alert("Enter amount!");
+                    return;
+                }
+                
+                const tokenIn = type === 'buy' ? DEX_CONFIG.pyusdToken : DEX_CONFIG.zuzToken;
+                const tokenOut = type === 'buy' ? DEX_CONFIG.zuzToken : DEX_CONFIG.pyusdToken;
+                const description = type === 'buy' ? "Buy ZUZ" : "Sell ZUZ";
+                
+                // Получаем decimals
+                const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, mobileSigner);
+                const decimals = await tokenInContract.decimals();
+                const amountIn = ethers.utils.parseUnits(amount, decimals);
+                
+                // Даем approve
+                alert("Approving tokens...");
+                const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
+                await approveTx.wait();
+                
+                // Получаем котировку
+                const [quoteAmount, charityAmount] = await mobileDexContract.getSwapQuote(tokenIn, tokenOut, amountIn);
+                
+                // Выполняем свап
+                alert("Executing swap...");
+                const swapTx = await mobileDexContract.swap(tokenIn, tokenOut, amountIn);
+                
+                alert(`✅ ${description} sent!\nHash: ${swapTx.hash}\n1% donated to charity.`);
+                
+                await swapTx.wait();
+                
+                alert("✅ Swap completed successfully!");
+                
+                // Обновляем данные
+                await loadMobileBalances();
+                await checkMobilePairStatus();
+                
+            } catch (error) {
+                alert(`❌ Swap error: ${error.message}`);
+            }
+        }
+        
+        // Авто-расчет total
+        function updateMobileTotal() {
+            const amount = parseFloat(document.getElementById('mobileAmountInput').value) || 0;
+            const price = parseFloat(document.getElementById('mobilePriceInput').value) || 0;
+            document.getElementById('mobileTotalInput').value = (amount * price).toFixed(4);
+        }
+        
+        // Инициализация
+        window.addEventListener('load', () => {
+            // Авто-расчет
+            document.getElementById('mobileAmountInput').addEventListener('input', updateMobileTotal);
+            document.getElementById('mobilePriceInput').addEventListener('input', updateMobileTotal);
+            updateMobileTotal();
+            
+            // Навигация
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Авто-подключение если уже подключен
+            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
+                setTimeout(() => connectWallet(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>

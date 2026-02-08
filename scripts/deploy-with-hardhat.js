@@ -24,7 +24,7 @@ async function main() {
   console.log("✅ ZUZIM DEX deployed to:", dexAddress);
   
   // Contract configuration
-  const ZUZ_TOKEN = "0x5B9d42EcAf7498771cC4edF728d3Dc3cc1f87C31";
+  const ZUZ_TOKEN = "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3";
   const WETH_SEPOLIA = "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9";
   
   console.log("🏊 Creating ZUZ/ETH liquidity pool...");
