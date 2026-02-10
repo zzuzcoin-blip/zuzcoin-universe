@@ -60,6 +60,46 @@
             width: 100%;
         }
         
+        /* ============= МОБИЛЬНАЯ АДАПТАЦИЯ ============= */
+        @media (max-width: 1200px) {
+            .container { padding: 0 15px; }
+            .main-grid { grid-template-columns: 1fr !important; }
+            .orderbook-grid { grid-template-columns: 1fr !important; }
+            .philosophy-grid { grid-template-columns: 1fr !important; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 10px; }
+            .header { flex-direction: column; gap: 15px; padding: 15px 0; }
+            .nav { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px; }
+            .nav a { padding: 6px 12px; font-size: 14px; }
+            .logo { width: 100%; justify-content: center; }
+            .wallet-section { width: 100%; justify-content: center; }
+            .balance-container { flex-direction: column; width: 100%; padding: 10px; }
+            .functional-grid { grid-template-columns: 1fr !important; }
+            .features-grid { grid-template-columns: 1fr !important; }
+            .section-header { flex-direction: column; gap: 15px; }
+            .tab-container { flex-direction: column; }
+            .tab { width: 100%; }
+            .modal-content { padding: 20px; width: 95%; max-height: 90vh; }
+            .philosophy-content { padding: 30px; }
+            .transformation-diagram { flex-direction: column; height: auto !important; }
+            .transformation-step { width: 100% !important; margin-bottom: 20px; }
+            .trading-pairs { grid-template-columns: 1fr !important; }
+            .exchange-stats { flex-direction: column; gap: 15px; }
+            .philosophy-title { font-size: 32px !important; }
+            .story-title { font-size: 24px !important; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 0 5px; }
+            .nav a { padding: 5px 8px; font-size: 12px; }
+            .wallet-btn { padding: 10px 15px; font-size: 14px; }
+            .coin-icon { width: 40px; height: 40px; font-size: 20px; }
+            .exchange-title { font-size: 24px !important; }
+            .philosophy-title { font-size: 24px !important; }
+        }
+        
         /* ============= ШАПКА БИРЖИ ============= */
         .header {
             display: flex;
@@ -169,14 +209,26 @@
             background: var(--positive);
         }
         
+        .wallet-btn.disconnecting {
+            background: var(--negative);
+        }
+        
         .balance-container {
             display: flex;
             gap: 20px;
             background: rgba(20, 30, 48, 0.8);
             padding: 12px 20px;
             border-radius: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
             border: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
+        }
+        
+        .balance-container.show {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .balance-item {
@@ -462,6 +514,195 @@
             margin: 0 auto;
         }
         
+        .talmud-story {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 5px solid var(--talmud-gold);
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 0 15px 15px 0;
+        }
+        
+        .story-title {
+            font-size: 32px;
+            color: var(--talmud-gold);
+            margin-bottom: 20px;
+            font-family: 'Rubik', sans-serif;
+        }
+        
+        .story-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 25px;
+        }
+        
+        .hebrew-quote {
+            font-family: 'Rubik', sans-serif;
+            font-size: 24px;
+            color: var(--talmud-gold);
+            text-align: right;
+            direction: rtl;
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border-right: 4px solid var(--talmud-gold);
+        }
+        
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .philosophy-card {
+            background: rgba(26, 43, 68, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .philosophy-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--talmud-gold);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+        }
+        
+        .card-icon {
+            font-size: 48px;
+            color: var(--talmud-gold);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            color: var(--text);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .card-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .transformation-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 50px 0;
+            height: 350px;
+            position: relative;
+        }
+        
+        .transformation-step {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 48px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
+            border: 4px solid;
+        }
+        
+        .step-icon.lion {
+            background: linear-gradient(135deg, var(--lion-fire), #FF4500);
+            border-color: var(--lion-fire);
+            color: white;
+        }
+        
+        .step-icon.vessel {
+            background: linear-gradient(135deg, var(--lead-vessel), #A0522D);
+            border-color: var(--lead-vessel);
+            color: white;
+        }
+        
+        .step-icon.zuz {
+            background: linear-gradient(135deg, var(--talmud-gold), #B8860B);
+            border-color: var(--talmud-gold);
+            color: black;
+        }
+        
+        .step-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 16px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .arrow {
+            font-size: 48px;
+            color: var(--talmud-gold);
+            margin: 0 30px;
+        }
+        
+        .modern-application {
+            background: linear-gradient(135deg, rgba(0, 195, 255, 0.1), rgba(212, 175, 55, 0.1));
+            border-radius: 20px;
+            padding: 40px;
+            margin: 50px 0;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .application-title {
+            font-size: 36px;
+            color: var(--talmud-gold);
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .application-item {
+            margin-bottom: 25px;
+            padding-left: 20px;
+            border-left: 3px solid var(--talmud-gold);
+        }
+        
+        .application-item h4 {
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .application-item p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
         /* ============= ОБЫЧНЫЕ МОДАЛЬНЫЕ ОКНА ============= */
         .modal-overlay {
             display: none;
@@ -629,6 +870,11 @@
             color: white;
         }
         
+        .action-btn.warning {
+            background: var(--negative);
+            color: white;
+        }
+        
         .functional-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -757,6 +1003,29 @@
             box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.1);
         }
         
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
         /* ============= КНОПКИ ============= */
         .btn-buy {
             background: var(--positive);
@@ -864,41 +1133,6 @@
             70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
             100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
         }
-        
-        /* Мобильная адаптация */
-        @media (max-width: 1200px) {
-            .container { padding: 0 15px; }
-            .main-grid { grid-template-columns: 1fr !important; }
-            .orderbook-grid { grid-template-columns: 1fr !important; }
-        }
-        
-        @media (max-width: 768px) {
-            .container { padding: 0 10px; }
-            .header { flex-direction: column; gap: 15px; padding: 15px 0; }
-            .nav { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px; }
-            .nav a { padding: 6px 12px; font-size: 14px; }
-            .logo { width: 100%; justify-content: center; }
-            .wallet-section { width: 100%; justify-content: center; }
-            .balance-container { flex-direction: column; width: 100%; padding: 10px; }
-            .functional-grid { grid-template-columns: 1fr !important; }
-            .section-header { flex-direction: column; gap: 15px; }
-            .tab-container { flex-direction: column; }
-            .tab { width: 100%; }
-            .modal-content { padding: 20px; width: 95%; max-height: 90vh; }
-            .philosophy-content { padding: 30px; }
-            .philosophy-title { font-size: 32px !important; }
-            .exchange-stats { flex-direction: column; gap: 15px; }
-            .trading-pairs { grid-template-columns: 1fr !important; }
-        }
-        
-        @media (max-width: 480px) {
-            .container { padding: 0 5px; }
-            .nav a { padding: 5px 8px; font-size: 12px; }
-            .wallet-btn { padding: 10px 15px; font-size: 14px; }
-            .coin-icon { width: 40px; height: 40px; font-size: 20px; }
-            .exchange-title { font-size: 24px !important; }
-            .philosophy-title { font-size: 24px !important; }
-        }
     </style>
 </head>
 <body>
@@ -916,10 +1150,10 @@
             </div>
             
             <!-- История из Талмуда -->
-            <div class="talmud-story" style="background: rgba(212, 175, 55, 0.1); border-left: 5px solid var(--talmud-gold); padding: 30px; margin: 40px 0; border-radius: 0 15px 15px 0;">
-                <h2 style="font-size: 32px; color: var(--talmud-gold); margin-bottom: 20px; font-family: 'Rubik', sans-serif;">Талмуд, Сукка 52а: История о Злом Начале</h2>
+            <div class="talmud-story">
+                <h2 class="story-title">Талмуд, Сукка 52а: История о Злом Начале</h2>
                 
-                <p style="font-size: 18px; line-height: 1.8; color: var(--text); margin-bottom: 25px;">
+                <p class="story-content">
                     <strong>В древние времена мудрецы поймали Иецер ха-Ра (Злое начало) и заперли его в железный сосуд.</strong><br><br>
                     
                     Но вскоре они обнаружили, что с исчезновением Иецер ха-Ра перестала существовать вся хозяйственная и социальная жизнь:
@@ -928,11 +1162,11 @@
                     Тогда они поняли: <em>Иецер ха-Ра — это не просто "зло", а фундаментальная движущая сила мира.</em>
                 </p>
                 
-                <div style="font-family: 'Rubik', sans-serif; font-size: 24px; color: var(--talmud-gold); text-align: right; direction: rtl; margin: 30px 0; padding: 25px; background: rgba(0, 0, 0, 0.3); border-radius: 12px; border-right: 4px solid var(--talmud-gold);">
+                <div class="hebrew-quote">
                     "יצר הרע, שנאסר בכד עופרת, עם שחר הפך לשני זוזים"
                 </div>
                 
-                <p style="font-size: 18px; line-height: 1.8; color: var(--text); margin-bottom: 25px;">
+                <p class="story-content">
                     <strong>Человек поймал Иецер ха-Ра, который выглядел как огненный лев.</strong><br>
                     Он запер его в свинцовый сосуд, надеясь усмирить дикую энергию.<br><br>
                     
@@ -944,54 +1178,131 @@
             </div>
             
             <!-- Диаграмма трансформации -->
-            <div class="transformation-diagram" style="display: flex; justify-content: space-between; align-items: center; margin: 50px 0; height: 350px; position: relative;">
-                <div class="transformation-step" style="flex: 1; text-align: center; padding: 20px; position: relative; z-index: 2;">
-                    <div class="step-icon" style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--lion-fire), #FF4500); border: 4px solid var(--lion-fire); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);">
+            <div class="transformation-diagram">
+                <div class="transformation-step">
+                    <div class="step-icon lion">
                         <i class="fas fa-fire"></i>
                     </div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 15px;">Иецер ха-Ра<br>Огненный лев</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.6; font-size: 16px; max-width: 300px; margin: 0 auto;">
+                    <h3 class="step-title">Иецер ха-Ра<br>Огненный лев</h3>
+                    <p class="step-description">
                         Природная, необузданная энергия человека.<br>
                         Источник страсти, амбиций, творческой силы.
                     </p>
                 </div>
                 
-                <div style="font-size: 48px; color: var(--talmud-gold); margin: 0 30px;">
+                <div class="arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
                 
-                <div class="transformation-step" style="flex: 1; text-align: center; padding: 20px; position: relative; z-index: 2;">
-                    <div class="step-icon" style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--lead-vessel), #A0522D); border: 4px solid var(--lead-vessel); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);">
+                <div class="transformation-step">
+                    <div class="step-icon vessel">
                         <i class="fas fa-flask"></i>
                     </div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 15px;">Свинцовый<br>Сосуд</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.6; font-size: 16px; max-width: 300px; margin: 0 auto;">
+                    <h3 class="step-title">Свинцовый<br>Сосуд</h3>
+                    <p class="step-description">
                         Цивилизация направляет дикую энергию<br>
                         в созидательное, контролируемое русло.
                     </p>
                 </div>
                 
-                <div style="font-size: 48px; color: var(--talmud-gold); margin: 0 30px;">
+                <div class="arrow">
                     <i class="fas fa-arrow-right"></i>
                 </div>
                 
-                <div class="transformation-step" style="flex: 1; text-align: center; padding: 20px; position: relative; z-index: 2;">
-                    <div class="step-icon" style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--talmud-gold), #B8860B); border: 4px solid var(--talmud-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: black; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);">
+                <div class="transformation-step">
+                    <div class="step-icon zuz">
                         <i class="fas fa-coins"></i>
                     </div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 15px;">Два Зузима<br>Монеты</h3>
-                    <p style="color: var(--text-secondary); line-height: 1.6; font-size: 16px; max-width: 300px; margin: 0 auto;">
+                    <h3 class="step-title">Два Зузима<br>Монеты</h3>
+                    <p class="step-description">
                         Энергия становится инструментом<br>
                         для торговли, строительства, развития общества.
                     </p>
                 </div>
             </div>
             
-            <!-- Заключение -->
-            <div style="margin-top: 50px; background: rgba(0, 195, 255, 0.1); border-left: 5px solid var(--accent); padding: 30px; border-radius: 0 15px 15px 0;">
-                <h2 style="font-size: 32px; color: var(--accent); margin-bottom: 20px; font-family: 'Rubik', sans-serif;">Миссия ZUZIM UNIVERSE</h2>
+            <!-- Ключевые принципы -->
+            <div class="philosophy-grid">
+                <div class="philosophy-card">
+                    <div class="card-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="card-title">Двойственность Энергии</h3>
+                    <p class="card-text">
+                        Иецер ха-Ра амбивалентен: с одной стороны — источник жадности и ревности, 
+                        с другой — движущая сила прогресса, семьи, культуры. Без него мир бы замер.
+                    </p>
+                </div>
                 
-                <p style="font-size: 18px; line-height: 1.8; color: var(--text); margin-bottom: 25px;">
+                <div class="philosophy-card">
+                    <div class="card-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="card-title">Трансформация</h3>
+                    <p class="card-text">
+                        Задача не в уничтожении энергии, а в её направлении. 
+                        Как дикий лев превращается в зузим, так страсть должна стать 
+                        силой созидания и развития.
+                    </p>
+                </div>
+                
+                <div class="philosophy-card">
+                    <div class="card-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3 class="card-title">Благотворительность как Обязательство</h3>
+                    <p class="card-text">
+                        1% от каждой транзакции на ZUZIM UNIVERSE автоматически идёт 
+                        на благотворительность. Это современное воплощение "цдаки" — 
+                        использования материального для духовного роста.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Современное применение -->
+            <div class="modern-application">
+                <h2 class="application-title">ZUZIM в Цифровую Эпоху: Блокчейн как Новый "Сосуд"</h2>
+                
+                <div class="application-item">
+                    <h4><i class="fas fa-bolt"></i> Блокчейн — Современный Свинцовый Сосуд</h4>
+                    <p>Технология блокчейн становится тем самым сосудом, который трансформирует 
+                    природную энергию в созидательную финансовую систему. Децентрализация, 
+                    прозрачность и безопасность — вот новые инструменты цивилизации.</p>
+                </div>
+                
+                <div class="application-item">
+                    <h4><i class="fas fa-chart-line"></i> Криптобиржа ZUZIM UNIVERSE</h4>
+                    <p>Наша биржа — не просто площадка для торговли. Это пространство, где 
+                    энергия Иецер ха-Ра направляется в этичное, созидательное русло. 
+                    Каждая сделка здесь — шаг к трансформации энергии.</p>
+                </div>
+                
+                <div class="application-item">
+                    <h4><i class="fas fa-hand-holding-heart"></i> Автоматическая Благотворительность</h4>
+                    <p>1% от каждой транзакции автоматически направляется на благотворительные 
+                    проекты. Торговля становится актом созидания — современной формой "цдаки", 
+                    где финансовая деятельность несёт духовную ценность.</p>
+                </div>
+                
+                <div class="application-item">
+                    <h4><i class="fas fa-shield-alt"></i> Доверие через Технологию</h4>
+                    <p>Digital Notary (Цифровой Нотариус) использует неизменность блокчейна 
+                    для создания доверия. ProofChain отслеживает каждое пожертвование. 
+                    Технология служит этическим целям.</p>
+                </div>
+                
+                <div class="application-item">
+                    <h4><i class="fas fa-industry"></i> Token Factory — Созидание через Творчество</h4>
+                    <p>Создавайте свои токены с встроенной благотворительной составляющей. 
+                    Каждый новый токен — возможность направить энергию созидания в новые проекты.</p>
+                </div>
+            </div>
+            
+            <!-- Заключение -->
+            <div class="talmud-story" style="margin-top: 50px; background: rgba(0, 195, 255, 0.1); border-left-color: var(--accent);">
+                <h2 class="story-title" style="color: var(--accent);">Миссия ZUZIM UNIVERSE</h2>
+                
+                <p class="story-content">
                     <strong>Мы создаём не просто криптобиржу. Мы создаём пространство трансформации.</strong><br><br>
                     
                     Где дикая энергия Иецер ха-Ра, подобно огненному льву из Талмуда, 
@@ -1031,6 +1342,28 @@
                     </div>
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
+                
+                <div class="wallet-option" onclick="connectWallet('trustwallet')">
+                    <div class="wallet-icon" style="color: #3375bb;">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="wallet-info">
+                        <div class="wallet-name">Trust Wallet</div>
+                        <div class="wallet-desc">Secure mobile wallet</div>
+                    </div>
+                    <div><i class="fas fa-chevron-right"></i></div>
+                </div>
+                
+                <div class="wallet-option" onclick="connectWallet('coinbase')">
+                    <div class="wallet-icon" style="color: #0052ff;">
+                        <i class="fab fa-bitcoin"></i>
+                    </div>
+                    <div class="wallet-info">
+                        <div class="wallet-name">Coinbase Wallet</div>
+                        <div class="wallet-desc">Exchange integrated wallet</div>
+                    </div>
+                    <div><i class="fas fa-chevron-right"></i></div>
+                </div>
             </div>
             
             <div style="text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 14px;">
@@ -1067,7 +1400,7 @@
             
             <div class="form-group">
                 <label class="form-label">Charity Percentage (%)</label>
-                <select class="form-input" id="charityPercentage">
+                <select class="form-select" id="charityPercentage">
                     <option value="1">1% - Standard ZUZIM</option>
                     <option value="2">2%</option>
                     <option value="5">5% - High Impact</option>
@@ -1103,7 +1436,12 @@
             
             <div class="form-group">
                 <label class="form-label">Document Description</label>
-                <textarea class="form-input" style="height: 120px; resize: vertical;" id="documentDescription" placeholder="Describe your document..."></textarea>
+                <textarea class="form-textarea" id="documentDescription" placeholder="Describe your document..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Upload Document</label>
+                <input type="file" class="form-input" id="documentFile" accept=".pdf,.doc,.docx,.txt">
             </div>
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -1189,7 +1527,7 @@
             </nav>
             
             <div class="wallet-section">
-                <div class="balance-container" id="balanceContainer" style="display: none;">
+                <div class="balance-container" id="balanceContainer">
                     <div class="balance-item">
                         <div class="balance-label">ETH Balance</div>
                         <div class="balance-value eth" id="ethBalance">0.00 ETH</div>
@@ -1207,15 +1545,15 @@
                     </div>
                 </div>
                 
-                <button class="wallet-btn" id="connectWalletBtn" onclick="openModal('walletModal')">
+                <button class="wallet-btn" id="connectWalletBtn">
                     <i class="fas fa-wallet"></i>
-                    <span>Connect Wallet</span>
+                    <span id="walletBtnText">Connect Wallet</span>
                 </button>
             </div>
         </header>
 
         <!-- БАННЕР ЖИВОГО DEX -->
-        <div class="real-dex-banner" id="realDexBanner" style="display: none;">
+        <div class="real-dex-banner" id="realDexBanner">
             <div class="banner-coin-icon">Z</div>
             <strong>🚀 ZUZ DEX LIVE!</strong> ZUZ/PYUSD Trading with 1% Auto-Donate
             <div class="banner-coin-icon">Z</div>
@@ -1278,6 +1616,7 @@
                     <div class="tab-container">
                         <button class="tab active" onclick="switchTab('market')">Market</button>
                         <button class="tab" onclick="switchTab('limit')">Limit</button>
+                        <button class="tab" onclick="switchTab('stop')">Stop</button>
                     </div>
                     
                     <div id="marketTab" style="display: block;">
@@ -1316,6 +1655,14 @@
                             <input type="number" class="form-input" placeholder="0.0950" step="0.0001">
                         </div>
                         <button class="action-btn primary" style="width: 100%;">Place Limit Order</button>
+                    </div>
+                    
+                    <div id="stopTab" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Stop Price (PYUSD)</label>
+                            <input type="number" class="form-input" placeholder="0.0975" step="0.0001">
+                        </div>
+                        <button class="action-btn warning" style="width: 100%;">Place Stop Order</button>
                     </div>
                 </div>
             </div>
@@ -1445,7 +1792,7 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h3 class="feature-title">Token Analytics</h3>
-                        <p class="feature-description">
+                        <p class="feature-desc">
                             Track your token performance, donations made, and community growth.
                         </p>
                         <button class="action-btn" onclick="viewTokenAnalytics()">
@@ -1458,7 +1805,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <h3 class="feature-title">Community Tokens</h3>
-                        <p class="feature-description">
+                        <p class="feature-desc">
                             Browse tokens created by the ZUZIM community.
                             Support projects that give back.
                         </p>
@@ -1533,8 +1880,8 @@
                         <button class="action-btn success" onclick="openModal('proofchainModal')">
                             <i class="fas fa-hand-holding-heart"></i> View Donations
                         </button>
-                        <button class="action-btn" onclick="voteForCharity()">
-                            <i class="fas fa-vote-yea"></i> Vote for Projects
+                        <button class="action-btn warning" onclick="openModal('proofchainModal')">
+                            <i class="fas fa-vote-yea"></i> Community Voting
                         </button>
                     </div>
                 </div>
@@ -1592,21 +1939,9 @@
             charityFee: 1.0
         };
         
-        // Sepolia network configuration
-        const SEPOLIA_CONFIG = {
-            chainId: "0xaa36a7", // 11155111 in hex
-            chainName: "Sepolia",
-            nativeCurrency: {
-                name: "ETH",
-                symbol: "ETH",
-                decimals: 18
-            },
-            rpcUrls: ["https://sepolia.infura.io/v3/"],
-            blockExplorerUrls: ["https://sepolia.etherscan.io"]
-        };
-        
-        // ABI для DEX (исправленные)
+        // ABI для DEX
         const DEX_ABI = [
+            "function getSwapQuote(address tokenIn, address tokenOut, uint256 amountIn) view returns (uint256 amountOut, uint256 charityAmount)",
             "function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)",
             "function getReserves(address tokenA, address tokenB) view returns (uint256 reserveA, uint256 reserveB)",
             "function charityWallet() view returns (address)",
@@ -1618,8 +1953,7 @@
             "function approve(address spender, uint256 amount) returns (bool)",
             "function balanceOf(address account) view returns (uint256)",
             "function decimals() view returns (uint8)",
-            "function transfer(address to, uint256 amount) returns (bool)",
-            "function allowance(address owner, address spender) view returns (uint256)"
+            "function transfer(address to, uint256 amount) returns (bool)"
         ];
         
         // ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
@@ -1656,55 +1990,16 @@
             }
         });
         
-        // ============= ПОДКЛЮЧЕНИЕ К СЕТИ SEPOLIA =============
-        async function switchToSepolia() {
-            try {
-                if (!window.ethereum) {
-                    alert("MetaMask not installed!");
-                    return false;
-                }
-                
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                
-                if (chainId !== SEPOLIA_CONFIG.chainId) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: SEPOLIA_CONFIG.chainId }]
-                        });
-                        return true;
-                    } catch (switchError) {
-                        // Если сеть не добавлена, добавляем её
-                        if (switchError.code === 4902) {
-                            try {
-                                await window.ethereum.request({
-                                    method: 'wallet_addEthereumChain',
-                                    params: [SEPOLIA_CONFIG]
-                                });
-                                return true;
-                            } catch (addError) {
-                                console.error("Error adding Sepolia:", addError);
-                                alert("Please add Sepolia network to MetaMask");
-                                return false;
-                            }
-                        }
-                        console.error("Error switching to Sepolia:", switchError);
-                        return false;
-                    }
-                }
-                return true;
-            } catch (error) {
-                console.error("Error checking network:", error);
-                return false;
-            }
-        }
-        
         // ============= ПОДКЛЮЧЕНИЕ КОШЕЛЬКА =============
         async function connectWallet(walletType) {
             closeModal('walletModal');
             
             if (walletType === 'metamask') {
                 await connectMetaMask();
+            } else if (walletType === 'trustwallet') {
+                await connectTrustWallet();
+            } else if (walletType === 'coinbase') {
+                await connectCoinbaseWallet();
             }
         }
         
@@ -1715,37 +2010,23 @@
             }
             
             try {
-                // Переключаемся на Sepolia
-                const switched = await switchToSepolia();
-                if (!switched) {
-                    alert("Please switch to Sepolia network in MetaMask");
-                    return;
-                }
-                
-                // Запрашиваем аккаунты
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_requestAccounts' 
                 });
                 
-                // Создаем провайдер и подписанта
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 userAddress = accounts[0];
                 isConnected = true;
                 
-                // Обновляем UI
                 updateWalletUI(true);
-                
-                // Инициализируем DEX
                 await initRealDEX();
-                
-                // Загружаем балансы
                 await loadBalances();
+                
+                console.log("✅ MetaMask connected:", userAddress);
                 
                 // Показываем баннер DEX
                 document.getElementById('realDexBanner').style.display = 'flex';
-                
-                console.log("✅ MetaMask connected to Sepolia:", userAddress);
                 
             } catch (error) {
                 console.error("Error connecting MetaMask:", error);
@@ -1753,39 +2034,107 @@
             }
         }
         
-        function disconnectWallet() {
-            if (confirm("Disconnect wallet?")) {
-                isConnected = false;
-                provider = null;
-                signer = null;
-                userAddress = null;
-                dexContract = null;
-                zuzContract = null;
-                pyusdContract = null;
-                
-                updateWalletUI(false);
-                
-                // Скрываем баннер DEX
-                document.getElementById('realDexBanner').style.display = 'none';
-                
-                console.log("✅ Wallet disconnected");
+        async function connectTrustWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("Trust Wallet not found!");
+                return;
             }
+            
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = accounts[0];
+                isConnected = true;
+                
+                updateWalletUI(true);
+                await initRealDEX();
+                await loadBalances();
+                
+                console.log("✅ Trust Wallet connected:", userAddress);
+                
+                // Показываем баннер DEX
+                document.getElementById('realDexBanner').style.display = 'flex';
+                
+            } catch (error) {
+                console.error("Error connecting Trust Wallet:", error);
+                alert("Error connecting Trust Wallet: " + error.message);
+            }
+        }
+        
+        async function connectCoinbaseWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                alert("Coinbase Wallet not found!");
+                return;
+            }
+            
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = accounts[0];
+                isConnected = true;
+                
+                updateWalletUI(true);
+                await initRealDEX();
+                await loadBalances();
+                
+                console.log("✅ Coinbase Wallet connected:", userAddress);
+                
+                // Показываем баннер DEX
+                document.getElementById('realDexBanner').style.display = 'flex';
+                
+            } catch (error) {
+                console.error("Error connecting Coinbase Wallet:", error);
+                alert("Error connecting Coinbase Wallet: " + error.message);
+            }
+        }
+        
+        function disconnectWallet() {
+            isConnected = false;
+            provider = null;
+            signer = null;
+            userAddress = null;
+            dexContract = null;
+            zuzContract = null;
+            pyusdContract = null;
+            
+            updateWalletUI(false);
+            
+            // Скрываем баннер DEX
+            document.getElementById('realDexBanner').style.display = 'none';
+            
+            console.log("✅ Wallet disconnected");
         }
         
         function updateWalletUI(connected) {
             const connectBtn = document.getElementById('connectWalletBtn');
             const balanceContainer = document.getElementById('balanceContainer');
+            const walletBtnText = document.getElementById('walletBtnText');
             
             if (connected) {
-                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span>Disconnect</span>';
+                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span id="walletBtnText">Disconnect</span>';
                 connectBtn.classList.add('connected');
-                connectBtn.onclick = disconnectWallet;
-                balanceContainer.style.display = 'flex';
+                balanceContainer.classList.add('show');
+                walletBtnText.textContent = 'Disconnect';
+                
+                // Обновляем текст кнопки
+                const span = connectBtn.querySelector('#walletBtnText');
+                if (span) span.textContent = 'Disconnect';
             } else {
-                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span>Connect Wallet</span>';
+                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span id="walletBtnText">Connect Wallet</span>';
                 connectBtn.classList.remove('connected');
-                connectBtn.onclick = () => openModal('walletModal');
-                balanceContainer.style.display = 'none';
+                balanceContainer.classList.remove('show');
+                
+                // Обновляем текст кнопки
+                const span = connectBtn.querySelector('#walletBtnText');
+                if (span) span.textContent = 'Connect Wallet';
                 
                 document.getElementById('ethBalance').textContent = '0.00 ETH';
                 document.getElementById('zuzBalance').innerHTML = `
@@ -1809,7 +2158,7 @@
                 zuzContract = new ethers.Contract(DEX_CONFIG.zuzToken, ERC20_ABI, signer);
                 pyusdContract = new ethers.Contract(DEX_CONFIG.pyusdToken, ERC20_ABI, signer);
                 
-                console.log("✅ Real DEX initialized on Sepolia");
+                console.log("✅ Real DEX initialized");
                 console.log("DEX Address:", DEX_CONFIG.address);
                 console.log("ZUZ Token:", DEX_CONFIG.zuzToken);
                 console.log("PYUSD Token:", DEX_CONFIG.pyusdToken);
@@ -1819,7 +2168,7 @@
             }
         }
         
-        // ============= РЕАЛЬНЫЕ СВАПЫ =============
+        // ============= РЕАЛЬНЫЕ СВАПЫ (ОСНОВНАЯ ФУНКЦИЯ) =============
         async function placeRealOrder(side) {
             if (!isConnected) {
                 alert("Please connect wallet first!");
@@ -1839,56 +2188,54 @@
                 const tokenOut = side === 'buy' ? DEX_CONFIG.zuzToken : DEX_CONFIG.pyusdToken;
                 const description = side === 'buy' ? "PYUSD → ZUZ" : "ZUZ → PYUSD";
                 
-                // Создаем контракт для входного токена
-                const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
-                
                 // Получаем decimals для токена
+                const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
                 const decimals = await tokenInContract.decimals();
                 const amountIn = ethers.utils.parseUnits(amount, decimals);
                 
-                // Проверяем баланс
-                const balance = await tokenInContract.balanceOf(userAddress);
-                if (balance.lt(amountIn)) {
-                    alert(`Insufficient balance! You have: ${ethers.utils.formatUnits(balance, decimals)}`);
+                // Шаг 1: Даем approve (MetaMask запросит подтверждение)
+                alert("MetaMask will ask for APPROVE confirmation...\nThis allows DEX to spend your tokens.");
+                
+                try {
+                    const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
+                    console.log("✅ Approve transaction sent:", approveTx.hash);
+                    
+                    // Показываем статус
+                    showNotification("⏳ Waiting for approve confirmation...");
+                    
+                    // Ждем подтверждения
+                    await approveTx.wait();
+                    console.log("✅ Approve confirmed");
+                    showNotification("✅ Approve confirmed!");
+                    
+                } catch (approveError) {
+                    console.error("Approve error:", approveError);
+                    alert("❌ Approve failed: " + approveError.message);
                     return;
                 }
                 
-                // Проверяем allowance
-                const allowance = await tokenInContract.allowance(userAddress, DEX_CONFIG.address);
-                
-                if (allowance.lt(amountIn)) {
-                    // Нужно дать approve
-                    alert("MetaMask will ask for APPROVE confirmation...\nThis allows DEX to spend your tokens.");
+                // Шаг 2: Получаем котировку
+                try {
+                    const [quoteAmount, charityAmount] = await dexContract.getSwapQuote(tokenIn, tokenOut, amountIn);
+                    const quoteDecimals = tokenOut === DEX_CONFIG.zuzToken ? 18 : 6; // ZUZ 18, PYUSD 6 decimals
+                    const quoteFormatted = ethers.utils.formatUnits(quoteAmount, quoteDecimals);
+                    const charityFormatted = ethers.utils.formatUnits(charityAmount, quoteDecimals);
                     
-                    try {
-                        const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
-                        console.log("✅ Approve transaction sent:", approveTx.hash);
-                        
-                        // Ждем подтверждения
-                        await approveTx.wait();
-                        console.log("✅ Approve confirmed");
-                        
-                        // Даем небольшую паузу после approve
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                    } catch (approveError) {
-                        console.error("Approve error:", approveError);
-                        alert("❌ Approve failed: " + (approveError.message || approveError));
-                        return;
-                    }
-                } else {
-                    console.log("✅ Allowance already sufficient");
+                    console.log("📊 Quote received:", quoteFormatted, "charity:", charityFormatted);
+                    
+                } catch (quoteError) {
+                    console.error("Quote error:", quoteError);
+                    // Продолжаем даже если котировка не удалась
                 }
                 
-                // Выполняем свап
-                alert("MetaMask will ask for SWAP confirmation...\nThis will execute the trade with 1% auto-donation.");
+                // Шаг 3: Выполняем свап (MetaMask запросит подтверждение)
+                alert("MetaMask will ask for SWAP confirmation...\nThis will execute the trade.");
                 
                 try {
                     const swapTx = await dexContract.swap(tokenIn, tokenOut, amountIn);
-                    
                     console.log("✅ Swap transaction sent:", swapTx.hash);
                     
-                    showNotification(`🚀 ${description} swap sent!\nHash: ${swapTx.hash.substring(0, 10)}...\n1% going to charity.`);
+                    showNotification(`🚀 ${description} swap sent!\nHash: ${swapTx.hash}\n1% going to charity.`);
                     
                     // Ждем подтверждения
                     await swapTx.wait();
@@ -1898,26 +2245,16 @@
                     
                 } catch (swapError) {
                     console.error("Swap error:", swapError);
-                    
-                    let errorMsg = "❌ Swap failed";
-                    if (swapError.message.includes("insufficient allowance")) {
-                        errorMsg += ": Insufficient allowance. Try approving again.";
-                    } else if (swapError.message.includes("INSUFFICIENT_OUTPUT_AMOUNT")) {
-                        errorMsg += ": Price changed. Try again.";
-                    } else {
-                        errorMsg += ": " + swapError.message;
-                    }
-                    
-                    alert(errorMsg);
+                    alert("❌ Swap failed: " + swapError.message);
                     return;
                 }
                 
-                // Обновляем балансы
+                // Шаг 4: Обновляем балансы
                 await loadBalances();
                 
             } catch (error) {
                 console.error("Place order error:", error);
-                alert(`❌ Error: ${error.message || error}`);
+                alert(`❌ Error: ${error.message}`);
             }
         }
         
@@ -1929,8 +2266,7 @@
                 // ETH баланс
                 const balance = await provider.getBalance(userAddress);
                 const ethBalance = ethers.utils.formatEther(balance);
-                document.getElementById('ethBalance').textContent = 
-                    parseFloat(ethBalance).toFixed(4) + ' ETH';
+                document.getElementById('ethBalance').textContent = parseFloat(ethBalance).toFixed(4) + ' ETH';
                 
                 // ZUZ баланс
                 if (zuzContract) {
@@ -1938,20 +2274,22 @@
                         const zuzBalance = await zuzContract.balanceOf(userAddress);
                         const zuzDecimals = await zuzContract.decimals();
                         const zuzFormatted = ethers.utils.formatUnits(zuzBalance, zuzDecimals);
-                        
-                        const zuzBalanceElement = document.getElementById('zuzBalance');
-                        zuzBalanceElement.innerHTML = `
+                        document.getElementById('zuzBalance').innerHTML = `
                             <div class="small-coin-icon">Z</div>
                             <span>${parseFloat(zuzFormatted).toFixed(2)} ZUZ</span>
                         `;
                     } catch (zuzError) {
                         console.error("Error loading ZUZ balance:", zuzError);
+                        document.getElementById('zuzBalance').innerHTML = `
+                            <div class="small-coin-icon">Z</div>
+                            <span>Error loading</span>
+                        `;
                     }
                 }
                 
-                // Сеть
+                // Получаем название сети
                 const network = await provider.getNetwork();
-                const networkName = network.name === 'sepolia' ? 'Sepolia' : network.name;
+                const networkName = network.name === 'unknown' ? 'Custom Network' : network.name;
                 document.getElementById('networkName').textContent = networkName.charAt(0).toUpperCase() + networkName.slice(1);
                 
             } catch (error) {
@@ -1994,38 +2332,6 @@
             }, 5000);
         }
         
-        // ============= МОДАЛЬНЫЕ ОКНА =============
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        
-        // Закрытие всех модальных окон по клику вне
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal(this.id);
-                }
-            });
-        });
-        
-        // Закрытие по Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-                    closeModal(modal.id);
-                });
-                if (document.getElementById('philosophyModal').classList.contains('active')) {
-                    closePhilosophy();
-                }
-            }
-        });
-        
         // ============= TRADINGVIEW =============
         function initTradingView() {
             if (typeof TradingView === 'undefined') {
@@ -2062,10 +2368,47 @@
             }
         }
         
+        // ============= МОДАЛЬНЫЕ ОКНА =============
+        function openModal(modalId) {
+            if (!isConnected && modalId !== 'walletModal') {
+                alert("Please connect wallet first!");
+                openModal('walletModal');
+                return;
+            }
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Закрытие всех модальных окон по клику вне
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this && !this.classList.contains('philosophy-modal')) {
+                    const modalId = this.id;
+                    closeModal(modalId);
+                }
+            });
+        });
+        
         // ============= ИНИЦИАЛИЗАЦИЯ =============
         window.addEventListener('DOMContentLoaded', () => {
             // TradingView
             setTimeout(initTradingView, 1000);
+            
+            // Кнопка Connect/Disconnect
+            document.getElementById('connectWalletBtn').addEventListener('click', () => {
+                if (isConnected) {
+                    if (confirm("Disconnect wallet?")) {
+                        disconnectWallet();
+                    }
+                } else {
+                    openModal('walletModal');
+                }
+            });
             
             // Обновление total при вводе
             document.getElementById('amountInput')?.addEventListener('input', updateTotal);
@@ -2097,25 +2440,6 @@
                 }
             `;
             document.head.appendChild(style);
-            
-            // Слушатель изменений сети
-            if (window.ethereum) {
-                window.ethereum.on('chainChanged', () => {
-                    window.location.reload();
-                });
-                
-                window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length === 0) {
-                        // User disconnected wallet
-                        isConnected = false;
-                        updateWalletUI(false);
-                        document.getElementById('realDexBanner').style.display = 'none';
-                    } else {
-                        // Account changed, reconnect
-                        connectWallet('metamask');
-                    }
-                });
-            }
         });
         
         function updateTotal() {
@@ -2134,6 +2458,7 @@
             // Скрываем все контенты табов
             document.getElementById('marketTab').style.display = 'none';
             document.getElementById('limitTab').style.display = 'none';
+            document.getElementById('stopTab').style.display = 'none';
             
             // Показываем выбранный таб
             document.getElementById(tabName + 'Tab').style.display = 'block';
@@ -2150,8 +2475,6 @@
         
         function selectPair(pair) {
             alert("Selected pair: " + pair);
-            // Обновляем заголовок и цену
-            document.querySelector('.pair-name').textContent = pair;
         }
         
         // ============= ФУНКЦИИ ЭКОСИСТЕМЫ =============
