@@ -34,3 +34,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+*.tar.gz
+*.zip
+node_modules/
