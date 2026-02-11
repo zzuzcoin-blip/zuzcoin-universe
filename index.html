@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>ZUZIM UNIVERSE | Talmudic Crypto Exchange</title>
     
     <!-- Favicon ZUZCOIN -->
@@ -45,6 +45,10 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
         
         html, body {
@@ -73,6 +77,7 @@
             top: 0;
             z-index: 1000;
             flex-wrap: wrap;
+            width: 100%;
         }
         
         .logo {
@@ -117,6 +122,8 @@
             display: flex;
             gap: 25px;
             flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
         }
         
         .nav a {
@@ -177,10 +184,12 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .balance-item {
             text-align: center;
+            min-width: 100px;
         }
         
         .balance-label {
@@ -202,6 +211,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            justify-content: center;
         }
         
         /* ============= БИРЖЕВОЙ БАННЕР ============= */
@@ -212,6 +222,7 @@
             margin: 25px 0;
             border: 1px solid rgba(212, 175, 55, 0.2);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
         }
         
         .exchange-header {
@@ -227,6 +238,7 @@
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .stat-item {
@@ -235,6 +247,7 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             border: 1px solid rgba(212, 175, 55, 0.1);
+            min-width: 140px;
         }
         
         .stat-value {
@@ -257,6 +270,7 @@
             grid-template-columns: 2fr 1fr;
             gap: 25px;
             margin: 20px 0;
+            width: 100%;
         }
         
         .chart-container {
@@ -267,6 +281,7 @@
             height: 550px;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
         
         .chart-header {
@@ -274,12 +289,15 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .pair-info {
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
         
         .pair-name {
@@ -319,6 +337,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            width: 100%;
         }
         
         .orderbook-grid {
@@ -326,6 +345,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-top: 25px;
+            width: 100%;
         }
         
         .orderbook {
@@ -333,6 +353,7 @@
             border-radius: 12px;
             padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
         }
         
         .orderbook-header {
@@ -365,6 +386,7 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 25px;
+            width: 100%;
         }
         
         .pair-card {
@@ -374,6 +396,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             cursor: pointer;
             transition: all 0.3s;
+            width: 100%;
         }
         
         .pair-card:hover {
@@ -413,6 +436,7 @@
             border: 3px solid var(--talmud-gold);
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
             position: relative;
+            margin: auto;
         }
         
         .philosophy-close {
@@ -493,6 +517,7 @@
             animation: slideUp 0.3s ease;
             max-height: 80vh;
             overflow-y: auto;
+            margin: auto;
         }
         
         .modal-header {
@@ -573,6 +598,7 @@
         /* ============= ФУНКЦИОНАЛЬНЫЕ СЕКЦИИ ============= */
         .functional-sections {
             margin: 40px 0;
+            width: 100%;
         }
         
         .section-header {
@@ -596,6 +622,7 @@
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .action-btn {
@@ -634,6 +661,7 @@
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 25px;
             margin-bottom: 50px;
+            width: 100%;
         }
         
         /* ============= КАРТОЧКИ ============= */
@@ -644,6 +672,10 @@
             border: 2px solid var(--border);
             transition: all 0.3s;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
         }
         
         .feature-card:hover {
@@ -677,6 +709,7 @@
             line-height: 1.7;
             font-size: 16px;
             margin-bottom: 20px;
+            flex-grow: 1;
         }
         
         /* ============= ЛОГОТИП ============= */
@@ -731,6 +764,7 @@
         /* ============= ФОРМЫ ============= */
         .form-group {
             margin-bottom: 20px;
+            width: 100%;
         }
         
         .form-label {
@@ -804,6 +838,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            width: 100%;
         }
         
         .tab {
@@ -816,6 +851,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            text-align: center;
         }
         
         .tab:hover {
@@ -843,6 +879,9 @@
             font-weight: 600;
             color: var(--text);
             animation: pulse 2s infinite;
+            text-align: center;
+            flex-wrap: wrap;
+            width: 100%;
         }
         
         .banner-coin-icon {
@@ -857,6 +896,7 @@
             color: var(--talmud-gold);
             font-size: 20px;
             font-weight: 900;
+            flex-shrink: 0;
         }
         
         @keyframes pulse {
@@ -865,39 +905,286 @@
             100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
         }
         
-        /* Мобильная адаптация */
+        /* ============= МОБИЛЬНАЯ АДАПТАЦИЯ ============= */
         @media (max-width: 1200px) {
             .container { padding: 0 15px; }
             .main-grid { grid-template-columns: 1fr !important; }
             .orderbook-grid { grid-template-columns: 1fr !important; }
+            .exchange-header { 
+                flex-direction: column; 
+                text-align: center; 
+                justify-content: center;
+            }
+            .exchange-header h1 { 
+                margin-bottom: 15px;
+                width: 100%;
+                text-align: center;
+            }
+            .section-header { 
+                flex-direction: column; 
+                text-align: center;
+                justify-content: center;
+            }
+            .section-title { 
+                justify-content: center;
+                width: 100%;
+            }
         }
         
         @media (max-width: 768px) {
-            .container { padding: 0 10px; }
-            .header { flex-direction: column; gap: 15px; padding: 15px 0; }
-            .nav { width: 100%; justify-content: center; flex-wrap: wrap; gap: 8px; }
-            .nav a { padding: 6px 12px; font-size: 14px; }
-            .logo { width: 100%; justify-content: center; }
-            .wallet-section { width: 100%; justify-content: center; }
-            .balance-container { flex-direction: column; width: 100%; padding: 10px; }
-            .functional-grid { grid-template-columns: 1fr !important; }
-            .section-header { flex-direction: column; gap: 15px; }
-            .tab-container { flex-direction: column; }
-            .tab { width: 100%; }
-            .modal-content { padding: 20px; width: 95%; max-height: 90vh; }
-            .philosophy-content { padding: 30px; }
-            .philosophy-title { font-size: 32px !important; }
-            .exchange-stats { flex-direction: column; gap: 15px; }
-            .trading-pairs { grid-template-columns: 1fr !important; }
+            .container { padding: 0 15px; }
+            .header { 
+                flex-direction: column; 
+                gap: 20px; 
+                padding: 20px 0;
+                text-align: center;
+                justify-content: center;
+            }
+            .nav { 
+                width: 100%; 
+                justify-content: center; 
+                flex-wrap: wrap; 
+                gap: 10px;
+            }
+            .nav a { 
+                padding: 10px 18px; 
+                font-size: 15px;
+                justify-content: center;
+                flex: 0 1 auto;
+            }
+            .logo { 
+                width: 100%; 
+                justify-content: center;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            .logo-text {
+                align-items: center;
+            }
+            .exchange-title {
+                font-size: 26px !important;
+                text-align: center;
+            }
+            .exchange-subtitle {
+                text-align: center;
+                font-size: 11px;
+            }
+            .wallet-section { 
+                width: 100%; 
+                justify-content: center;
+                flex-direction: column;
+                align-items: center;
+            }
+            .wallet-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 16px;
+            }
+            .balance-container { 
+                flex-direction: column; 
+                width: 100%; 
+                padding: 20px;
+                align-items: center;
+                gap: 15px;
+            }
+            .balance-item {
+                width: 100%;
+                text-align: center;
+            }
+            .functional-grid { 
+                grid-template-columns: 1fr !important; 
+                gap: 20px;
+            }
+            .section-header { 
+                flex-direction: column; 
+                gap: 20px;
+                text-align: center;
+                justify-content: center;
+            }
+            .section-title {
+                font-size: 28px !important;
+                justify-content: center;
+                width: 100%;
+                text-align: center;
+            }
+            .action-buttons {
+                width: 100%;
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+            }
+            .tab-container { 
+                flex-direction: column; 
+                gap: 8px;
+            }
+            .tab { 
+                width: 100%; 
+                padding: 14px;
+            }
+            .modal-content { 
+                padding: 30px 20px; 
+                width: 95%; 
+                max-height: 90vh; 
+            }
+            .philosophy-content { 
+                padding: 40px 25px; 
+            }
+            .philosophy-title { 
+                font-size: 32px !important; 
+                text-align: center;
+            }
+            .philosophy-subtitle {
+                font-size: 18px !important;
+                text-align: center;
+                padding: 0 10px;
+            }
+            .exchange-stats { 
+                flex-direction: column; 
+                gap: 15px;
+                width: 100%;
+                align-items: center;
+            }
+            .stat-item {
+                width: 100%;
+                max-width: 300px;
+            }
+            .trading-pairs { 
+                grid-template-columns: 1fr !important; 
+            }
+            .pair-info {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                gap: 10px;
+            }
+            .pair-name {
+                font-size: 24px !important;
+                text-align: center;
+            }
+            .pair-price {
+                font-size: 28px !important;
+                text-align: center;
+            }
+            .chart-header {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .chart-header > div:last-child {
+                width: 100%;
+            }
+            .chart-header .tab-container {
+                width: 100%;
+            }
+            .feature-card {
+                align-items: center;
+                text-align: center;
+                padding: 30px 25px;
+            }
+            .feature-description {
+                text-align: center;
+            }
+            .real-dex-banner {
+                flex-direction: column;
+                padding: 20px;
+                font-size: 16px;
+                gap: 12px;
+            }
+            .transformation-diagram {
+                flex-direction: column !important;
+                height: auto !important;
+                gap: 40px;
+            }
+            .transformation-step {
+                width: 100%;
+            }
+            .exchange-hero {
+                padding: 25px 20px;
+            }
+            .orderbook-grid {
+                gap: 15px;
+            }
+            .orderbook {
+                padding: 15px;
+            }
         }
         
         @media (max-width: 480px) {
-            .container { padding: 0 5px; }
-            .nav a { padding: 5px 8px; font-size: 12px; }
-            .wallet-btn { padding: 10px 15px; font-size: 14px; }
-            .coin-icon { width: 40px; height: 40px; font-size: 20px; }
-            .exchange-title { font-size: 24px !important; }
-            .philosophy-title { font-size: 24px !important; }
+            .container { padding: 0 12px; }
+            .nav a { 
+                padding: 8px 14px; 
+                font-size: 14px; 
+            }
+            .wallet-btn { 
+                padding: 12px 18px; 
+                font-size: 15px; 
+            }
+            .coin-icon { 
+                width: 50px; 
+                height: 50px; 
+                font-size: 24px; 
+            }
+            .exchange-title { 
+                font-size: 22px !important; 
+            }
+            .philosophy-title { 
+                font-size: 26px !important; 
+            }
+            .philosophy-content {
+                padding: 30px 20px;
+            }
+            .section-title {
+                font-size: 24px !important;
+            }
+            .pair-name {
+                font-size: 22px !important;
+            }
+            .pair-price {
+                font-size: 26px !important;
+            }
+            .stat-value {
+                font-size: 22px;
+            }
+            .feature-title {
+                font-size: 22px;
+            }
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 26px;
+            }
+            .modal-content {
+                padding: 25px 20px;
+            }
+            .modal-title {
+                font-size: 22px;
+            }
+            .exchange-hero {
+                padding: 20px 15px;
+            }
+            .chart-container {
+                padding: 20px;
+                height: 450px;
+            }
+            .trading-panel {
+                padding: 20px;
+            }
+            .real-dex-banner {
+                padding: 18px;
+                font-size: 15px;
+            }
+            .banner-coin-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -1015,7 +1302,7 @@
             <div class="modal-header">
                 <div class="modal-title">
                     <div class="coin-icon" style="width: 40px; height: 40px; font-size: 20px; display: inline-flex; margin-right: 10px;">Z</div>
-                    Connect Wallet to ZUZIM UNIVERSE
+                    Connect Wallet
                 </div>
                 <button class="close-modal" onclick="closeModal('walletModal')">&times;</button>
             </div>
@@ -1027,14 +1314,10 @@
                     </div>
                     <div class="wallet-info">
                         <div class="wallet-name">MetaMask</div>
-                        <div class="wallet-desc">Most popular Web3 wallet</div>
+                        <div class="wallet-desc">Connect to Sepolia</div>
                     </div>
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 14px;">
-                <i class="fas fa-lock"></i> Your wallet connection is secure and private
             </div>
         </div>
     </div>
@@ -1061,17 +1344,17 @@
             </div>
             
             <div class="form-group">
-                <label class="form-label">Total Supply</label>
+                <label class="form-label">Initial Supply</label>
                 <input type="number" class="form-input" id="initialSupply" placeholder="e.g., 1000000">
             </div>
             
             <div class="form-group">
                 <label class="form-label">Charity Percentage (%)</label>
                 <select class="form-input" id="charityPercentage">
-                    <option value="1">1% - Standard ZUZIM</option>
+                    <option value="1">1% - Standard</option>
                     <option value="2">2%</option>
                     <option value="5">5% - High Impact</option>
-                    <option value="10">10% - Maximum Charity</option>
+                    <option value="10">10% - Maximum</option>
                 </select>
             </div>
             
@@ -1081,12 +1364,8 @@
             </div>
             
             <button class="action-btn primary" style="width: 100%; margin-top: 20px;" onclick="createToken()">
-                <i class="fas fa-plus-circle"></i> Create Token with Charity
+                <i class="fas fa-plus-circle"></i> Create Token
             </button>
-            
-            <div style="text-align: center; margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
-                <i class="fas fa-info-circle"></i> 1% of creation fee goes to charity
-            </div>
         </div>
     </div>
 
@@ -1107,8 +1386,8 @@
             </div>
             
             <div class="form-group">
-                <label class="form-label">Document Description</label>
-                <textarea class="form-input" style="height: 120px; resize: vertical;" id="documentDescription" placeholder="Describe your document..."></textarea>
+                <label class="form-label">Document Hash</label>
+                <input type="text" class="form-input" id="documentHash" placeholder="0x...">
             </div>
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -1119,10 +1398,6 @@
                     <i class="fas fa-check-circle"></i> Verify
                 </button>
             </div>
-            
-            <div style="text-align: center; margin-top: 20px; color: var(--text-secondary); font-size: 14px;">
-                <i class="fas fa-shield-alt"></i> Stored permanently on blockchain
-            </div>
         </div>
     </div>
 
@@ -1132,42 +1407,29 @@
             <div class="modal-header">
                 <div class="modal-title">
                     <i class="fas fa-link" style="color: var(--talmud-gold);"></i>
-                    ProofChain Ecosystem
+                    ProofChain
                 </div>
                 <button class="close-modal" onclick="closeModal('proofchainModal')">&times;</button>
             </div>
             
-            <div style="text-align: center; margin: 30px 0;">
+            <div style="text-align: center; margin: 20px 0;">
                 <div class="coin-icon" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto 20px;">Z</div>
-                <h3 style="color: var(--text); margin-bottom: 10px;">ZUZIM Charity Tracking</h3>
-                <p style="color: var(--text-secondary);">Every transaction helps make the world better</p>
+                <h3 style="color: var(--text); margin-bottom: 10px;">Charity Tracking</h3>
             </div>
             
             <div style="background: rgba(212, 175, 55, 0.1); border-radius: 10px; padding: 20px; margin: 20px 0;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                     <span style="color: var(--text-secondary);">Total Donations:</span>
-                    <span style="color: var(--talmud-gold); font-weight: 600;">$42,819</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-secondary);">Projects Funded:</span>
-                    <span style="color: var(--talmud-gold); font-weight: 600;">127</span>
+                    <span style="color: var(--talmud-gold); font-weight: 600;">42,819 ZUZ</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--text-secondary);">Community Votes:</span>
-                    <span style="color: var(--talmud-gold); font-weight: 600;">8,452</span>
+                    <span style="color: var(--text-secondary);">Projects:</span>
+                    <span style="color: var(--talmud-gold); font-weight: 600;">127</span>
                 </div>
             </div>
             
-            <button class="action-btn success" style="width: 100%; margin-bottom: 15px;" onclick="viewDonations()">
+            <button class="action-btn success" style="width: 100%;" onclick="viewDonations()">
                 <i class="fas fa-hand-holding-heart"></i> View Donations
-            </button>
-            
-            <button class="action-btn primary" style="width: 100%; margin-bottom: 15px;" onclick="voteForCharity()">
-                <i class="fas fa-vote-yea"></i> Vote for Charity Projects
-            </button>
-            
-            <button class="action-btn" style="width: 100%;" onclick="viewCharityProjects()">
-                <i class="fas fa-list"></i> Browse Projects
             </button>
         </div>
     </div>
@@ -1177,9 +1439,7 @@
         <!-- ШАПКА БИРЖИ -->
         <header class="header">
             <div class="logo" onclick="openPhilosophy()">
-                <div class="coin-icon">
-                    Z
-                </div>
+                <div class="coin-icon">Z</div>
                 <div class="logo-text">
                     <span class="exchange-title">ZUZIM UNIVERSE</span>
                     <span class="exchange-subtitle">TALMUDIC CRYPTO EXCHANGE</span>
@@ -1189,18 +1449,18 @@
             <nav class="nav">
                 <a href="#" class="active"><i class="fas fa-chart-line"></i> Trade</a>
                 <a href="#token-factory"><i class="fas fa-industry"></i> Token Factory</a>
-                <a href="#digital-notary"><i class="fas fa-file-contract"></i> Digital Notary</a>
+                <a href="#digital-notary"><i class="fas fa-file-contract"></i> Notary</a>
                 <a href="#proofchain"><i class="fas fa-link"></i> ProofChain</a>
             </nav>
             
             <div class="wallet-section">
                 <div class="balance-container" id="balanceContainer" style="display: none;">
                     <div class="balance-item">
-                        <div class="balance-label">ETH Balance</div>
+                        <div class="balance-label">ETH</div>
                         <div class="balance-value eth" id="ethBalance">0.00 ETH</div>
                     </div>
                     <div class="balance-item">
-                        <div class="balance-label">ZUZ Balance</div>
+                        <div class="balance-label">ZUZ</div>
                         <div class="balance-value zuz" id="zuzBalance">
                             <div class="small-coin-icon">Z</div>
                             <span>0 ZUZ</span>
@@ -1222,7 +1482,7 @@
         <!-- БАННЕР ЖИВОГО DEX -->
         <div class="real-dex-banner" id="realDexBanner" style="display: none;">
             <div class="banner-coin-icon">Z</div>
-            <strong>🚀 ZUZ DEX LIVE!</strong> ZUZ/PYUSD Trading with 1% Auto-Donate
+            <strong>ZUZ DEX LIVE!</strong> Trade with 1% Auto-Donate
             <div class="banner-coin-icon">Z</div>
         </div>
 
@@ -1240,17 +1500,18 @@
                         <div class="stat-label">24h Volume</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">42,819</div>
-                        <div class="stat-label">Active Traders</div>
+                        <div class="stat-value">42.8K</div>
+                        <div class="stat-label">Traders</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">127</div>
-                        <div class="stat-label">Trading Pairs</div>
+                        <div class="stat-label">Pairs</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value">1%</div>
-                        <div class="stat-label">Auto-Donate</div>
+                        <div class="stat-label">Donate</div>
                     </div>
+                </div>
             </div>
 
             <!-- ОСНОВНАЯ ТОРГОВАЯ ПЛОЩАДКА -->
@@ -1302,15 +1563,15 @@
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;">
                             <button class="btn-buy" onclick="placeRealOrder('buy')">
-                                <i class="fas fa-arrow-up"></i> Buy ZUZ
+                                <i class="fas fa-arrow-up"></i> Buy
                             </button>
                             <button class="btn-sell" onclick="placeRealOrder('sell')">
-                                <i class="fas fa-arrow-down"></i> Sell ZUZ
+                                <i class="fas fa-arrow-down"></i> Sell
                             </button>
                         </div>
                         
-                        <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 15px; background: rgba(0, 209, 140, 0.1); border-radius: 8px; border: 1px solid rgba(0, 209, 140, 0.2);">
-                            <i class="fas fa-hand-holding-heart"></i> 1% of this trade will be auto-donated to charity
+                        <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 15px; background: rgba(0, 209, 140, 0.1); border-radius: 8px;">
+                            <i class="fas fa-hand-holding-heart"></i> 1% auto-donated
                         </div>
                     </div>
                     
@@ -1328,29 +1589,29 @@
             <div class="orderbook-grid">
                 <div class="orderbook">
                     <div class="orderbook-header">
-                        <div class="orderbook-title">Bids (Buy Orders)</div>
-                        <div style="color: var(--text-secondary); font-size: 12px;">Amount</div>
+                        <div class="orderbook-title">Bids</div>
+                        <div style="color: var(--text-secondary);">Amount</div>
                     </div>
                     <div class="order-rows">
-                        <div class="order-row"><span class="order-price bid">0.0965</span><span>12,450 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price bid">0.0963</span><span>8,720 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price bid">0.0961</span><span>15,300 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price bid">0.0959</span><span>6,540 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price bid">0.0957</span><span>9,810 ZUZ</span></div>
+                        <div class="order-row"><span class="order-price bid">0.0965</span><span>12,450</span></div>
+                        <div class="order-row"><span class="order-price bid">0.0963</span><span>8,720</span></div>
+                        <div class="order-row"><span class="order-price bid">0.0961</span><span>15,300</span></div>
+                        <div class="order-row"><span class="order-price bid">0.0959</span><span>6,540</span></div>
+                        <div class="order-row"><span class="order-price bid">0.0957</span><span>9,810</span></div>
                     </div>
                 </div>
                 
                 <div class="orderbook">
                     <div class="orderbook-header">
-                        <div class="orderbook-title">Asks (Sell Orders)</div>
-                        <div style="color: var(--text-secondary); font-size: 12px;">Amount</div>
+                        <div class="orderbook-title">Asks</div>
+                        <div style="color: var(--text-secondary);">Amount</div>
                     </div>
                     <div class="order-rows">
-                        <div class="order-row"><span class="order-price ask">0.0967</span><span>7,890 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price ask">0.0969</span><span>11,230 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price ask">0.0971</span><span>5,670 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price ask">0.0973</span><span>8,910 ZUZ</span></div>
-                        <div class="order-row"><span class="order-price ask">0.0975</span><span>4,320 ZUZ</span></div>
+                        <div class="order-row"><span class="order-price ask">0.0967</span><span>7,890</span></div>
+                        <div class="order-row"><span class="order-price ask">0.0969</span><span>11,230</span></div>
+                        <div class="order-row"><span class="order-price ask">0.0971</span><span>5,670</span></div>
+                        <div class="order-row"><span class="order-price ask">0.0973</span><span>8,910</span></div>
+                        <div class="order-row"><span class="order-price ask">0.0975</span><span>4,320</span></div>
                     </div>
                 </div>
             </div>
@@ -1368,8 +1629,8 @@
                             <div style="color: var(--positive); font-weight: 700;">$0.0961</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                            <div style="color: var(--text-secondary);">24h Volume</div>
-                            <div style="color: var(--text);">$842,150</div>
+                            <div style="color: var(--text-secondary);">Volume</div>
+                            <div style="color: var(--text);">$842K</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
                             <div style="color: var(--text-secondary);">Change</div>
@@ -1383,8 +1644,8 @@
                             <div style="color: var(--negative); font-weight: 700;">0.000042</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                            <div style="color: var(--text-secondary);">24h Volume</div>
-                            <div style="color: var(--text);">$315,780</div>
+                            <div style="color: var(--text-secondary);">Volume</div>
+                            <div style="color: var(--text);">$315K</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
                             <div style="color: var(--text-secondary);">Change</div>
@@ -1398,7 +1659,7 @@
                             <div style="color: var(--positive); font-weight: 700;">$2,285</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                            <div style="color: var(--text-secondary);">24h Volume</div>
+                            <div style="color: var(--text-secondary);">Volume</div>
                             <div style="color: var(--text);">$1.2M</div>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 14px;">
@@ -1410,7 +1671,7 @@
             </div>
         </div>
 
-        <!-- ФУНКЦИОНАЛЬНЫЕ СЕКЦИИ ЭКОСИСТЕМЫ -->
+        <!-- ФУНКЦИОНАЛЬНЫЕ СЕКЦИИ -->
         <div class="functional-sections">
             <!-- Token Factory -->
             <div id="token-factory">
@@ -1421,7 +1682,7 @@
                     </h2>
                     <div class="action-buttons">
                         <button class="action-btn primary" onclick="openModal('tokenFactoryModal')">
-                            <i class="fas fa-plus-circle"></i> Create Charity Token
+                            <i class="fas fa-plus-circle"></i> Create Token
                         </button>
                         <button class="action-btn" onclick="viewMyTokens()">
                             <i class="fas fa-list"></i> My Tokens
@@ -1440,7 +1701,7 @@
                             1-10% of every transaction automatically donated.
                         </p>
                         <button class="action-btn" onclick="openModal('tokenFactoryModal')">
-                            <i class="fas fa-rocket"></i> Launch Token
+                            Launch Token
                         </button>
                     </div>
                     
@@ -1453,7 +1714,7 @@
                             Track your token performance, donations made, and community growth.
                         </p>
                         <button class="action-btn" onclick="viewTokenAnalytics()">
-                            <i class="fas fa-chart-bar"></i> View Analytics
+                            View Analytics
                         </button>
                     </div>
                     
@@ -1467,7 +1728,7 @@
                             Support projects that give back.
                         </p>
                         <button class="action-btn" onclick="browseCommunityTokens()">
-                            <i class="fas fa-search"></i> Browse Tokens
+                            Browse Tokens
                         </button>
                     </div>
                 </div>
@@ -1482,10 +1743,10 @@
                     </h2>
                     <div class="action-buttons">
                         <button class="action-btn primary" onclick="openModal('notaryModal')">
-                            <i class="fas fa-upload"></i> Upload Document
+                            <i class="fas fa-upload"></i> Notarize
                         </button>
                         <button class="action-btn" onclick="openModal('notaryModal')">
-                            <i class="fas fa-check-circle"></i> Verify Document
+                            <i class="fas fa-check-circle"></i> Verify
                         </button>
                     </div>
                 </div>
@@ -1531,14 +1792,14 @@
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-link" style="color: var(--talmud-gold);"></i>
-                        ProofChain Ecosystem
+                        ProofChain
                     </h2>
                     <div class="action-buttons">
                         <button class="action-btn success" onclick="openModal('proofchainModal')">
-                            <i class="fas fa-hand-holding-heart"></i> View Donations
+                            <i class="fas fa-hand-holding-heart"></i> Donations
                         </button>
                         <button class="action-btn" onclick="voteForCharity()">
-                            <i class="fas fa-vote-yea"></i> Vote for Projects
+                            <i class="fas fa-vote-yea"></i> Vote
                         </button>
                     </div>
                 </div>
@@ -1582,48 +1843,35 @@
     </div>
 
     <!-- СКРИПТЫ -->
-    <script src="https://unpkg.com/web3@1.7.0/dist/web3.min.js"></script>
     <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
-        // ============= КОНФИГУРАЦИЯ РЕАЛЬНОГО DEX =============
+        // ============= КОНФИГУРАЦИЯ =============
         const DEX_CONFIG = {
             address: "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
             zuzToken: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
-            pyusdToken: "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9",
-            tradingFee: 0.3,
-            charityFee: 1.0
+            pyusdToken: "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9"
         };
         
-        // Sepolia network configuration
         const SEPOLIA_CONFIG = {
-            chainId: "0xaa36a7", // 11155111 in hex
+            chainId: "0xaa36a7",
             chainName: "Sepolia",
-            nativeCurrency: {
-                name: "ETH",
-                symbol: "ETH",
-                decimals: 18
-            },
+            nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
             rpcUrls: ["https://sepolia.infura.io/v3/"],
             blockExplorerUrls: ["https://sepolia.etherscan.io"]
         };
         
-        // ABI для DEX (исправленные)
-        const DEX_ABI = [
-            "function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)",
-            "function getReserves(address tokenA, address tokenB) view returns (uint256 reserveA, uint256 reserveB)",
-            "function charityWallet() view returns (address)",
-            "function totalCharityDonated() view returns (uint256)"
-        ];
-        
-        // ABI для ERC20
+        // ABI
+        const DEX_ABI = ["function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)"];
         const ERC20_ABI = [
             "function approve(address spender, uint256 amount) returns (bool)",
             "function balanceOf(address account) view returns (uint256)",
             "function decimals() view returns (uint8)",
-            "function transfer(address to, uint256 amount) returns (bool)",
             "function allowance(address owner, address spender) view returns (uint256)"
+        ];
+        const TOKEN_FACTORY_ABI = [
+            "function createCharityToken(string memory name, string memory symbol, uint256 initialSupply, uint256 charityPercent, address charityWallet) public returns (address)"
         ];
         
         // ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
@@ -1635,7 +1883,7 @@
         let zuzContract = null;
         let pyusdContract = null;
         
-        // ============= ФИЛОСОФИЯ ZUZ =============
+        // ============= ФИЛОСОФИЯ =============
         function openPhilosophy() {
             document.getElementById('philosophyModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1646,187 +1894,113 @@
             document.body.style.overflow = 'auto';
         }
         
-        // Закрытие по клику вне контента
         document.getElementById('philosophyModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePhilosophy();
-            }
+            if (e.target === this) closePhilosophy();
         });
         
-        // Закрытие по Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('philosophyModal').classList.contains('active')) {
-                closePhilosophy();
-            }
-        });
-        
-        // ============= ПОДКЛЮЧЕНИЕ К СЕТИ SEPOLIA =============
+        // ============= ПОДКЛЮЧЕНИЕ =============
         async function switchToSepolia() {
             try {
-                if (!window.ethereum) {
-                    alert("MetaMask not installed!");
-                    return false;
-                }
-                
+                if (!window.ethereum) return false;
                 const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                
                 if (chainId !== SEPOLIA_CONFIG.chainId) {
                     try {
                         await window.ethereum.request({
                             method: 'wallet_switchEthereumChain',
                             params: [{ chainId: SEPOLIA_CONFIG.chainId }]
                         });
-                        return true;
                     } catch (switchError) {
-                        // Если сеть не добавлена, добавляем её
                         if (switchError.code === 4902) {
-                            try {
-                                await window.ethereum.request({
-                                    method: 'wallet_addEthereumChain',
-                                    params: [SEPOLIA_CONFIG]
-                                });
-                                return true;
-                            } catch (addError) {
-                                console.error("Error adding Sepolia:", addError);
-                                alert("Please add Sepolia network to MetaMask");
-                                return false;
-                            }
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [SEPOLIA_CONFIG]
+                            });
                         }
-                        console.error("Error switching to Sepolia:", switchError);
-                        return false;
                     }
                 }
                 return true;
             } catch (error) {
-                console.error("Error checking network:", error);
+                console.error(error);
                 return false;
             }
         }
         
-        // ============= ПОДКЛЮЧЕНИЕ КОШЕЛЬКА =============
         async function connectWallet(walletType) {
             closeModal('walletModal');
-            
-            if (walletType === 'metamask') {
-                await connectMetaMask();
-            }
+            if (walletType === 'metamask') await connectMetaMask();
         }
         
         async function connectMetaMask() {
-            if (typeof window.ethereum === 'undefined') {
+            if (!window.ethereum) {
                 alert("Please install MetaMask!");
                 return;
             }
             
             try {
-                // Переключаемся на Sepolia
-                const switched = await switchToSepolia();
-                if (!switched) {
-                    alert("Please switch to Sepolia network in MetaMask");
-                    return;
-                }
+                await switchToSepolia();
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 
-                // Запрашиваем аккаунты
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                // Создаем провайдер и подписанта
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 userAddress = accounts[0];
                 isConnected = true;
                 
-                // Обновляем UI
                 updateWalletUI(true);
-                
-                // Инициализируем DEX
                 await initRealDEX();
-                
-                // Загружаем балансы
                 await loadBalances();
-                
-                // Показываем баннер DEX
                 document.getElementById('realDexBanner').style.display = 'flex';
                 
-                console.log("✅ MetaMask connected to Sepolia:", userAddress);
-                
             } catch (error) {
-                console.error("Error connecting MetaMask:", error);
-                alert("Error connecting MetaMask: " + error.message);
+                console.error(error);
+                alert("Error connecting: " + error.message);
             }
         }
         
         function disconnectWallet() {
             if (confirm("Disconnect wallet?")) {
                 isConnected = false;
-                provider = null;
-                signer = null;
-                userAddress = null;
-                dexContract = null;
-                zuzContract = null;
-                pyusdContract = null;
-                
+                provider = null; signer = null; userAddress = null;
+                dexContract = null; zuzContract = null; pyusdContract = null;
                 updateWalletUI(false);
-                
-                // Скрываем баннер DEX
                 document.getElementById('realDexBanner').style.display = 'none';
-                
-                console.log("✅ Wallet disconnected");
             }
         }
         
         function updateWalletUI(connected) {
-            const connectBtn = document.getElementById('connectWalletBtn');
-            const balanceContainer = document.getElementById('balanceContainer');
+            const btn = document.getElementById('connectWalletBtn');
+            const balance = document.getElementById('balanceContainer');
             
             if (connected) {
-                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span>Disconnect</span>';
-                connectBtn.classList.add('connected');
-                connectBtn.onclick = disconnectWallet;
-                balanceContainer.style.display = 'flex';
+                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Disconnect</span>';
+                btn.classList.add('connected');
+                btn.onclick = disconnectWallet;
+                balance.style.display = 'flex';
             } else {
-                connectBtn.innerHTML = '<i class="fas fa-wallet"></i><span>Connect Wallet</span>';
-                connectBtn.classList.remove('connected');
-                connectBtn.onclick = () => openModal('walletModal');
-                balanceContainer.style.display = 'none';
-                
+                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Connect Wallet</span>';
+                btn.classList.remove('connected');
+                btn.onclick = () => openModal('walletModal');
+                balance.style.display = 'none';
                 document.getElementById('ethBalance').textContent = '0.00 ETH';
-                document.getElementById('zuzBalance').innerHTML = `
-                    <div class="small-coin-icon">Z</div>
-                    <span>0 ZUZ</span>
-                `;
+                document.getElementById('zuzBalance').innerHTML = '<div class="small-coin-icon">Z</div><span>0 ZUZ</span>';
                 document.getElementById('networkName').textContent = 'Not Connected';
             }
         }
         
-        // ============= ИНИЦИАЛИЗАЦИЯ РЕАЛЬНОГО DEX =============
+        // ============= DEX =============
         async function initRealDEX() {
+            if (!provider || !signer) return;
             try {
-                if (!provider || !signer) {
-                    console.error("Provider or signer not initialized");
-                    return;
-                }
-                
-                // Создаем контракты
                 dexContract = new ethers.Contract(DEX_CONFIG.address, DEX_ABI, signer);
                 zuzContract = new ethers.Contract(DEX_CONFIG.zuzToken, ERC20_ABI, signer);
                 pyusdContract = new ethers.Contract(DEX_CONFIG.pyusdToken, ERC20_ABI, signer);
-                
-                console.log("✅ Real DEX initialized on Sepolia");
-                console.log("DEX Address:", DEX_CONFIG.address);
-                console.log("ZUZ Token:", DEX_CONFIG.zuzToken);
-                console.log("PYUSD Token:", DEX_CONFIG.pyusdToken);
-                
             } catch (error) {
-                console.error("Error initializing DEX:", error);
+                console.error(error);
             }
         }
         
-        // ============= РЕАЛЬНЫЕ СВАПЫ =============
         async function placeRealOrder(side) {
             if (!isConnected) {
-                alert("Please connect wallet first!");
+                alert("Connect wallet first!");
                 openModal('walletModal');
                 return;
             }
@@ -1834,168 +2008,125 @@
             try {
                 const amount = document.getElementById('amountInput').value;
                 if (!amount || amount <= 0) {
-                    alert("Please enter valid amount!");
+                    alert("Enter valid amount!");
                     return;
                 }
                 
-                // Определяем токены для свапа
                 const tokenIn = side === 'buy' ? DEX_CONFIG.pyusdToken : DEX_CONFIG.zuzToken;
                 const tokenOut = side === 'buy' ? DEX_CONFIG.zuzToken : DEX_CONFIG.pyusdToken;
-                const description = side === 'buy' ? "PYUSD → ZUZ" : "ZUZ → PYUSD";
-                
-                // Создаем контракт для входного токена
                 const tokenInContract = new ethers.Contract(tokenIn, ERC20_ABI, signer);
                 
-                // Получаем decimals для токена
                 const decimals = await tokenInContract.decimals();
                 const amountIn = ethers.utils.parseUnits(amount, decimals);
-                
-                // Проверяем баланс
                 const balance = await tokenInContract.balanceOf(userAddress);
+                
                 if (balance.lt(amountIn)) {
-                    alert(`Insufficient balance! You have: ${ethers.utils.formatUnits(balance, decimals)}`);
+                    alert(`Insufficient balance!`);
                     return;
                 }
                 
-                // Проверяем allowance
                 const allowance = await tokenInContract.allowance(userAddress, DEX_CONFIG.address);
-                
                 if (allowance.lt(amountIn)) {
-                    // Нужно дать approve
-                    alert("MetaMask will ask for APPROVE confirmation...\nThis allows DEX to spend your tokens.");
-                    
-                    try {
-                        const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
-                        console.log("✅ Approve transaction sent:", approveTx.hash);
-                        
-                        // Ждем подтверждения
-                        await approveTx.wait();
-                        console.log("✅ Approve confirmed");
-                        
-                        // Даем небольшую паузу после approve
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                    } catch (approveError) {
-                        console.error("Approve error:", approveError);
-                        alert("❌ Approve failed: " + (approveError.message || approveError));
-                        return;
-                    }
-                } else {
-                    console.log("✅ Allowance already sufficient");
+                    alert("Please approve token spending...");
+                    const approveTx = await tokenInContract.approve(DEX_CONFIG.address, amountIn);
+                    await approveTx.wait();
                 }
                 
-                // Выполняем свап
-                alert("MetaMask will ask for SWAP confirmation...\nThis will execute the trade with 1% auto-donation.");
-                
-                try {
-                    const swapTx = await dexContract.swap(tokenIn, tokenOut, amountIn);
-                    
-                    console.log("✅ Swap transaction sent:", swapTx.hash);
-                    
-                    showNotification(`🚀 ${description} swap sent!\nHash: ${swapTx.hash.substring(0, 10)}...\n1% going to charity.`);
-                    
-                    // Ждем подтверждения
-                    await swapTx.wait();
-                    
-                    showNotification(`✅ Swap completed!\n1% donated to charity.`);
-                    alert(`✅ ${description} swap completed!\n1% automatically donated to charity.`);
-                    
-                } catch (swapError) {
-                    console.error("Swap error:", swapError);
-                    
-                    let errorMsg = "❌ Swap failed";
-                    if (swapError.message.includes("insufficient allowance")) {
-                        errorMsg += ": Insufficient allowance. Try approving again.";
-                    } else if (swapError.message.includes("INSUFFICIENT_OUTPUT_AMOUNT")) {
-                        errorMsg += ": Price changed. Try again.";
-                    } else {
-                        errorMsg += ": " + swapError.message;
-                    }
-                    
-                    alert(errorMsg);
-                    return;
-                }
-                
-                // Обновляем балансы
+                const swapTx = await dexContract.swap(tokenIn, tokenOut, amountIn);
+                alert(`✅ Swap sent! Tx: ${swapTx.hash.substring(0, 10)}...`);
+                await swapTx.wait();
+                alert(`✅ Swap completed! 1% donated.`);
                 await loadBalances();
                 
             } catch (error) {
-                console.error("Place order error:", error);
-                alert(`❌ Error: ${error.message || error}`);
+                console.error(error);
+                alert("Error: " + error.message);
             }
         }
         
-        // ============= ЗАГРУЗКА БАЛАНСОВ =============
+        // ============= БАЛАНСЫ =============
         async function loadBalances() {
             if (!provider || !userAddress) return;
-            
             try {
-                // ETH баланс
                 const balance = await provider.getBalance(userAddress);
-                const ethBalance = ethers.utils.formatEther(balance);
                 document.getElementById('ethBalance').textContent = 
-                    parseFloat(ethBalance).toFixed(4) + ' ETH';
+                    parseFloat(ethers.utils.formatEther(balance)).toFixed(4) + ' ETH';
                 
-                // ZUZ баланс
                 if (zuzContract) {
-                    try {
-                        const zuzBalance = await zuzContract.balanceOf(userAddress);
-                        const zuzDecimals = await zuzContract.decimals();
-                        const zuzFormatted = ethers.utils.formatUnits(zuzBalance, zuzDecimals);
-                        
-                        const zuzBalanceElement = document.getElementById('zuzBalance');
-                        zuzBalanceElement.innerHTML = `
-                            <div class="small-coin-icon">Z</div>
-                            <span>${parseFloat(zuzFormatted).toFixed(2)} ZUZ</span>
-                        `;
-                    } catch (zuzError) {
-                        console.error("Error loading ZUZ balance:", zuzError);
-                    }
+                    const zuzBalance = await zuzContract.balanceOf(userAddress);
+                    const zuzDecimals = await zuzContract.decimals();
+                    const zuzFormatted = ethers.utils.formatUnits(zuzBalance, zuzDecimals);
+                    document.getElementById('zuzBalance').innerHTML = 
+                        `<div class="small-coin-icon">Z</div><span>${parseFloat(zuzFormatted).toFixed(2)} ZUZ</span>`;
                 }
                 
-                // Сеть
                 const network = await provider.getNetwork();
-                const networkName = network.name === 'sepolia' ? 'Sepolia' : network.name;
-                document.getElementById('networkName').textContent = networkName.charAt(0).toUpperCase() + networkName.slice(1);
-                
+                document.getElementById('networkName').textContent = 
+                    network.name === 'sepolia' ? 'Sepolia' : network.name;
+                    
             } catch (error) {
-                console.error("Error loading balances:", error);
+                console.error(error);
             }
         }
         
-        // ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
-        function showNotification(message) {
-            // Создаем уведомление
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--card-bg);
-                border: 2px solid var(--positive);
-                border-radius: 10px;
-                padding: 15px;
-                color: var(--text);
-                z-index: 3000;
-                max-width: 400px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-                animation: slideIn 0.3s ease;
-            `;
-            
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-info-circle" style="color: var(--positive);"></i>
-                    <div>${message}</div>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Удаляем через 5 секунд
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 5000);
+        // ============= TOKEN FACTORY =============
+        async function createToken() {
+            try {
+                if (!window.ethereum) {
+                    alert('Please install MetaMask!');
+                    return;
+                }
+
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const userAddress = accounts[0];
+                
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0xaa36a7') {
+                    alert('Please switch to Sepolia network!');
+                    return;
+                }
+
+                const tokenName = document.getElementById('tokenName').value.trim();
+                const tokenSymbol = document.getElementById('tokenSymbol').value.trim();
+                const initialSupply = document.getElementById('initialSupply').value.trim();
+                const charityPercentage = document.getElementById('charityPercentage').value.trim();
+                const charityWallet = document.getElementById('charityWallet').value.trim();
+
+                if (!tokenName || !tokenSymbol || !initialSupply || !charityPercentage || !charityWallet) {
+                    alert('Please fill all fields!');
+                    return;
+                }
+
+                if (!/^0x[a-fA-F0-9]{40}$/.test(charityWallet)) {
+                    alert('Invalid charity wallet address!');
+                    return;
+                }
+
+                const tokenFactoryAddress = "0x79cd09bb3ec10efce3379f8179eccd6368af21fc";
+                
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const tokenFactory = new ethers.Contract(tokenFactoryAddress, TOKEN_FACTORY_ABI, signer);
+
+                const initialSupplyWei = ethers.utils.parseUnits(initialSupply, 18);
+                const charityPercent = parseInt(charityPercentage);
+
+                const tx = await tokenFactory.createCharityToken(
+                    tokenName, tokenSymbol, initialSupplyWei, charityPercent, charityWallet,
+                    { gasLimit: 3000000 }
+                );
+
+                alert(`✅ Transaction sent!\nHash: ${tx.hash}`);
+                await tx.wait();
+                alert(`🎉 Token created successfully!`);
+                closeModal('tokenFactoryModal');
+                
+            } catch (error) {
+                console.error(error);
+                if (error.code === 4001) alert('❌ Transaction rejected');
+                else if (error.message.includes('insufficient funds')) alert('❌ Insufficient ETH for gas');
+                else alert(`❌ Error: ${error.message}`);
+            }
         }
         
         // ============= МОДАЛЬНЫЕ ОКНА =============
@@ -2009,24 +2140,16 @@
             document.body.style.overflow = 'auto';
         }
         
-        // Закрытие всех модальных окон по клику вне
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal(this.id);
-                }
+                if (e.target === this) closeModal(this.id);
             });
         });
         
-        // Закрытие по Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
-                    closeModal(modal.id);
-                });
-                if (document.getElementById('philosophyModal').classList.contains('active')) {
-                    closePhilosophy();
-                }
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => closeModal(modal.id));
+                if (document.getElementById('philosophyModal').classList.contains('active')) closePhilosophy();
             }
         });
         
@@ -2036,86 +2159,47 @@
                 setTimeout(initTradingView, 1000);
                 return;
             }
-            
-            const isMobile = window.innerWidth <= 768;
-            
             try {
                 new TradingView.widget({
                     "container_id": "tradingview_chart",
                     "width": "100%",
                     "height": "100%",
                     "symbol": "ETHUSD",
-                    "interval": isMobile ? "60" : "D",
+                    "interval": "D",
                     "timezone": "exchange",
                     "theme": "dark",
                     "style": "1",
                     "locale": "en",
                     "toolbar_bg": "#0a1525",
                     "enable_publishing": false,
-                    "hide_side_toolbar": isMobile,
+                    "hide_side_toolbar": window.innerWidth <= 768,
                     "allow_symbol_change": true,
-                    "details": !isMobile,
-                    "studies": isMobile ? [] : ["RSI@tv-basicstudies"],
-                    "show_popup_button": !isMobile,
-                    "popup_width": "1000",
-                    "popup_height": "650"
+                    "studies": window.innerWidth <= 768 ? [] : ["RSI@tv-basicstudies"]
                 });
-                console.log("✅ TradingView initialized");
             } catch (error) {
-                console.error("Error initializing TradingView:", error);
+                console.error(error);
             }
         }
         
         // ============= ИНИЦИАЛИЗАЦИЯ =============
         window.addEventListener('DOMContentLoaded', () => {
-            // TradingView
             setTimeout(initTradingView, 1000);
             
-            // Обновление total при вводе
             document.getElementById('amountInput')?.addEventListener('input', updateTotal);
             document.getElementById('priceInput')?.addEventListener('input', updateTotal);
             
-            // Автоподключение если уже подключен
-            if (typeof window.ethereum !== 'undefined' && window.ethereum.selectedAddress) {
-                setTimeout(() => {
-                    connectWallet('metamask');
-                }, 1000);
+            if (window.ethereum?.selectedAddress) {
+                setTimeout(() => connectWallet('metamask'), 1000);
             }
             
-            // Мобильное меню
-            initMobileMenu();
-            
-            // Установка активного меню
-            setActiveMenu();
-            
-            // Добавляем стили для анимаций уведомлений
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Слушатель изменений сети
             if (window.ethereum) {
-                window.ethereum.on('chainChanged', () => {
-                    window.location.reload();
-                });
-                
+                window.ethereum.on('chainChanged', () => window.location.reload());
                 window.ethereum.on('accountsChanged', (accounts) => {
                     if (accounts.length === 0) {
-                        // User disconnected wallet
                         isConnected = false;
                         updateWalletUI(false);
                         document.getElementById('realDexBanner').style.display = 'none';
                     } else {
-                        // Account changed, reconnect
                         connectWallet('metamask');
                     }
                 });
@@ -2125,226 +2209,34 @@
         function updateTotal() {
             const amount = parseFloat(document.getElementById('amountInput').value) || 0;
             const price = parseFloat(document.getElementById('priceInput').value) || 0;
-            const total = amount * price;
-            document.getElementById('totalInput').value = total.toFixed(4);
+            document.getElementById('totalInput').value = (amount * price).toFixed(4);
         }
         
         function switchTab(tabName) {
-            // Убираем активный класс со всех табов
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            // Добавляем активный класс нажатому табу
             event.target.classList.add('active');
-            
-            // Скрываем все контенты табов
             document.getElementById('marketTab').style.display = 'none';
             document.getElementById('limitTab').style.display = 'none';
-            
-            // Показываем выбранный таб
             document.getElementById(tabName + 'Tab').style.display = 'block';
         }
         
         function changeTimeframe(timeframe) {
-            // Убираем активный класс со всех кнопок таймфрейма
             event.target.parentElement.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-            // Добавляем активный класс нажатой кнопке
             event.target.classList.add('active');
-            
-            console.log("Changed timeframe to:", timeframe);
         }
         
         function selectPair(pair) {
-            alert("Selected pair: " + pair);
-            // Обновляем заголовок и цену
             document.querySelector('.pair-name').textContent = pair;
         }
         
-        // ============= ФУНКЦИИ ЭКОСИСТЕМЫ =============
-        async function createToken() {
-            try {
-                console.log("Starting token creation...");
-
-                // Проверка наличия MetaMask
-                if (!window.ethereum) {
-                    alert('Please install MetaMask!');
-                    return;
-                }
-
-                // Запрос подключения к аккаунту
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                const userAddress = accounts[0];
-                console.log("Connected account:", userAddress);
-
-                // Проверка сети (Sepolia)
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                const sepoliaChainId = '0xaa36a7'; // 11155111 в hex
-                
-                if (chainId !== sepoliaChainId) {
-                    alert(`Please switch to Sepolia network (Chain ID: 11155111).\nCurrent chain ID: ${chainId}`);
-                    return;
-                }
-
-                // Получаем значения из формы
-                const tokenName = document.getElementById('tokenName').value.trim();
-                const tokenSymbol = document.getElementById('tokenSymbol').value.trim();
-                const initialSupply = document.getElementById('initialSupply').value.trim();
-                const charityPercentage = document.getElementById('charityPercentage').value.trim();
-                const charityWallet = document.getElementById('charityWallet').value.trim();
-
-                // Валидация
-                if (!tokenName || !tokenSymbol || !initialSupply || !charityPercentage || !charityWallet) {
-                    alert('Please fill all fields!');
-                    return;
-                }
-
-                // Проверка адреса кошелька
-                if (!/^0x[a-fA-F0-9]{40}$/.test(charityWallet)) {
-                    alert('Please enter a valid Ethereum wallet address for charity!');
-                    return;
-                }
-
-                // Адрес TokenFactory контракта
-                const tokenFactoryAddress = "0x79cd09bb3ec10efce3379f8179eccd6368af21fc";
-
-                // ABI контракта TokenFactory (минимизированная версия)
-                const tokenFactoryABI = [
-                    "function createCharityToken(string memory name, string memory symbol, uint256 initialSupply, uint256 charityPercent, address charityWallet) public returns (address)"
-                ];
-
-                // Создаем провайдер и подписывающего
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
-
-                // Создаем контракт
-                const tokenFactory = new ethers.Contract(tokenFactoryAddress, tokenFactoryABI, signer);
-
-                // Подготовка параметров
-                const initialSupplyWei = ethers.utils.parseUnits(initialSupply, 18); // 18 decimals
-                const charityPercent = parseInt(charityPercentage);
-
-                console.log("Sending transaction with params:", {
-                    tokenName,
-                    tokenSymbol,
-                    initialSupply: initialSupplyWei.toString(),
-                    charityPercent,
-                    charityWallet
-                });
-
-                // Отправляем транзакцию
-                const tx = await tokenFactory.createCharityToken(
-                    tokenName,
-                    tokenSymbol,
-                    initialSupplyWei,
-                    charityPercent,
-                    charityWallet,
-                    {
-                        gasLimit: 3000000 // Увеличиваем лимит газа для деплоя токена
-                    }
-                );
-
-                console.log("Transaction sent:", tx.hash);
-                
-                // Показываем пользователю хэш транзакции
-                alert(`✅ Transaction sent!\n\nHash: ${tx.hash}\n\nPlease wait for confirmation...`);
-
-                // Ждем подтверждения
-                const receipt = await tx.wait();
-                console.log("Transaction confirmed:", receipt);
-
-                // Парсим событие TokenCreated если есть
-                if (receipt.events && receipt.events.length > 0) {
-                    for (const event of receipt.events) {
-                        if (event.event === 'TokenCreated') {
-                            const tokenAddress = event.args.tokenAddress;
-                            alert(`🎉 Token created successfully!\n\nToken Address: ${tokenAddress}\n\nTransaction: ${tx.hash}`);
-                            break;
-                        }
-                    }
-                } else {
-                    alert(`🎉 Token creation transaction confirmed!\n\nTransaction: ${tx.hash}\n\nCheck Etherscan for token address.`);
-                }
-
-                closeModal('tokenFactoryModal');
-                
-            } catch (error) {
-                console.error("Error creating token:", error);
-                
-                // Более информативные сообщения об ошибках
-                if (error.code === 4001) {
-                    alert('❌ Transaction rejected by user');
-                } else if (error.code === -32603) {
-                    alert('❌ Transaction failed. Check if you have enough ETH for gas.');
-                } else if (error.message.includes('insufficient funds')) {
-                    alert('❌ Insufficient ETH for gas. Please get some Sepolia ETH.');
-                } else if (error.message.includes('user rejected')) {
-                    alert('❌ Transaction rejected by user');
-                } else {
-                    alert(`❌ Error: ${error.message || 'Unknown error occurred'}`);
-                }
-            }
-        }
-        
-        // ============= МОБИЛЬНОЕ МЕНЮ =============
-        function initMobileMenu() {
-            if (window.innerWidth <= 768) {
-                // Плавная прокрутка для якорных ссылок
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function(e) {
-                        if (this.getAttribute('href') === '#') return;
-                        
-                        const targetId = this.getAttribute('href');
-                        const targetElement = document.querySelector(targetId);
-                        
-                        if (targetElement) {
-                            e.preventDefault();
-                            window.scrollTo({
-                                top: targetElement.offsetTop - 100,
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
-                });
-            }
-        }
-        
-        window.addEventListener('resize', initMobileMenu);
-        
-        // ============= АКТИВНОЕ МЕНЮ =============
-        function setActiveMenu() {
-            const currentHash = window.location.hash || '#';
-            document.querySelectorAll('.nav a').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === currentHash) {
-                    link.classList.add('active');
-                }
-            });
-            
-            // Если нет хэша, делаем активным Trade
-            if (currentHash === '#') {
-                document.querySelector('.nav a[href="#"]').classList.add('active');
-            }
-        }
-        
-        window.addEventListener('hashchange', setActiveMenu);
-        
-        // ============= ДЕМО ДАННЫЕ =============
-        // Обновляем цены каждые 10 секунд для реалистичности
-        setInterval(() => {
-            if (document.querySelector('.pair-price')) {
-                const currentPrice = parseFloat(document.querySelector('.pair-price').textContent.replace('$', ''));
-                const change = (Math.random() - 0.5) * 0.002; // ±0.2%
-                const newPrice = currentPrice * (1 + change);
-                
-                document.querySelector('.pair-price').textContent = '$' + newPrice.toFixed(4);
-                document.querySelector('.price-change').textContent = (change > 0 ? '+' : '') + (change * 100).toFixed(2) + '%';
-                document.querySelector('.price-change').className = 'price-change ' + (change > 0 ? 'positive' : 'negative');
-                
-                // Обновляем цену в поле ввода
-                document.getElementById('priceInput').value = newPrice.toFixed(4);
-                updateTotal();
-            }
-        }, 10000);
+        // Заглушки функций
+        function viewMyTokens() { alert("Coming soon!"); }
+        function viewTokenAnalytics() { alert("Coming soon!"); }
+        function browseCommunityTokens() { alert("Coming soon!"); }
+        function notarizeDocument() { alert("Coming soon!"); }
+        function verifyDocument() { alert("Coming soon!"); }
+        function viewDonations() { alert("Coming soon!"); }
+        function voteForCharity() { alert("Coming soon!"); }
     </script>
 </body>
 </html>
