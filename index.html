@@ -1336,17 +1336,17 @@
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
                 
-                <!-- Mobile MetaMask - Deep Link -->
-                <div class="wallet-option" onclick="window.location.href='https://metamask.app.link/dapp/zuzim-universe.com'">
-                    <div class="wallet-icon" style="color: #627eea;">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div class="wallet-info">
-                        <div class="wallet-name">MetaMask Mobile</div>
-                        <div class="wallet-desc">Open in MetaMask app</div>
-                    </div>
-                    <div><i class="fas fa-external-link-alt"></i></div>
-                </div>
+                <!-- Mobile WalletConnect (работает на всех мобильных кошельках) -->
+<div class="wallet-option" onclick="connectWalletConnect()">
+    <div class="wallet-icon" style="color: #3b99fc;">
+        <i class="fas fa-qrcode"></i>
+    </div>
+    <div class="wallet-info">
+        <div class="wallet-name">WalletConnect</div>
+        <div class="wallet-desc">MetaMask, Trust, Rainbow и др.</div>
+    </div>
+    <div><i class="fas fa-chevron-right"></i></div>
+</div>
                 
                 <!-- WalletConnect for future -->
                 <div class="wallet-option" onclick="alert('WalletConnect coming soon!')">
