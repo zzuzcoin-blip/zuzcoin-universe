@@ -2161,7 +2161,8 @@
                 const tokenSymbol = document.getElementById('tokenSymbol').value.trim();
                 const initialSupply = document.getElementById('initialSupply').value.trim();
                 const charityPercentage = document.getElementById('charityPercentage').value.trim();
-                const charityWallet = document.getElementById('charityWallet').value.trim();
+                // ИСПРАВЛЕНИЕ: добавляем toLowerCase() к адресу
+                const charityWallet = document.getElementById('charityWallet').value.trim().toLowerCase();
 
                 if (!tokenName || !tokenSymbol || !initialSupply || !charityPercentage || !charityWallet) {
                     alert('Please fill all fields!');
