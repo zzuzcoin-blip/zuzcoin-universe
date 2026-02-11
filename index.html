@@ -1931,60 +1931,50 @@
         }
         
         async function connectMetaMask() {
-            if (!window.ethereum) {
-                alert("Please install MetaMask!");
-                return;
-            }
-            
-            try {
-                await switchToSepolia();
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                userAddress = accounts[0];
-                isConnected = true;
-                
-                updateWalletUI(true);
-                await initRealDEX();
-                await loadBalances();
-                document.getElementById('realDexBanner').style.display = 'flex';
-                
-            } catch (error) {
-                console.error(error);
-                alert("Error connecting: " + error.message);
-            }
+    // Проверяем мобильное устройство
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Если MetaMask не установлен или это мобильный браузер
+    if (typeof window.ethereum === 'undefined') {
+        if (isMobile) {
+            // На мобильных устройствах - перенаправляем в MetaMask приложение
+            const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
+            window.location.href = deepLink;
+            return;
+        } else {
+            alert("Please install MetaMask!");
+            return;
         }
+    }
+    
+    try {
+        // Переключаемся на Sepolia
+        await switchToSepolia();
         
-        function disconnectWallet() {
-            if (confirm("Disconnect wallet?")) {
-                isConnected = false;
-                provider = null; signer = null; userAddress = null;
-                dexContract = null; zuzContract = null; pyusdContract = null;
-                updateWalletUI(false);
-                document.getElementById('realDexBanner').style.display = 'none';
-            }
-        }
+        // Запрашиваем аккаунты
+        const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+        });
         
-        function updateWalletUI(connected) {
-            const btn = document.getElementById('connectWalletBtn');
-            const balance = document.getElementById('balanceContainer');
-            
-            if (connected) {
-                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Disconnect</span>';
-                btn.classList.add('connected');
-                btn.onclick = disconnectWallet;
-                balance.style.display = 'flex';
-            } else {
-                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Connect Wallet</span>';
-                btn.classList.remove('connected');
-                btn.onclick = () => openModal('walletModal');
-                balance.style.display = 'none';
-                document.getElementById('ethBalance').textContent = '0.00 ETH';
-                document.getElementById('zuzBalance').innerHTML = '<div class="small-coin-icon">Z</div><span>0 ZUZ</span>';
-                document.getElementById('networkName').textContent = 'Not Connected';
-            }
-        }
+        // Создаем провайдер
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        userAddress = accounts[0];
+        isConnected = true;
+        
+        // Обновляем UI
+        updateWalletUI(true);
+        await initRealDEX();
+        await loadBalances();
+        document.getElementById('realDexBanner').style.display = 'flex';
+        
+        console.log("✅ Connected:", userAddress);
+        
+    } catch (error) {
+        console.error("Error connecting:", error);
+        alert("Error connecting: " + error.message);
+    }
+}
         
         // ============= DEX =============
         async function initRealDEX() {
