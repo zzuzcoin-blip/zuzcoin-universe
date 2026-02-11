@@ -63,7 +63,6 @@
             width: 100%;
         }
         
-        /* ============= ШАПКА БИРЖИ ============= */
         .header {
             display: flex;
             justify-content: space-between;
@@ -213,7 +212,6 @@
             justify-content: center;
         }
         
-        /* ============= БИРЖЕВОЙ БАННЕР ============= */
         .exchange-hero {
             background: linear-gradient(135deg, rgba(10, 21, 37, 0.9), rgba(20, 30, 48, 0.9));
             border-radius: 20px;
@@ -263,7 +261,6 @@
             letter-spacing: 1px;
         }
         
-        /* ============= ТОРГОВАЯ ПЛОЩАДКА ============= */
         .main-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -403,7 +400,6 @@
             transform: translateY(-2px);
         }
         
-        /* ============= МОДАЛЬНОЕ ОКНО ФИЛОСОФИИ ============= */
         .philosophy-modal {
             display: none;
             position: fixed;
@@ -485,7 +481,6 @@
             margin: 0 auto;
         }
         
-        /* ============= ОБЫЧНЫЕ МОДАЛЬНЫЕ ОКНА ============= */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -594,7 +589,6 @@
             color: var(--text-secondary);
         }
         
-        /* ============= ФУНКЦИОНАЛЬНЫЕ СЕКЦИИ ============= */
         .functional-sections {
             margin: 40px 0;
             width: 100%;
@@ -663,7 +657,6 @@
             width: 100%;
         }
         
-        /* ============= КАРТОЧКИ ============= */
         .feature-card {
             background: var(--card-bg);
             border-radius: 20px;
@@ -711,7 +704,6 @@
             flex-grow: 1;
         }
         
-        /* ============= ЛОГОТИП ============= */
         .coin-icon {
             width: 60px;
             height: 60px;
@@ -749,7 +741,6 @@
             flex-shrink: 0;
         }
         
-        /* ============= АНИМАЦИИ ============= */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -760,7 +751,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* ============= ФОРМЫ ============= */
         .form-group {
             margin-bottom: 20px;
             width: 100%;
@@ -790,7 +780,6 @@
             box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.1);
         }
         
-        /* ============= КНОПКИ ============= */
         .btn-buy {
             background: var(--positive);
             color: white;
@@ -863,7 +852,6 @@
             color: white;
         }
         
-        /* ============= DEX БАННЕР ============= */
         .real-dex-banner {
             background: linear-gradient(135deg, rgba(0, 209, 140, 0.2), rgba(212, 175, 55, 0.2));
             border: 2px solid rgba(212, 175, 55, 0.3);
@@ -904,7 +892,6 @@
             100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
         }
         
-        /* ============= МОБИЛЬНАЯ АДАПТАЦИЯ ============= */
         @media (max-width: 1200px) {
             .container { padding: 0 15px; }
             .main-grid { grid-template-columns: 1fr !important; }
@@ -1185,26 +1172,86 @@
                 font-size: 18px;
             }
         }
+
+        .mobile-instruction-card {
+            background: linear-gradient(135deg, #1a2b44, #0e1a2d);
+            border: 2px solid var(--talmud-gold);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .mobile-instruction-card.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--talmud-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: 900;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
-        <!-- ИНСТРУКЦИЯ ДЛЯ МОБИЛЬНЫХ (видна только на телефоне) -->
-    <div id="mobile-instruction" style="display: none; background: #1a2b44; border-left: 5px solid var(--talmud-gold); padding: 15px; margin: 10px 0; border-radius: 10px;">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="background: var(--talmud-gold); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 20px;">📱</div>
-            <div>
-                <strong style="color: var(--talmud-gold);">Mobile Connection:</strong><br>
-                <span style="color: var(--text); font-size: 14px;">1. Open MetaMask → Browser → enter zuzim-universe.com</span>
-            </div>
+    <!-- ИНСТРУКЦИЯ ДЛЯ МОБИЛЬНЫХ -->
+    <div id="mobileInstructionCard" class="mobile-instruction-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: var(--talmud-gold); font-size: 22px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-mobile-alt"></i> MetaMask Mobile
+            </h3>
+            <button onclick="closeMobileInstruction()" style="background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div class="instruction-step">
+            <div class="step-number">1</div>
+            <div style="color: var(--text);">Откройте приложение <strong>MetaMask</strong> на телефоне</div>
+        </div>
+        
+        <div class="instruction-step">
+            <div class="step-number">2</div>
+            <div style="color: var(--text);">Нажмите на <strong>три полоски</strong> (меню) в левом верхнем углу</div>
+        </div>
+        
+        <div class="instruction-step">
+            <div class="step-number">3</div>
+            <div style="color: var(--text);">Выберите <strong>"Browser"</strong> (значок компаса)</div>
+        </div>
+        
+        <div class="instruction-step">
+            <div class="step-number">4</div>
+            <div style="color: var(--text);">Введите адрес: <strong style="background: rgba(212, 175, 55, 0.2); padding: 5px 10px; border-radius: 6px;">zuzim-universe.com</strong></div>
+        </div>
+        
+        <div class="instruction-step">
+            <div class="step-number">5</div>
+            <div style="color: var(--text);">Нажмите <strong>"Connect Wallet"</strong> на сайте</div>
+        </div>
+        
+        <div style="background: rgba(0, 209, 140, 0.1); border-left: 4px solid var(--positive); padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <i class="fas fa-check-circle" style="color: var(--positive);"></i>
+            После этого кошелек подключится автоматически!
         </div>
     </div>
 
-    <script>
-        // Показываем инструкцию только на телефоне
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            document.getElementById('mobile-instruction').style.display = 'block';
-        }
-    </script>
     <!-- МОДАЛЬНОЕ ОКНО ФИЛОСОФИИ ZUZ -->
     <div class="philosophy-modal" id="philosophyModal">
         <div class="philosophy-content">
@@ -1218,7 +1265,6 @@
                 </p>
             </div>
             
-            <!-- История из Талмуда -->
             <div class="talmud-story" style="background: rgba(212, 175, 55, 0.1); border-left: 5px solid var(--talmud-gold); padding: 30px; margin: 40px 0; border-radius: 0 15px 15px 0;">
                 <h2 style="font-size: 32px; color: var(--talmud-gold); margin-bottom: 20px; font-family: 'Rubik', sans-serif;">Талмуд, Сукка 52а: История о Злом Начале</h2>
                 
@@ -1246,7 +1292,6 @@
                 </p>
             </div>
             
-            <!-- Диаграмма трансформации -->
             <div class="transformation-diagram" style="display: flex; justify-content: space-between; align-items: center; margin: 50px 0; height: 350px; position: relative;">
                 <div class="transformation-step" style="flex: 1; text-align: center; padding: 20px; position: relative; z-index: 2;">
                     <div class="step-icon" style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--lion-fire), #FF4500); border: 4px solid var(--lion-fire); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 48px; color: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);">
@@ -1290,7 +1335,6 @@
                 </div>
             </div>
             
-            <!-- Заключение -->
             <div style="margin-top: 50px; background: rgba(0, 195, 255, 0.1); border-left: 5px solid var(--accent); padding: 30px; border-radius: 0 15px 15px 0;">
                 <h2 style="font-size: 32px; color: var(--accent); margin-bottom: 20px; font-family: 'Rubik', sans-serif;">Миссия ZUZIM UNIVERSE</h2>
                 
@@ -1312,7 +1356,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА КОШЕЛЬКОВ И ФУНКЦИЙ -->
+    <!-- МОДАЛЬНЫЕ ОКНА КОШЕЛЬКОВ -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1324,40 +1368,26 @@
             </div>
             
             <div class="wallet-options">
-                <!-- Desktop MetaMask -->
-                <div class="wallet-option" onclick="connectWallet('metamask')">
+                <div class="wallet-option" onclick="connectWalletDesktop()">
                     <div class="wallet-icon" style="color: #627eea;">
                         <i class="fab fa-ethereum"></i>
                     </div>
                     <div class="wallet-info">
                         <div class="wallet-name">MetaMask</div>
-                        <div class="wallet-desc">Desktop browser extension</div>
+                        <div class="wallet-desc">Desktop browser</div>
                     </div>
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
                 
-                <!-- Mobile MetaMask - Deep Link (ИСПРАВЛЕНО) -->
-                <div class="wallet-option" onclick="connectMobileDirect()">
+                <div class="wallet-option" onclick="showMobileInstructions()">
                     <div class="wallet-icon" style="color: #627eea;">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
                     <div class="wallet-info">
                         <div class="wallet-name">MetaMask Mobile</div>
-                        <div class="wallet-desc">Open in MetaMask app</div>
+                        <div class="wallet-desc">📱 Инструкция</div>
                     </div>
-                    <div><i class="fas fa-external-link-alt"></i></div>
-                </div>
-                
-                <!-- WalletConnect (опционально) -->
-                <div class="wallet-option" onclick="alert('📱 Use MetaMask Mobile button above')">
-                    <div class="wallet-icon" style="color: #3b99fc;">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <div class="wallet-info">
-                        <div class="wallet-name">WalletConnect</div>
-                        <div class="wallet-desc">Recommended for mobile</div>
-                    </div>
-                    <div><i class="fas fa-chevron-right"></i></div>
+                    <div><i class="fas fa-info-circle"></i></div>
                 </div>
             </div>
         </div>
@@ -1477,7 +1507,6 @@
 
     <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
     <div class="container">
-        <!-- ШАПКА БИРЖИ -->
         <header class="header">
             <div class="logo" onclick="openPhilosophy()">
                 <div class="coin-icon">Z</div>
@@ -1520,14 +1549,12 @@
             </div>
         </header>
 
-        <!-- БАННЕР ЖИВОГО DEX -->
         <div class="real-dex-banner" id="realDexBanner" style="display: none;">
             <div class="banner-coin-icon">Z</div>
             <strong>ZUZ DEX LIVE!</strong> Trade with 1% Auto-Donate
             <div class="banner-coin-icon">Z</div>
         </div>
 
-        <!-- СТАТИСТИКА БИРЖИ -->
         <div class="exchange-hero">
             <div class="exchange-header">
                 <h1 style="font-size: 36px; color: var(--text);">
@@ -1555,9 +1582,7 @@
                 </div>
             </div>
 
-            <!-- ОСНОВНАЯ ТОРГОВАЯ ПЛОЩАДКА -->
             <div class="main-grid">
-                <!-- ЛЕВАЯ КОЛОНКА: ГРАФИК -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <div class="pair-info">
@@ -1575,7 +1600,6 @@
                     <div id="tradingview_chart" style="height: calc(100% - 60px);"></div>
                 </div>
 
-                <!-- ПРАВАЯ КОЛОНКА: ТОРГОВАЯ ПАНЕЛЬ -->
                 <div class="trading-panel">
                     <h3 style="color: var(--text); margin-bottom: 20px; font-size: 20px;">
                         <i class="fas fa-exchange-alt"></i> Trade ZUZ/PYUSD
@@ -1626,7 +1650,6 @@
                 </div>
             </div>
 
-            <!-- СТОЛ ЗАЯВОК -->
             <div class="orderbook-grid">
                 <div class="orderbook">
                     <div class="orderbook-header">
@@ -1657,7 +1680,6 @@
                 </div>
             </div>
 
-            <!-- ТОРГОВЫЕ ПАРЫ -->
             <div id="pairs" style="margin-top: 40px;">
                 <h2 style="color: var(--text); margin-bottom: 20px; font-size: 24px;">
                     <i class="fas fa-list"></i> Trading Pairs
@@ -1712,9 +1734,7 @@
             </div>
         </div>
 
-        <!-- ФУНКЦИОНАЛЬНЫЕ СЕКЦИИ -->
         <div class="functional-sections">
-            <!-- Token Factory -->
             <div id="token-factory">
                 <div class="section-header">
                     <h2 class="section-title">
@@ -1775,7 +1795,6 @@
                 </div>
             </div>
             
-            <!-- Digital Notary -->
             <div id="digital-notary">
                 <div class="section-header">
                     <h2 class="section-title">
@@ -1828,7 +1847,6 @@
                 </div>
             </div>
             
-            <!-- ProofChain -->
             <div id="proofchain">
                 <div class="section-header">
                     <h2 class="section-title">
@@ -1883,12 +1901,10 @@
         </div>
     </div>
 
-    <!-- СКРИПТЫ -->
     <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
-        // ============= КОНФИГУРАЦИЯ =============
         const DEX_CONFIG = {
             address: "0x09970975aa48c718e17db4a18128ebf6806e1f2c",
             zuzToken: "0x4284ecC7E6E560cAfc0bA65CbDFc9c19bd2C0bD3",
@@ -1903,7 +1919,6 @@
             blockExplorerUrls: ["https://sepolia.etherscan.io"]
         };
         
-        // ABI
         const DEX_ABI = ["function swap(address tokenIn, address tokenOut, uint256 amountIn) returns (uint256)"];
         const ERC20_ABI = [
             "function approve(address spender, uint256 amount) returns (bool)",
@@ -1915,7 +1930,6 @@
             "function createCharityToken(string memory name, string memory symbol, uint256 initialSupply, uint256 charityPercent, address charityWallet) public returns (address)"
         ];
         
-        // ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
         let provider = null;
         let signer = null;
         let userAddress = null;
@@ -1924,7 +1938,10 @@
         let zuzContract = null;
         let pyusdContract = null;
         
-        // ============= ФИЛОСОФИЯ =============
+        function isMobileDevice() {
+            return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        }
+        
         function openPhilosophy() {
             document.getElementById('philosophyModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1939,12 +1956,15 @@
             if (e.target === this) closePhilosophy();
         });
         
-        // ============= ПРОВЕРКА НА МОБИЛЬНОЕ УСТРОЙСТВО =============
-        function isMobileDevice() {
-            return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        function showMobileInstructions() {
+            closeModal('walletModal');
+            document.getElementById('mobileInstructionCard').classList.add('active');
         }
         
-        // ============= ПОДКЛЮЧЕНИЕ =============
+        function closeMobileInstruction() {
+            document.getElementById('mobileInstructionCard').classList.remove('active');
+        }
+        
         async function switchToSepolia() {
             try {
                 if (!window.ethereum) return false;
@@ -1971,24 +1991,14 @@
             }
         }
         
-        async function connectWallet(walletType) {
+        async function connectWalletDesktop() {
             closeModal('walletModal');
             
-            // Для мобильных устройств используем специальную функцию
             if (isMobileDevice()) {
-                if (walletType === 'metamask') {
-                    connectMobileDirect();
-                }
+                showMobileInstructions();
                 return;
-            } else {
-                // На десктопе - обычное подключение
-                if (walletType === 'metamask') {
-                    await connectMetaMask();
-                }
             }
-        }
-        
-        async function connectMetaMask() {
+            
             if (typeof window.ethereum === 'undefined') {
                 alert("Please install MetaMask!");
                 return;
@@ -2016,22 +2026,6 @@
             }
         }
         
-        // ============= ПРЯМОЕ ПОДКЛЮЧЕНИЕ ДЛЯ МОБИЛЬНЫХ =============
-        function connectMobileDirect() {
-            closeModal('walletModal');
-            
-            // Сохраняем флаг, что мы пытались подключиться
-            localStorage.setItem('attemptingConnection', 'true');
-            
-            // Открываем MetaMask
-            window.location.href = 'https://metamask.app.link/dapp/zuzim-universe.com';
-            
-            // Показываем инструкцию
-            setTimeout(() => {
-                alert('📱 1. Подтвердите подключение в MetaMask\n2. Вернитесь в этот браузер\n3. Нажмите "Connect Wallet" снова');
-            }, 1000);
-        }
-        
         function disconnectWallet() {
             if (confirm("Disconnect wallet?")) {
                 isConnected = false;
@@ -2039,7 +2033,6 @@
                 dexContract = null; zuzContract = null; pyusdContract = null;
                 updateWalletUI(false);
                 document.getElementById('realDexBanner').style.display = 'none';
-                localStorage.removeItem('attemptingConnection');
             }
         }
         
@@ -2063,7 +2056,6 @@
             }
         }
         
-        // ============= DEX =============
         async function initRealDEX() {
             if (!provider || !signer) return;
             try {
@@ -2121,7 +2113,6 @@
             }
         }
         
-        // ============= БАЛАНСЫ =============
         async function loadBalances() {
             if (!provider || !userAddress) return;
             try {
@@ -2146,12 +2137,10 @@
             }
         }
         
-        // ============= TOKEN FACTORY =============
         async function createToken() {
             try {
-                // Проверяем мобильное устройство
                 if (isMobileDevice()) {
-                    connectMobileDirect();
+                    showMobileInstructions();
                     return;
                 }
                 
@@ -2173,7 +2162,6 @@
                 const tokenSymbol = document.getElementById('tokenSymbol').value.trim();
                 const initialSupply = document.getElementById('initialSupply').value.trim();
                 const charityPercentage = document.getElementById('charityPercentage').value.trim();
-                // ИСПРАВЛЕНИЕ: добавляем toLowerCase() к адресу
                 const charityWallet = document.getElementById('charityWallet').value.trim().toLowerCase();
 
                 if (!tokenName || !tokenSymbol || !initialSupply || !charityPercentage || !charityWallet) {
@@ -2213,7 +2201,6 @@
             }
         }
         
-        // ============= МОДАЛЬНЫЕ ОКНА =============
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -2237,7 +2224,6 @@
             }
         });
         
-        // ============= TRADINGVIEW =============
         function initTradingView() {
             if (typeof TradingView === 'undefined') {
                 setTimeout(initTradingView, 1000);
@@ -2265,28 +2251,14 @@
             }
         }
         
-        // ============= ИНИЦИАЛИЗАЦИЯ =============
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(initTradingView, 1000);
             
             document.getElementById('amountInput')?.addEventListener('input', updateTotal);
             document.getElementById('priceInput')?.addEventListener('input', updateTotal);
             
-            // Проверяем, возвращаемся ли мы из MetaMask
-            if (localStorage.getItem('attemptingConnection') === 'true') {
-                localStorage.removeItem('attemptingConnection');
-                
-                // Если пользователь вернулся, пробуем подключиться автоматически
-                setTimeout(() => {
-                    if (!isConnected && window.ethereum?.selectedAddress) {
-                        connectMetaMask();
-                    }
-                }, 1500);
-            }
-            
-            // Не пытаемся автоподключиться на мобильных устройствах
             if (!isMobileDevice() && window.ethereum?.selectedAddress) {
-                setTimeout(() => connectWallet('metamask'), 1000);
+                setTimeout(() => connectWalletDesktop(), 1000);
             }
             
             if (window.ethereum) {
@@ -2297,7 +2269,7 @@
                         updateWalletUI(false);
                         document.getElementById('realDexBanner').style.display = 'none';
                     } else if (!isMobileDevice()) {
-                        connectWallet('metamask');
+                        connectWalletDesktop();
                     }
                 });
             }
@@ -2326,7 +2298,6 @@
             document.querySelector('.pair-name').textContent = pair;
         }
         
-        // Заглушки функций
         function viewMyTokens() { alert("Coming soon!"); }
         function viewTokenAnalytics() { alert("Coming soon!"); }
         function browseCommunityTokens() { alert("Coming soon!"); }
