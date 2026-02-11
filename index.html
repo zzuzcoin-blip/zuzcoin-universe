@@ -1188,6 +1188,23 @@
     </style>
 </head>
 <body>
+        <!-- ИНСТРУКЦИЯ ДЛЯ МОБИЛЬНЫХ (видна только на телефоне) -->
+    <div id="mobile-instruction" style="display: none; background: #1a2b44; border-left: 5px solid var(--talmud-gold); padding: 15px; margin: 10px 0; border-radius: 10px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="background: var(--talmud-gold); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 20px;">📱</div>
+            <div>
+                <strong style="color: var(--talmud-gold);">Mobile Connection:</strong><br>
+                <span style="color: var(--text); font-size: 14px;">1. Open MetaMask → Browser → enter zuzim-universe.com</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Показываем инструкцию только на телефоне
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            document.getElementById('mobile-instruction').style.display = 'block';
+        }
+    </script>
     <!-- МОДАЛЬНОЕ ОКНО ФИЛОСОФИИ ZUZ -->
     <div class="philosophy-modal" id="philosophyModal">
         <div class="philosophy-content">
