@@ -2156,71 +2156,61 @@
         
         // ============= ФУНКЦИИ ЭКОСИСТЕМЫ =============
         async function createToken() {
-            if (!isConnected) {
-                alert("Please connect wallet first!");
-                return;
-            }
-            
-            const tokenName = document.getElementById('tokenName').value;
-            const tokenSymbol = document.getElementById('tokenSymbol').value;
-            const totalSupply = document.getElementById('totalSupply').value;
-            const charityPercentage = document.getElementById('charityPercentage').value;
-            
-            if (!tokenName || !tokenSymbol || !totalSupply) {
-                alert("Please fill all required fields!");
-                return;
-            }
-            
-            alert(`✅ Creating token:\nName: ${tokenName}\nSymbol: ${tokenSymbol}\nSupply: ${totalSupply}\nCharity: ${charityPercentage}%\n\nToken creation fee includes 1% charity donation.`);
-            
-            closeModal('tokenFactoryModal');
-        }
+    if (!isConnected) {
+        alert("Please connect wallet first!");
+        return;
+    }
+    
+    const tokenName = document.getElementById('tokenName').value;
+    const tokenSymbol = document.getElementById('tokenSymbol').value;
+    const totalSupply = document.getElementById('totalSupply').value;
+    const charityPercentage = document.getElementById('charityPercentage').value;
+    
+    if (!tokenName || !tokenSymbol || !totalSupply) {
+        alert("Please fill all required fields!");
+        return;
+    }
+    
+    // НОВЫЙ КОД: Реальный вызов контракта
+    try {
+        const TOKEN_FACTORY_ADDRESS = "0x79cd09bb3ec10efce3379f8179eccd6368af21fc";
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
         
-        async function notarizeDocument() {
-            if (!isConnected) {
-                alert("Please connect wallet first!");
-                return;
-            }
-            
-            const fileInput = document.getElementById('documentFile');
-            if (!fileInput.files[0]) {
-                alert("Please select a file!");
-                return;
-            }
-            
-            alert("✅ Document notarized on blockchain!\n\nYour document is now permanently timestamped and verifiable.");
-            
-            closeModal('notaryModal');
-        }
+        // ABI TokenFactory (минимальный)
+        const TOKEN_FACTORY_ABI = [
+            "function createToken(string memory name, string memory symbol, uint256 totalSupply, address charityWallet, uint256 charityPercentage) external payable returns (address)"
+        ];
         
-        function verifyDocument() {
-            alert("🔍 Document verification feature coming soon!\n\nUpload a document to verify its blockchain timestamp.");
-        }
+        const tokenFactory = new ethers.Contract(TOKEN_FACTORY_ADDRESS, TOKEN_FACTORY_ABI, signer);
         
-        function viewDonations() {
-            alert("📊 Opening donation dashboard...\n\nSee all charitable contributions made through ZUZIM UNIVERSE.");
-            closeModal('proofchainModal');
-        }
+        // Конвертируем проценты в базисные пункты (1% = 100)
+        const charityPercentageBps = charityPercentage * 100;
+        const charityWallet = "0x742d35Cc6634C0532925a3b844Bc9e90F1b6c168"; // Дефолтный благотворительный кошелек
         
-        function voteForCharity() {
-            alert("🗳️ Charity voting system coming soon!\n\nVote on which projects receive funding from the 1% auto-donate pool.");
-        }
+        alert(`Creating token...\nName: ${tokenName}\nSymbol: ${tokenSymbol}\nSupply: ${totalSupply}\nCharity: ${charityPercentage}%\n\nPlease confirm transaction in MetaMask.`);
         
-        function viewCharityProjects() {
-            alert("🌍 Browse charity projects...\n\nSee all active projects funded by ZUZIM community.");
-        }
+        const tx = await tokenFactory.createToken(
+            tokenName,
+            tokenSymbol,
+            totalSupply,
+            charityWallet,
+            charityPercentageBps,
+            { value: ethers.parseEther("0") } // Без комиссии
+        );
         
-        function viewMyTokens() {
-            alert("👤 Viewing your created tokens...\n\nSee all tokens you've created with Token Factory.");
-        }
+        alert(`✅ Transaction sent!\nHash: ${tx.hash}\n\nWaiting for confirmation...`);
         
-        function viewTokenAnalytics() {
-            alert("📈 Token analytics dashboard...\n\nDetailed analytics for all community tokens.");
-        }
+        await tx.wait();
         
-        function browseCommunityTokens() {
-            alert("🔍 Browsing community tokens...\n\nDiscover tokens created by other ZUZIM users.");
-        }
+        alert(`🎉 Token created successfully!\nTransaction: ${tx.hash}\n\nCheck on Etherscan!`);
+        
+    } catch (error) {
+        alert(`❌ Error: ${error.message}\n\nMake sure:\n1. You're on Sepolia network\n2. You have enough ETH for gas`);
+    }
+    
+    closeModal('tokenFactoryModal');
+}
         
         // ============= МОБИЛЬНОЕ МЕНЮ =============
         function initMobileMenu() {
