@@ -1336,26 +1336,26 @@
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
                 
-                <!-- Mobile WalletConnect (работает на всех мобильных кошельках) -->
-<div class="wallet-option" onclick="connectWalletConnect()">
-    <div class="wallet-icon" style="color: #3b99fc;">
-        <i class="fas fa-qrcode"></i>
-    </div>
-    <div class="wallet-info">
-        <div class="wallet-name">WalletConnect</div>
-        <div class="wallet-desc">MetaMask, Trust, Rainbow и др.</div>
-    </div>
-    <div><i class="fas fa-chevron-right"></i></div>
-</div>
+                <!-- Mobile MetaMask - Deep Link (ИСПРАВЛЕНО) -->
+                <div class="wallet-option" onclick="connectMobileDirect()">
+                    <div class="wallet-icon" style="color: #627eea;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="wallet-info">
+                        <div class="wallet-name">MetaMask Mobile</div>
+                        <div class="wallet-desc">Open in MetaMask app</div>
+                    </div>
+                    <div><i class="fas fa-external-link-alt"></i></div>
+                </div>
                 
-                <!-- WalletConnect for future -->
-                <div class="wallet-option" onclick="alert('WalletConnect coming soon!')">
+                <!-- WalletConnect (опционально) -->
+                <div class="wallet-option" onclick="alert('📱 Use MetaMask Mobile button above')">
                     <div class="wallet-icon" style="color: #3b99fc;">
                         <i class="fas fa-link"></i>
                     </div>
                     <div class="wallet-info">
                         <div class="wallet-name">WalletConnect</div>
-                        <div class="wallet-desc">Scan QR code</div>
+                        <div class="wallet-desc">Recommended for mobile</div>
                     </div>
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
@@ -1885,8 +1885,6 @@
 
     <!-- СКРИПТЫ -->
     <script src="https://unpkg.com/ethers@5.7.0/dist/ethers.umd.min.js"></script>
-    <!-- WalletConnect for mobile -->
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     
     <script>
@@ -1976,14 +1974,12 @@
         async function connectWallet(walletType) {
             closeModal('walletModal');
             
-            // Проверяем, мобильное устройство
+            // Для мобильных устройств используем специальную функцию
             if (isMobileDevice()) {
-                // На мобильных устройствах открываем MetaMask через deep link
                 if (walletType === 'metamask') {
-                    const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
-                    window.location.href = deepLink;
-                    return;
+                    connectMobileDirect();
                 }
+                return;
             } else {
                 // На десктопе - обычное подключение
                 if (walletType === 'metamask') {
@@ -2019,81 +2015,21 @@
                 alert("Error connecting: " + error.message);
             }
         }
-
-        // ============= WALLETCONNECT ДЛЯ МОБИЛЬНЫХ =============
-        async function connectWalletConnect() {
+        
+        // ============= ПРЯМОЕ ПОДКЛЮЧЕНИЕ ДЛЯ МОБИЛЬНЫХ =============
+        function connectMobileDirect() {
             closeModal('walletModal');
             
-            // Проверяем, загружена ли библиотека
-            if (typeof WalletConnectProvider === 'undefined') {
-                alert('Loading WalletConnect... Please refresh the page.');
-                return;
-            }
+            // Сохраняем флаг, что мы пытались подключиться
+            localStorage.setItem('attemptingConnection', 'true');
             
-            try {
-                // Создаем WalletConnect провайдер
-                const provider = new WalletConnectProvider.default({
-                    rpc: {
-                        11155111: "https://sepolia.infura.io/v3/70d8ce8df4784326999798cd336dd6cb"
-                    },
-                    chainId: 11155111,
-                    qrcode: true,
-                    qrcodeModalOptions: {
-                        mobileLinks: ["metamask", "rainbow", "trust", "wallet"]
-                    }
-                });
-                
-                // Запрашиваем подключение
-                await provider.enable();
-                
-                // Создаем ethers провайдер
-                const web3Provider = new ethers.providers.Web3Provider(provider);
-                const accounts = await web3Provider.listAccounts();
-                
-                if (!accounts || accounts.length === 0) {
-                    throw new Error("No accounts found");
-                }
-                
-                // Сохраняем в глобальные переменные
-                window.provider = web3Provider;
-                window.signer = web3Provider.getSigner();
-                window.userAddress = accounts[0];
-                window.isConnected = true;
-                
-                // Обновляем UI
-                updateWalletUI(true);
-                await initRealDEX();
-                await loadBalances();
-                document.getElementById('realDexBanner').style.display = 'flex';
-                
-                const shortAddress = `${accounts[0].substring(0,6)}...${accounts[0].substring(38)}`;
-                alert(`✅ Connected via WalletConnect!\n📱 ${shortAddress}`);
-                
-                // Обработка отключения
-                provider.on("disconnect", () => {
-                    console.log("WalletConnect disconnected");
-                    disconnectWallet();
-                });
-                
-            } catch (error) {
-                console.error("WalletConnect error:", error);
-                
-                if (error.message.includes("User rejected")) {
-                    alert("❌ Connection rejected");
-                } else {
-                    alert("❌ Connection failed. Make sure MetaMask is installed.");
-                }
-            }
-        }
-
-        function disconnectWallet() {
-            if (confirm("Disconnect wallet?")) {
-                isConnected = false;
-                provider = null; signer = null; userAddress = null;
-                dexContract = null; zuzContract = null; pyusdContract = null;
-                updateWalletUI(false);
-                document.getElementById('realDexBanner').style.display = 'none';
-            }
+            // Открываем MetaMask
+            window.location.href = 'https://metamask.app.link/dapp/zuzim-universe.com';
+            
+            // Показываем инструкцию
+            setTimeout(() => {
+                alert('📱 1. Подтвердите подключение в MetaMask\n2. Вернитесь в этот браузер\n3. Нажмите "Connect Wallet" снова');
+            }, 1000);
         }
         
         function disconnectWallet() {
@@ -2103,6 +2039,7 @@
                 dexContract = null; zuzContract = null; pyusdContract = null;
                 updateWalletUI(false);
                 document.getElementById('realDexBanner').style.display = 'none';
+                localStorage.removeItem('attemptingConnection');
             }
         }
         
@@ -2214,10 +2151,7 @@
             try {
                 // Проверяем мобильное устройство
                 if (isMobileDevice()) {
-                    const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
-                    if (confirm("Open MetaMask app to create token?")) {
-                        window.location.href = deepLink;
-                    }
+                    connectMobileDirect();
                     return;
                 }
                 
@@ -2337,6 +2271,18 @@
             
             document.getElementById('amountInput')?.addEventListener('input', updateTotal);
             document.getElementById('priceInput')?.addEventListener('input', updateTotal);
+            
+            // Проверяем, возвращаемся ли мы из MetaMask
+            if (localStorage.getItem('attemptingConnection') === 'true') {
+                localStorage.removeItem('attemptingConnection');
+                
+                // Если пользователь вернулся, пробуем подключиться автоматически
+                setTimeout(() => {
+                    if (!isConnected && window.ethereum?.selectedAddress) {
+                        connectMetaMask();
+                    }
+                }, 1500);
+            }
             
             // Не пытаемся автоподключиться на мобильных устройствах
             if (!isMobileDevice() && window.ethereum?.selectedAddress) {
