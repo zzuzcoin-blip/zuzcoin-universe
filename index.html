@@ -2156,20 +2156,128 @@
         
         // ============= ФУНКЦИИ ЭКОСИСТЕМЫ =============
         async function createToken() {
-    if (!isConnected) {
-        alert("Please connect wallet first!");
-        return;
+    try {
+        console.log("Starting token creation...");
+
+        // Проверка наличия MetaMask
+        if (!window.ethereum) {
+            alert('Please install MetaMask!');
+            return;
+        }
+
+        // Запрос подключения к аккаунту
+        const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+        });
+        const userAddress = accounts[0];
+        console.log("Connected account:", userAddress);
+
+        // Проверка сети (Sepolia)
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        const sepoliaChainId = '0xaa36a7'; // 11155111 в hex
+        
+        if (chainId !== sepoliaChainId) {
+            alert(`Please switch to Sepolia network (Chain ID: 11155111).\nCurrent chain ID: ${chainId}`);
+            return;
+        }
+
+        // Получаем значения из формы
+        const tokenName = document.getElementById('tokenName').value.trim();
+        const tokenSymbol = document.getElementById('tokenSymbol').value.trim();
+        const initialSupply = document.getElementById('initialSupply').value.trim();
+        const charityPercentage = document.getElementById('charityPercentage').value.trim();
+        const charityWallet = document.getElementById('charityWallet').value.trim();
+
+        // Валидация
+        if (!tokenName || !tokenSymbol || !initialSupply || !charityPercentage || !charityWallet) {
+            alert('Please fill all fields!');
+            return;
+        }
+
+        // Проверка адреса кошелька
+        if (!/^0x[a-fA-F0-9]{40}$/.test(charityWallet)) {
+            alert('Please enter a valid Ethereum wallet address for charity!');
+            return;
+        }
+
+        // Адрес TokenFactory контракта
+        const tokenFactoryAddress = "0x79cd09bb3ec10efce3379f8179eccd6368af21fc";
+
+        // ABI контракта TokenFactory (минимизированная версия)
+        const tokenFactoryABI = [
+            "function createCharityToken(string memory name, string memory symbol, uint256 initialSupply, uint256 charityPercent, address charityWallet) public returns (address)"
+        ];
+
+        // Создаем провайдер и подписывающего
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        // Создаем контракт
+        const tokenFactory = new ethers.Contract(tokenFactoryAddress, tokenFactoryABI, signer);
+
+        // Подготовка параметров
+        const initialSupplyWei = ethers.utils.parseUnits(initialSupply, 18); // 18 decimals
+        const charityPercent = parseInt(charityPercentage);
+
+        console.log("Sending transaction with params:", {
+            tokenName,
+            tokenSymbol,
+            initialSupply: initialSupplyWei.toString(),
+            charityPercent,
+            charityWallet
+        });
+
+        // Отправляем транзакцию
+        const tx = await tokenFactory.createCharityToken(
+            tokenName,
+            tokenSymbol,
+            initialSupplyWei,
+            charityPercent,
+            charityWallet,
+            {
+                gasLimit: 3000000 // Увеличиваем лимит газа для деплоя токена
+            }
+        );
+
+        console.log("Transaction sent:", tx.hash);
+        
+        // Показываем пользователю хэш транзакции
+        alert(`✅ Transaction sent!\n\nHash: ${tx.hash}\n\nPlease wait for confirmation...`);
+
+        // Ждем подтверждения
+        const receipt = await tx.wait();
+        console.log("Transaction confirmed:", receipt);
+
+        // Парсим событие TokenCreated если есть
+        if (receipt.events && receipt.events.length > 0) {
+            for (const event of receipt.events) {
+                if (event.event === 'TokenCreated') {
+                    const tokenAddress = event.args.tokenAddress;
+                    alert(`🎉 Token created successfully!\n\nToken Address: ${tokenAddress}\n\nTransaction: ${tx.hash}`);
+                    break;
+                }
+            }
+        } else {
+            alert(`🎉 Token creation transaction confirmed!\n\nTransaction: ${tx.hash}\n\nCheck Etherscan for token address.`);
+        }
+
+    } catch (error) {
+        console.error("Error creating token:", error);
+        
+        // Более информативные сообщения об ошибках
+        if (error.code === 4001) {
+            alert('❌ Transaction rejected by user');
+        } else if (error.code === -32603) {
+            alert('❌ Transaction failed. Check if you have enough ETH for gas.');
+        } else if (error.message.includes('insufficient funds')) {
+            alert('❌ Insufficient ETH for gas. Please get some Sepolia ETH.');
+        } else if (error.message.includes('user rejected')) {
+            alert('❌ Transaction rejected by user');
+        } else {
+            alert(`❌ Error: ${error.message || 'Unknown error occurred'}`);
+        }
     }
-    
-    const tokenName = document.getElementById('tokenName').value;
-    const tokenSymbol = document.getElementById('tokenSymbol').value;
-    const totalSupply = document.getElementById('totalSupply').value;
-    const charityPercentage = document.getElementById('charityPercentage').value;
-    
-    if (!tokenName || !tokenSymbol || !totalSupply) {
-        alert("Please fill all required fields!");
-        return;
-    }
+}
     
     // НОВЫЙ КОД: Реальный вызов контракта
     try {
