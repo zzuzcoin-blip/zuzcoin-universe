@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>ZUZIM UNIVERSE | Talmudic Crypto Exchange</title>
     
     <!-- Favicon ZUZCOIN -->
@@ -30,7 +30,6 @@
             --talmud-gold: #D4AF37;
             --lion-fire: #FF6B35;
             --lead-vessel: #8B4513;
-            --zuz-purple: #8A2BE2;
         }
         
         * {
@@ -1308,13 +1307,38 @@
             </div>
             
             <div class="wallet-options">
+                <!-- Desktop MetaMask -->
                 <div class="wallet-option" onclick="connectWallet('metamask')">
                     <div class="wallet-icon" style="color: #627eea;">
                         <i class="fab fa-ethereum"></i>
                     </div>
                     <div class="wallet-info">
                         <div class="wallet-name">MetaMask</div>
-                        <div class="wallet-desc">Connect to Sepolia</div>
+                        <div class="wallet-desc">Desktop browser extension</div>
+                    </div>
+                    <div><i class="fas fa-chevron-right"></i></div>
+                </div>
+                
+                <!-- Mobile MetaMask - Deep Link -->
+                <div class="wallet-option" onclick="window.location.href='https://metamask.app.link/dapp/zuzim-universe.com'">
+                    <div class="wallet-icon" style="color: #627eea;">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="wallet-info">
+                        <div class="wallet-name">MetaMask Mobile</div>
+                        <div class="wallet-desc">Open in MetaMask app</div>
+                    </div>
+                    <div><i class="fas fa-external-link-alt"></i></div>
+                </div>
+                
+                <!-- WalletConnect for future -->
+                <div class="wallet-option" onclick="alert('WalletConnect coming soon!')">
+                    <div class="wallet-icon" style="color: #3b99fc;">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="wallet-info">
+                        <div class="wallet-name">WalletConnect</div>
+                        <div class="wallet-desc">Scan QR code</div>
                     </div>
                     <div><i class="fas fa-chevron-right"></i></div>
                 </div>
@@ -1898,6 +1922,11 @@
             if (e.target === this) closePhilosophy();
         });
         
+        // ============= ПРОВЕРКА НА МОБИЛЬНОЕ УСТРОЙСТВО =============
+        function isMobileDevice() {
+            return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        }
+        
         // ============= ПОДКЛЮЧЕНИЕ =============
         async function switchToSepolia() {
             try {
@@ -1927,54 +1956,80 @@
         
         async function connectWallet(walletType) {
             closeModal('walletModal');
-            if (walletType === 'metamask') await connectMetaMask();
+            
+            // Проверяем, мобильное устройство
+            if (isMobileDevice()) {
+                // На мобильных устройствах открываем MetaMask через deep link
+                if (walletType === 'metamask') {
+                    const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
+                    window.location.href = deepLink;
+                    return;
+                }
+            } else {
+                // На десктопе - обычное подключение
+                if (walletType === 'metamask') {
+                    await connectMetaMask();
+                }
+            }
         }
         
         async function connectMetaMask() {
-    // Проверяем мобильное устройство
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Если MetaMask не установлен или это мобильный браузер
-    if (typeof window.ethereum === 'undefined') {
-        if (isMobile) {
-            // На мобильных устройствах - перенаправляем в MetaMask приложение
-            const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
-            window.location.href = deepLink;
-            return;
-        } else {
-            alert("Please install MetaMask!");
-            return;
+            if (typeof window.ethereum === 'undefined') {
+                alert("Please install MetaMask!");
+                return;
+            }
+            
+            try {
+                await switchToSepolia();
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = accounts[0];
+                isConnected = true;
+                
+                updateWalletUI(true);
+                await initRealDEX();
+                await loadBalances();
+                document.getElementById('realDexBanner').style.display = 'flex';
+                
+                console.log("✅ Connected:", userAddress);
+                
+            } catch (error) {
+                console.error(error);
+                alert("Error connecting: " + error.message);
+            }
         }
-    }
-    
-    try {
-        // Переключаемся на Sepolia
-        await switchToSepolia();
         
-        // Запрашиваем аккаунты
-        const accounts = await window.ethereum.request({ 
-            method: 'eth_requestAccounts' 
-        });
+        function disconnectWallet() {
+            if (confirm("Disconnect wallet?")) {
+                isConnected = false;
+                provider = null; signer = null; userAddress = null;
+                dexContract = null; zuzContract = null; pyusdContract = null;
+                updateWalletUI(false);
+                document.getElementById('realDexBanner').style.display = 'none';
+            }
+        }
         
-        // Создаем провайдер
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        userAddress = accounts[0];
-        isConnected = true;
-        
-        // Обновляем UI
-        updateWalletUI(true);
-        await initRealDEX();
-        await loadBalances();
-        document.getElementById('realDexBanner').style.display = 'flex';
-        
-        console.log("✅ Connected:", userAddress);
-        
-    } catch (error) {
-        console.error("Error connecting:", error);
-        alert("Error connecting: " + error.message);
-    }
-}
+        function updateWalletUI(connected) {
+            const btn = document.getElementById('connectWalletBtn');
+            const balance = document.getElementById('balanceContainer');
+            
+            if (connected) {
+                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Disconnect</span>';
+                btn.classList.add('connected');
+                btn.onclick = disconnectWallet;
+                balance.style.display = 'flex';
+            } else {
+                btn.innerHTML = '<i class="fas fa-wallet"></i><span>Connect Wallet</span>';
+                btn.classList.remove('connected');
+                btn.onclick = () => openModal('walletModal');
+                balance.style.display = 'none';
+                document.getElementById('ethBalance').textContent = '0.00 ETH';
+                document.getElementById('zuzBalance').innerHTML = '<div class="small-coin-icon">Z</div><span>0 ZUZ</span>';
+                document.getElementById('networkName').textContent = 'Not Connected';
+            }
+        }
         
         // ============= DEX =============
         async function initRealDEX() {
@@ -2062,6 +2117,15 @@
         // ============= TOKEN FACTORY =============
         async function createToken() {
             try {
+                // Проверяем мобильное устройство
+                if (isMobileDevice()) {
+                    const deepLink = "https://metamask.app.link/dapp/zuzim-universe.com";
+                    if (confirm("Open MetaMask app to create token?")) {
+                        window.location.href = deepLink;
+                    }
+                    return;
+                }
+                
                 if (!window.ethereum) {
                     alert('Please install MetaMask!');
                     return;
@@ -2162,9 +2226,9 @@
                     "locale": "en",
                     "toolbar_bg": "#0a1525",
                     "enable_publishing": false,
-                    "hide_side_toolbar": window.innerWidth <= 768,
+                    "hide_side_toolbar": isMobileDevice(),
                     "allow_symbol_change": true,
-                    "studies": window.innerWidth <= 768 ? [] : ["RSI@tv-basicstudies"]
+                    "studies": isMobileDevice() ? [] : ["RSI@tv-basicstudies"]
                 });
             } catch (error) {
                 console.error(error);
@@ -2178,7 +2242,8 @@
             document.getElementById('amountInput')?.addEventListener('input', updateTotal);
             document.getElementById('priceInput')?.addEventListener('input', updateTotal);
             
-            if (window.ethereum?.selectedAddress) {
+            // Не пытаемся автоподключиться на мобильных устройствах
+            if (!isMobileDevice() && window.ethereum?.selectedAddress) {
                 setTimeout(() => connectWallet('metamask'), 1000);
             }
             
@@ -2189,7 +2254,7 @@
                         isConnected = false;
                         updateWalletUI(false);
                         document.getElementById('realDexBanner').style.display = 'none';
-                    } else {
+                    } else if (!isMobileDevice()) {
                         connectWallet('metamask');
                     }
                 });
