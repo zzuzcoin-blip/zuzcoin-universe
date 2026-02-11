@@ -2019,6 +2019,82 @@
                 alert("Error connecting: " + error.message);
             }
         }
+
+        // ============= WALLETCONNECT ДЛЯ МОБИЛЬНЫХ =============
+        async function connectWalletConnect() {
+            closeModal('walletModal');
+            
+            // Проверяем, загружена ли библиотека
+            if (typeof WalletConnectProvider === 'undefined') {
+                alert('Loading WalletConnect... Please refresh the page.');
+                return;
+            }
+            
+            try {
+                // Создаем WalletConnect провайдер
+                const provider = new WalletConnectProvider.default({
+                    rpc: {
+                        11155111: "https://sepolia.infura.io/v3/70d8ce8df4784326999798cd336dd6cb"
+                    },
+                    chainId: 11155111,
+                    qrcode: true,
+                    qrcodeModalOptions: {
+                        mobileLinks: ["metamask", "rainbow", "trust", "wallet"]
+                    }
+                });
+                
+                // Запрашиваем подключение
+                await provider.enable();
+                
+                // Создаем ethers провайдер
+                const web3Provider = new ethers.providers.Web3Provider(provider);
+                const accounts = await web3Provider.listAccounts();
+                
+                if (!accounts || accounts.length === 0) {
+                    throw new Error("No accounts found");
+                }
+                
+                // Сохраняем в глобальные переменные
+                window.provider = web3Provider;
+                window.signer = web3Provider.getSigner();
+                window.userAddress = accounts[0];
+                window.isConnected = true;
+                
+                // Обновляем UI
+                updateWalletUI(true);
+                await initRealDEX();
+                await loadBalances();
+                document.getElementById('realDexBanner').style.display = 'flex';
+                
+                const shortAddress = `${accounts[0].substring(0,6)}...${accounts[0].substring(38)}`;
+                alert(`✅ Connected via WalletConnect!\n📱 ${shortAddress}`);
+                
+                // Обработка отключения
+                provider.on("disconnect", () => {
+                    console.log("WalletConnect disconnected");
+                    disconnectWallet();
+                });
+                
+            } catch (error) {
+                console.error("WalletConnect error:", error);
+                
+                if (error.message.includes("User rejected")) {
+                    alert("❌ Connection rejected");
+                } else {
+                    alert("❌ Connection failed. Make sure MetaMask is installed.");
+                }
+            }
+        }
+
+        function disconnectWallet() {
+            if (confirm("Disconnect wallet?")) {
+                isConnected = false;
+                provider = null; signer = null; userAddress = null;
+                dexContract = null; zuzContract = null; pyusdContract = null;
+                updateWalletUI(false);
+                document.getElementById('realDexBanner').style.display = 'none';
+            }
+        }
         
         function disconnectWallet() {
             if (confirm("Disconnect wallet?")) {
