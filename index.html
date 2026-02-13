@@ -1472,38 +1472,7 @@
         </div>
     </div>
 
-    <!-- ProofChain Modal -->
-    <div class="modal-overlay" id="proofchainModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <i class="fas fa-link" style="color: var(--talmud-gold);"></i>
-                    ProofChain
-                </div>
-                <button class="close-modal" onclick="closeModal('proofchainModal')">&times;</button>
-            </div>
-            
-            <div style="text-align: center; margin: 20px 0;">
-                <div class="coin-icon" style="width: 80px; height: 80px; font-size: 40px; margin: 0 auto 20px;">Z</div>
-                <h3 style="color: var(--text); margin-bottom: 10px;">Charity Tracking</h3>
-            </div>
-            
-            <div style="background: rgba(212, 175, 55, 0.1); border-radius: 10px; padding: 20px; margin: 20px 0;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-secondary);">Total Donations:</span>
-                    <span style="color: var(--talmud-gold); font-weight: 600;">42,819 ZUZ</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--text-secondary);">Projects:</span>
-                    <span style="color: var(--talmud-gold); font-weight: 600;">127</span>
-                </div>
-            </div>
-            
-            <button class="action-btn success" style="width: 100%;" onclick="viewDonations()">
-                <i class="fas fa-hand-holding-heart"></i> View Donations
-            </button>
-        </div>
-    </div>
+    <!-- ProofChain Modal - УДАЛЕНО, ТЕПЕРЬ ВСЁ В ОСНОВНОМ ИНТЕРФЕЙСЕ -->
 
     <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
     <div class="container">
@@ -1847,54 +1816,108 @@
                 </div>
             </div>
             
+            <!-- ProofChain - REAL L1 BLOCKCHAIN INTEGRATION -->
             <div id="proofchain">
                 <div class="section-header">
                     <h2 class="section-title">
                         <i class="fas fa-link" style="color: var(--talmud-gold);"></i>
-                        ProofChain
+                        ProofChain <span style="font-size: 14px; background: #00c087; padding: 5px 10px; border-radius: 20px; margin-left: 15px;">L1 ACTIVE</span>
                     </h2>
                     <div class="action-buttons">
-                        <button class="action-btn success" onclick="openModal('proofchainModal')">
-                            <i class="fas fa-hand-holding-heart"></i> Donations
+                        <button class="action-btn success" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')">
+                            <i class="fas fa-wallet"></i> ZUZ Wallet
                         </button>
-                        <button class="action-btn" onclick="voteForCharity()">
-                            <i class="fas fa-vote-yea"></i> Vote
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')">
+                            <i class="fas fa-plus-circle"></i> Create Token
+                        </button>
+                        <button class="action-btn primary" onclick="loadProofChainStats()">
+                            <i class="fas fa-sync-alt"></i> Refresh
                         </button>
                     </div>
                 </div>
                 
-                <div class="functional-grid">
+                <div class="functional-grid" id="proofchainStats">
+                    <!-- Блок статуса сети -->
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-donate"></i>
+                            <i class="fas fa-link"></i>
                         </div>
-                        <h3 class="feature-title">Transparent Donations</h3>
-                        <p class="feature-description">
-                            Every donation tracked on blockchain.
-                            See exactly where your 1% goes.
-                        </p>
+                        <h3 class="feature-title">ZUZCOIN ProofChain</h3>
+                        <div class="feature-description">
+                            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                                <span>Chain ID:</span>
+                                <span style="color: var(--talmud-gold); font-weight: 600;" id="chainId">7777</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                                <span>Blocks:</span>
+                                <span style="color: var(--positive); font-weight: 600;" id="blockCount">2</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                                <span>Transactions:</span>
+                                <span style="color: var(--positive); font-weight: 600;" id="txCount">1</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                                <span>Status:</span>
+                                <span style="color: #00c087; font-weight: 600;" id="networkStatus">🟢 Running</span>
+                            </div>
+                        </div>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/network-status', '_blank')" style="margin-top: 15px;">
+                            <i class="fas fa-chart-line"></i> Network Details
+                        </button>
                     </div>
                     
+                    <!-- Последний блок -->
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-vote-yea"></i>
+                            <i class="fas fa-cube"></i>
                         </div>
-                        <h3 class="feature-title">Community Governance</h3>
-                        <p class="feature-description">
-                            Vote on which charities to support.
-                            Democratic decision making.
-                        </p>
+                        <h3 class="feature-title">Latest Block</h3>
+                        <div class="feature-description">
+                            <div style="margin: 10px 0;">
+                                <div style="color: var(--text-secondary);">Block #<span id="latestBlockIndex">1</span></div>
+                                <div style="font-family: monospace; font-size: 12px; word-break: break-all; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; margin-top: 5px;" id="latestBlockHash">
+                                    loading...
+                                </div>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <div style="color: var(--text-secondary);">Transactions:</div>
+                                <div style="font-size: 18px; color: var(--positive);" id="latestBlockTxCount">1</div>
+                            </div>
+                        </div>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/block/1', '_blank')" style="margin-top: 15px;">
+                            <i class="fas fa-search"></i> View Block
+                        </button>
                     </div>
                     
+                    <!-- Транзакции и донации -->
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-leaf"></i>
+                            <i class="fas fa-hand-holding-heart"></i>
                         </div>
-                        <h3 class="feature-title">Impact Reports</h3>
-                        <p class="feature-description">
-                            Quarterly reports on charity impact.
-                            See the real-world difference you make.
-                        </p>
+                        <h3 class="feature-title">Donations</h3>
+                        <div class="feature-description">
+                            <div style="background: rgba(212, 175, 55, 0.1); border-radius: 10px; padding: 15px; margin: 10px 0;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="color: var(--text-secondary);">Total Donations:</span>
+                                    <span style="color: var(--talmud-gold); font-weight: 600;" id="totalDonations">1,000 ZUZ</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-secondary);">Projects:</span>
+                                    <span style="color: var(--talmud-gold); font-weight: 600;" id="projectCount">1</span>
+                                </div>
+                            </div>
+                            <p style="font-size: 14px; color: var(--text-secondary);">
+                                Every transaction on DEX automatically donates 1%
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; width: 100%;">
+                            <button class="action-btn success" style="flex: 1;" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')">
+                                <i class="fas fa-donate"></i> Donate
+                            </button>
+                            <button class="action-btn" style="flex: 1;" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')">
+                                <i class="fas fa-plus-circle"></i> Create
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2251,6 +2274,47 @@
             }
         }
         
+        // ============= PROOFCHAIN REAL DATA INTEGRATION =============
+        const PROOFCHAIN_API = 'https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev';
+        
+        async function loadProofChainStats() {
+            try {
+                // Загружаем статус сети
+                const statusResponse = await fetch(`${PROOFCHAIN_API}/proofchain/network-status`);
+                const statusData = await statusResponse.json();
+                
+                document.getElementById('chainId').textContent = statusData.chainId || '7777';
+                document.getElementById('blockCount').textContent = statusData.blocks || '2';
+                document.getElementById('txCount').textContent = statusData.totalTransactions || '1';
+                
+                // Загружаем последний блок
+                const blocksResponse = await fetch(`${PROOFCHAIN_API}/proofchain/blocks?count=1`);
+                const blocksData = await blocksResponse.json();
+                
+                if (blocksData && blocksData.length > 0) {
+                    const latestBlock = blocksData[0];
+                    document.getElementById('latestBlockIndex').textContent = latestBlock.index || '1';
+                    document.getElementById('latestBlockHash').textContent = 
+                        (latestBlock.hash || '').substring(0, 32) + '...';
+                    document.getElementById('latestBlockTxCount').textContent = 
+                        latestBlock.transactions?.length || '1';
+                    
+                    // Обновляем donations (берем из первой транзакции как пример)
+                    if (latestBlock.transactions && latestBlock.transactions[0]) {
+                        const tx = latestBlock.transactions[0];
+                        document.getElementById('totalDonations').textContent = 
+                            (tx.amount || '1000') + ' ZUZ';
+                        document.getElementById('projectCount').textContent = '1';
+                    }
+                }
+                
+                console.log('✅ ProofChain stats updated');
+            } catch (error) {
+                console.error('❌ Failed to load ProofChain stats:', error);
+                document.getElementById('networkStatus').innerHTML = '🔴 Connection Error';
+            }
+        }
+        
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(initTradingView, 1000);
             
@@ -2273,6 +2337,9 @@
                     }
                 });
             }
+            
+            // Загружаем статистику ProofChain
+            setTimeout(loadProofChainStats, 1500);
         });
         
         function updateTotal() {
@@ -2303,8 +2370,12 @@
         function browseCommunityTokens() { alert("Coming soon!"); }
         function notarizeDocument() { alert("Coming soon!"); }
         function verifyDocument() { alert("Coming soon!"); }
-        function viewDonations() { alert("Coming soon!"); }
-        function voteForCharity() { alert("Coming soon!"); }
+        function viewDonations() { 
+            window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank');
+        }
+        function voteForCharity() { 
+            alert('Voting system coming soon!');
+        }
     </script>
 </body>
 </html>
