@@ -6,8 +6,8 @@
     <title>ZUZ Universe — 7 мудрецов</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Web3 + WalletConnect -->
     <script src="https://cdn.jsdelivr.net/npm/web3@4.4.0/dist/web3.min.js"></script>
-    <!-- Web3Modal для нескольких кошельков -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3wallet@1.12.0/dist/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.11/dist/index.js"></script>
     <style>
@@ -183,10 +183,47 @@
         .action-btn.primary { background: linear-gradient(135deg, var(--accent-gold), #FFD700); color: black; border: none; }
         .action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
         .feature-description { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin: 15px 0; }
+        
+        /* Modal для выбора кошелька */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--accent-gold); border-radius: 24px; padding: 30px; max-width: 400px; width: 90%; text-align: center; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 24px; font-weight: 700; color: var(--accent-gold); }
+        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
+        .wallet-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
+        .wallet-item { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 15px; }
+        .wallet-item:hover { background: rgba(212,175,55,0.1); border-color: var(--accent-gold); transform: translateX(5px); }
+        .wallet-item img { width: 32px; height: 32px; }
     </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
+    
+    <!-- Modal выбора кошелька -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Подключить кошелек</div>
+                <button class="close-modal" onclick="closeWalletModal()">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Выберите способ подключения</p>
+            <div class="wallet-list">
+                <div class="wallet-item" onclick="connectWallet('metamask')">
+                    <img src="https://cdn.jsdelivr.net/gh/ethereum/metamask-extension/app/images/icon-128.png" width="32" height="32" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg'">
+                    <span>MetaMask</span>
+                </div>
+                <div class="wallet-item" onclick="connectWallet('walletconnect')">
+                    <i class="fas fa-qrcode" style="font-size: 32px; color: var(--accent-gold);"></i>
+                    <span>WalletConnect (Trust Wallet, Rainbow, OKX и др.)</span>
+                </div>
+                <div class="wallet-item" onclick="connectWallet('coinbase')">
+                    <i class="fab fa-bitcoin" style="font-size: 32px; color: var(--accent-gold);"></i>
+                    <span>Coinbase Wallet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="navbar">
         <div class="container">
             <div class="logo">
@@ -235,14 +272,6 @@
                         <div class="you-get"><span>Вы получите:</span><strong id="tokenAmountDisplay">0 ZUZ</strong></div>
                         <button class="btn-buy" id="buyBtn">КУПИТЬ ZUZ</button>
                         <label class="accept-terms"><input type="checkbox" id="acceptTerms"> Я согласен с условиями</label>
-                        <div class="supported-wallets">
-                            <span>Поддерживаемые кошельки:</span>
-                            <div class="wallet-icons" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <div class="wallet-option" onclick="connectWallet('metamask')"><i class="fab fa-ethereum"></i> MetaMask</div>
-                                <div class="wallet-option" onclick="connectWallet('walletconnect')"><i class="fas fa-link"></i> WalletConnect</div>
-                                <div class="wallet-option" onclick="connectWallet('coinbase')"><i class="fab fa-bitcoin"></i> Coinbase</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -308,7 +337,7 @@
         </div>
     </div>
     
-    <!-- ProofChain Section (сохранён из твоего кода) -->
+    <!-- ProofChain Section -->
     <div class="container" id="proofchain">
         <div class="section-header">
             <h2 class="section-title">
@@ -423,7 +452,9 @@
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
-        const TOKEN_DECIMALS = 18;
+        
+        // WalletConnect Project ID
+        const WALLETCONNECT_PROJECT_ID = 'ad01e4465a19e847abe4ac7c4097d10c';
 
         const PRESALE_ABI = [
             {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
@@ -438,6 +469,7 @@
         let isProcessing = false;
         let stageStartTime = 1774775487;
         let stageEndTime = 1788307200;
+        let walletConnectProvider = null;
 
         // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
         function showNotification(msg, type) {
@@ -472,11 +504,22 @@
             }
         }
 
-        // ========== ПОДКЛЮЧЕНИЕ КОШЕЛЬКА ==========
+        function openWalletModal() {
+            document.getElementById('walletModal').style.display = 'flex';
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').style.display = 'none';
+        }
+
+        // ========== ПОДКЛЮЧЕНИЕ КОШЕЛЬКОВ ==========
         async function connectWallet(type) {
+            closeWalletModal();
+            
             if (type === 'metamask') {
                 if (!window.ethereum) {
                     showNotification('Установите MetaMask', 'error');
+                    window.open('https://metamask.io/download/', '_blank');
                     return;
                 }
                 try {
@@ -485,19 +528,68 @@
                     web3Instance = new Web3(window.ethereum);
                     presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
                     updateWalletUI();
-                    showNotification('✅ Кошелек подключен', 'success');
+                    showNotification('✅ Кошелек MetaMask подключен', 'success');
                     await loadPresaleData();
+                    
+                    // Слушаем смену аккаунта
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) disconnectWallet();
+                        else {
+                            currentAccount = accounts[0];
+                            updateWalletUI();
+                            loadPresaleData();
+                        }
+                    });
                 } catch(e) {
                     console.error(e);
-                    showNotification('Ошибка подключения', 'error');
+                    showNotification('Ошибка подключения MetaMask', 'error');
                 }
-            } else if (type === 'walletconnect') {
-                showNotification('WalletConnect будет доступен в следующем обновлении', 'info');
-            } else if (type === 'coinbase') {
+            } 
+            else if (type === 'walletconnect') {
+                // WalletConnect v2 с Project ID
+                showNotification('Открываем WalletConnect...', 'info');
+                try {
+                    // Импортируем динамически
+                    const { EthereumProvider } = await import('https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.min.js');
+                    
+                    const provider = await EthereumProvider.init({
+                        projectId: WALLETCONNECT_PROJECT_ID,
+                        chains: [1], // Ethereum Mainnet
+                        methods: ['eth_sendTransaction', 'eth_sign'],
+                        showQrModal: true,
+                        qrModalOptions: {
+                            themeMode: 'dark',
+                            themeVariables: {
+                                '--wcm-z-index': '10000'
+                            }
+                        }
+                    });
+                    
+                    await provider.connect();
+                    const accounts = await provider.enable();
+                    currentAccount = accounts[0];
+                    walletConnectProvider = provider;
+                    web3Instance = new Web3(provider);
+                    presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                    updateWalletUI();
+                    showNotification('✅ Кошелек подключен через WalletConnect', 'success');
+                    await loadPresaleData();
+                    
+                    // Слушаем отключение
+                    provider.on('disconnect', () => {
+                        disconnectWallet();
+                    });
+                } catch(e) {
+                    console.error(e);
+                    showNotification('Ошибка WalletConnect. Попробуйте другой кошелек.', 'error');
+                }
+            }
+            else if (type === 'coinbase') {
                 if (window.ethereum && window.ethereum.isCoinbaseWallet) {
                     await connectWallet('metamask');
                 } else {
                     showNotification('Установите Coinbase Wallet', 'info');
+                    window.open('https://www.coinbase.com/wallet/downloads', '_blank');
                 }
             }
         }
@@ -522,7 +614,13 @@
             }
         }
 
-        function disconnectWallet() {
+        async function disconnectWallet() {
+            if (walletConnectProvider) {
+                try {
+                    await walletConnectProvider.disconnect();
+                } catch(e) {}
+                walletConnectProvider = null;
+            }
             currentAccount = null;
             web3Instance = null;
             presaleContract = null;
@@ -549,6 +647,7 @@
         async function buyTokens() {
             if (!presaleContract) {
                 showNotification('Сначала подключите кошелек', 'error');
+                openWalletModal();
                 return;
             }
             const eth = parseFloat(document.getElementById('ethAmount').value || 0);
@@ -633,7 +732,7 @@
             }
         }
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (для совместимости) ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         function browseCommunityTokens() { alert("Coming soon!"); }
         function notarizeDocument() { alert("Coming soon!"); }
         function verifyDocument() { alert("Coming soon!"); }
@@ -662,13 +761,18 @@
             }
         }
 
+        // Закрытие модалки по клику вне
+        document.getElementById('walletModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('walletModal')) closeWalletModal();
+        });
+
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
         });
         document.getElementById('connectWalletBtn').onclick = () => {
             if (currentAccount) disconnectWallet();
-            else connectWallet('metamask');
+            else openWalletModal();
         };
         document.getElementById('buyBtn').onclick = buyTokens;
         document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
@@ -682,7 +786,7 @@
         setTimeout(loadProofChainStats, 1500);
         
         if (window.ethereum && window.ethereum.selectedAddress) {
-            connectWallet('metamask');
+            setTimeout(() => connectWallet('metamask'), 500);
         }
     </script>
 </body>
