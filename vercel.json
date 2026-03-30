@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*).mp4",
@@ -16,11 +10,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "server.js",
-      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+      "dest": "/$1"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
