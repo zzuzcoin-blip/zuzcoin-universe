@@ -500,27 +500,29 @@
         
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
-            try {
-                const web3 = new Web3('https://cloudflare-eth.com');
-                const contract = new web3.eth.Contract([
-                    {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-                    {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-                ], PRESALE_ADDRESS);
-                
-                const sold = await contract.methods.tokensSold().call();
-                const max = await contract.methods.maxTokensToSell().call();
-                
-                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-                const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-                const percent = (raisedETH / maxETH) * 100;
-                
-                document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-            } catch(e) {
-                console.error('Ошибка загрузки данных пресейла:', e);
-                document.getElementById('raisedAmount').innerHTML = '-- ETH';
-            }
-        }
+    try {
+        const web3 = new Web3('https://cloudflare-eth.com');
+        const contract = new web3.eth.Contract([
+            {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+        ], PRESALE_ADDRESS);
+        
+        const sold = await contract.methods.tokensSold().call();
+        const max = await contract.methods.maxTokensToSell().call();
+        
+        const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+        const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+        const percent = (raisedETH / maxETH) * 100;
+        
+        document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+        document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+        
+        console.log('✅ Баланс загружен:', raisedETH, 'ETH');
+    } catch(e) {
+        console.error('Ошибка загрузки баланса:', e);
+        document.getElementById('raisedAmount').innerHTML = '-- ETH';
+    }
+}
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
         async function connectMetaMask() {
