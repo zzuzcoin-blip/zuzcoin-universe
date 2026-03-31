@@ -6,7 +6,10 @@
     <title>ZUZ Universe — 7 мудрецов</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 1. Основная библиотека Web3 -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <!-- 2. Современный WalletConnect 2.0 (UMD версия) -->
+    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
     <style>
         :root {
             --bg-primary: #0A0A0A;
@@ -238,15 +241,15 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             <div class="wallet-options">
-                <div class="wallet-option-item" onclick="connectInjected()">
+                <div class="wallet-option-item" onclick="handleWalletChoice('injected')">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                    <span>MetaMask / Trust Wallet</span>
+                    <span>MetaMask</span>
                     <div class="wallet-badge">Популярно</div>
                 </div>
-                <div class="wallet-option-item" onclick="connectWalletConnect()">
+                <div class="wallet-option-item" onclick="handleWalletChoice('walletconnect')">
                     <img src="https://avatars.githubusercontent.com/u/37784886?s=200&v=4" alt="WalletConnect">
                     <span>WalletConnect</span>
-                    <div class="wallet-subtext">QR-код для мобильных кошельков</div>
+                    <div class="wallet-subtext">Trust Wallet, SafePal, Rainbow и 200+ кошельков</div>
                 </div>
             </div>
             <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 20px;">
@@ -435,7 +438,7 @@
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
-        const WALLETCONNECT_PROJECT_ID = 'ad01e4465a19e847abe4ac7c4097d10c';
+        const WC_PROJECT_ID = 'c77ee52ed95eeec4596ca359f4cdb63d';
         
         const PRESALE_ABI = [
             {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
@@ -500,119 +503,109 @@
             }
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ INJECTED (MetaMask/Trust) ==========
-        async function connectInjected() {
+        // ========== ОСНОВНАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ ==========
+        async function handleWalletChoice(type) {
             closeWalletModal();
-            
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    // Принудительный выбор аккаунта
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_requestPermissions',
-                            params: [{ eth_accounts: {} }]
-                        });
-                    } catch (permError) {
-                        if (permError.code === 4001) {
-                            showNotification("Выбор аккаунта отменен", "info");
-                            return;
-                        }
-                    }
-                    
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    currentAccount = accounts[0];
-                    const web3 = new Web3(window.ethereum);
-                    
-                    // Проверка сети
-                    const chainId = await web3.eth.getChainId();
-                    if (chainId !== 1) {
-                        showNotification("Пожалуйста, переключитесь на сеть Ethereum Mainnet", "error");
-                        try {
-                            await window.ethereum.request({
-                                method: 'wallet_switchEthereumChain',
-                                params: [{ chainId: '0x1' }],
-                            });
-                        } catch (e) {}
-                    }
-                    
-                    presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
-                    tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
-                    
-                    updateUI(currentAccount);
-                    showNotification(`✅ Кошелек подключен: ${currentAccount.substring(0,6)}...`, 'success');
-                    
-                    await loadPresaleData(web3);
-                    await loadTokenBalance(web3, currentAccount);
-                    
-                    // Слушатели
-                    window.ethereum.on('accountsChanged', () => window.location.reload());
-                    window.ethereum.on('chainChanged', () => window.location.reload());
-                    
-                } catch (e) {
-                    console.error(e);
-                    showNotification("Ошибка подключения", "error");
-                }
-            } else {
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile) {
-                    const dappUrl = window.location.href.replace(/https?:\/\//, "");
-                    window.open(`https://metamask.app.link/dapp/${dappUrl}`, '_blank');
-                } else {
-                    alert("Установите MetaMask");
-                    window.open('https://metamask.io/download/', '_blank');
-                }
-            }
-        }
-        
-        // ========== ПОДКЛЮЧЕНИЕ WALLETCONNECT 2.0 (динамический импорт) ==========
-        async function connectWalletConnect() {
-            closeWalletModal();
-            showNotification("Загрузка WalletConnect...", "info");
+            console.log("Запуск подключения:", type);
             
             try {
-                // Динамический импорт ESM-модуля
-                const { EthereumProvider } = await import('https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.min.js');
+                let provider;
+                let accounts;
                 
-                const provider = await EthereumProvider.init({
-                    projectId: WALLETCONNECT_PROJECT_ID,
-                    chains: [1],
-                    methods: ['eth_sendTransaction', 'eth_sign'],
-                    showQrModal: true,
-                    qrModalOptions: {
-                        themeMode: 'dark',
-                        themeVariables: {
-                            '--wcm-z-index': '10000'
+                if (type === 'injected') {
+                    // --- ДЛЯ METAMASK (ПК и браузеры кошельков) ---
+                    if (typeof window.ethereum !== 'undefined') {
+                        // ПРИНУДИТЕЛЬНЫЙ ВЫБОР (решает проблему 2-х кошельков)
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_requestPermissions',
+                                params: [{ eth_accounts: {} }]
+                            });
+                        } catch (permError) {
+                            if (permError.code === 4001) {
+                                showNotification("Выбор аккаунта отменен", "info");
+                                return;
+                            }
                         }
+                        
+                        const accountsResponse = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        provider = window.ethereum;
+                        accounts = accountsResponse;
+                    } else {
+                        // Если нет кошелька на мобильном - редирект в App Store
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        if (isMobile) {
+                            const dappUrl = window.location.href.replace(/https?:\/\//, "");
+                            window.open(`https://metamask.app.link/dapp/${dappUrl}`, '_blank');
+                        } else {
+                            alert("Установите MetaMask!");
+                            window.open('https://metamask.io/download/', '_blank');
+                        }
+                        return;
                     }
-                });
+                } else if (type === 'walletconnect') {
+                    // --- ДЛЯ TRUST WALLET И ДРУГИХ (Через WalletConnect 2.0) ---
+                    if (typeof window.EthereumProvider === 'undefined') {
+                        showNotification("Загрузка WalletConnect...", "info");
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                    
+                    const EthereumProvider = window.EthereumProvider;
+                    
+                    provider = await EthereumProvider.init({
+                        projectId: WC_PROJECT_ID,
+                        chains: [1],
+                        showQrModal: true,
+                        methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
+                        events: ["chainChanged", "accountsChanged"],
+                        metadata: {
+                            name: "ZUZ Universe",
+                            description: "7 Мудрецов — Пресейл",
+                            url: window.location.origin,
+                            icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon.png"]
+                        }
+                    });
+                    
+                    await provider.connect();
+                    accounts = provider.accounts;
+                }
                 
-                await provider.connect();
-                const accounts = await provider.request({ method: 'eth_accounts' });
-                currentAccount = accounts[0];
-                walletConnectProvider = provider;
-                
+                // --- ОБЩАЯ НАСТРОЙКА WEB3 ---
                 const web3 = new Web3(provider);
+                currentAccount = accounts[0];
                 
+                // Переинициализируем контракты
                 presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
                 tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
                 
                 updateUI(currentAccount);
-                showNotification(`✅ Кошелек подключен: ${currentAccount.substring(0,6)}...`, 'success');
+                showNotification(`✅ Успешно: ${currentAccount.substring(0,6)}...`, "success");
                 
                 await loadPresaleData(web3);
                 await loadTokenBalance(web3, currentAccount);
                 
-                // Слушатели
-                provider.on('accountsChanged', (accs) => {
-                    if (accs.length === 0) disconnectWallet();
-                    else window.location.reload();
-                });
-                provider.on('chainChanged', () => window.location.reload());
-                provider.on('disconnect', () => disconnectWallet());
+                // Авто-обновление при смене аккаунта
+                if (provider.on) {
+                    provider.on("accountsChanged", (newAccounts) => {
+                        if (newAccounts.length === 0) disconnectWallet();
+                        else window.location.reload();
+                    });
+                    provider.on("chainChanged", () => window.location.reload());
+                }
+                
+                if (type === 'walletconnect') {
+                    walletConnectProvider = provider;
+                }
                 
             } catch (e) {
-                console.error("WalletConnect ошибка:", e);
-                showNotification("Ошибка WalletConnect. Попробуйте MetaMask.", "error");
+                console.error("Ошибка подключения:", e);
+                if (e.message && e.message.includes("User rejected")) {
+                    showNotification("Подключение отклонено", "info");
+                } else if (e.message && e.message.includes("closed")) {
+                    showNotification("Подключение отменено", "info");
+                } else {
+                    showNotification("Ошибка: проверьте настройки кошелька", "error");
+                }
             }
         }
         
@@ -910,7 +903,7 @@
         
         // Автоподключение, если кошелек уже был разрешён
         if (window.ethereum && window.ethereum.selectedAddress) {
-            setTimeout(() => connectInjected(), 500);
+            setTimeout(() => handleWalletChoice('injected'), 500);
         }
     </script>
 </body>
