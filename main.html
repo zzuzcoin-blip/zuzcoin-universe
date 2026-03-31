@@ -544,7 +544,7 @@
                         return;
                     }
                 } else if (type === 'walletconnect') {
-                    // --- УЛУЧШЕННАЯ ЛОГИКА ДЛЯ TRUST WALLET ---
+                    // --- ФИНАЛЬНАЯ "МЯГКАЯ" КОНФИГУРАЦИЯ ДЛЯ TRUST WALLET ---
                     if (typeof window.EthereumProvider === 'undefined') {
                         showNotification("Загрузка WalletConnect...", "info");
                         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -554,16 +554,19 @@
                     
                     provider = await EthereumProvider.init({
                         projectId: WC_PROJECT_ID,
-                        // Для Trust Wallet важно явно указать опциональные цепочки
-                        chains: [1],
-                        optionalChains: [1, 56, 137], // Ethereum, BSC, Polygon
+                        // Оставляем ПУСТЫМ requiredNamespaces (через chains), чтобы не блокировать вход
+                        chains: [],
+                        // Переносим всё в OPTIONAL — это "золотой стандарт" для Trust Wallet
+                        optionalChains: [1],
                         showQrModal: true,
-                        // Trust Wallet требует расширенный список методов
-                        methods: ["eth_sendTransaction", "eth_signTransaction", "personal_sign", "eth_sign", "eth_accounts"],
-                        events: ["chainChanged", "accountsChanged"],
-                        rpcMap: {
-                            1: "https://eth.llamarpc.com"
-                        },
+                        // Методы, которые Trust Wallet обязан поддерживать для покупки
+                        optionalMethods: [
+                            "eth_sendTransaction",
+                            "personal_sign",
+                            "eth_accounts",
+                            "eth_requestAccounts"
+                        ],
+                        optionalEvents: ["chainChanged", "accountsChanged"],
                         metadata: {
                             name: "ZUZ Universe",
                             description: "7 Мудрецов — Экосистема ZUZ",
@@ -572,9 +575,9 @@
                         }
                     });
                     
-                    // Перед вызовом connect проверим, нет ли активной старой сессии
+                    // Очистка "зависших" сессий перед новым входом
                     if (provider.session) {
-                        await provider.disconnect();
+                        await provider.disconnect().catch(() => {});
                     }
                     
                     await provider.connect();
