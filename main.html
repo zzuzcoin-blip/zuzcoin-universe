@@ -382,43 +382,466 @@
     </div>
     
     <script>
-        const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
-        const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
-        const TOKEN_PRICE_ETH = 0.0001;
-        const PRESALE_ABI = [{"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
-        const TOKEN_ABI = [{"inputs":[],"name":"balanceOf","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}];
-        let web3Instance = null, currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
-        let stageStartTime = 1774775487, stageEndTime = 1788307200;
-        const sageLevels = [{ threshold: 0, name: "Новичок", badge: "🌱", bonus: 0, next: 1000 },{ threshold: 1000, name: "Мудрость", badge: "📜", bonus: 2, next: 5000 },{ threshold: 5000, name: "Процветание", badge: "🌾", bonus: 5, next: 10000 },{ threshold: 10000, name: "Защита", badge: "🛡️", bonus: 10, next: 25000 },{ threshold: 25000, name: "Инновации", badge: "⚡", bonus: 15, next: 50000 },{ threshold: 50000, name: "Гармония", badge: "☯️", bonus: 20, next: 100000 },{ threshold: 100000, name: "Сила", badge: "⚔️", bonus: 25, next: 250000 },{ threshold: 250000, name: "Бессмертие", badge: "👑", bonus: 30, next: Infinity }];
-        function showNotification(msg, type) { const n = document.createElement('div'); n.className = `notification ${type}`; n.textContent = msg; document.body.appendChild(n); setTimeout(() => n.remove(), 5000); }
-        function updateTimer() { const now = Math.floor(Date.now() / 1000); const timerSpan = document.getElementById('timer'); const statusSpan = document.getElementById('saleStatus'); if (now < stageStartTime) { statusSpan.innerHTML = 'СКОРО'; statusSpan.style.background = '#ff9800'; const diff = stageStartTime - now; const days = Math.floor(diff / 86400); timerSpan.innerText = `${days}д`; } else if (now >= stageStartTime && now <= stageEndTime) { statusSpan.innerHTML = 'АКТИВЕН'; statusSpan.style.background = '#00D18C'; const diff = stageEndTime - now; const days = Math.floor(diff / 86400); timerSpan.innerText = `${days}д`; } else { statusSpan.innerHTML = 'ЗАВЕРШЕН'; statusSpan.style.background = '#f44336'; timerSpan.innerText = 'ЗАВЕРШЕН'; } }
-        async function loadPresaleData() { if (!presaleContract) { document.getElementById('raisedAmount').innerHTML = '-- ETH'; return; } try { const sold = await presaleContract.methods.tokensSold().call(); const max = await presaleContract.methods.maxTokensToSell().call(); const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18; const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18; const percent = (raisedETH / maxETH) * 100; document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`; document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%'; } catch(e) { console.error(e); } }
-        async function updateSageLevel() { if (!currentAccount || !tokenContract) return; try { const balanceWei = await tokenContract.methods.balanceOf(currentAccount).call(); const balance = Number(balanceWei) / 1e18; let level = sageLevels[0]; for (let i = sageLevels.length - 1; i >= 0; i--) { if (balance >= sageLevels[i].threshold) { level = sageLevels[i]; break; } } const previewDiv = document.getElementById('sagePreview'); previewDiv.style.display = 'block'; document.getElementById('sageBadge').innerHTML = level.badge; document.getElementById('sageTitle').innerHTML = level.name; document.getElementById('sageDesc').innerHTML = `Бонус к стейкингу: +${level.bonus}%`; let nextLevel = sageLevels.find(l => l.threshold > balance); if (nextLevel) { const needed = nextLevel.threshold - balance; const percent = (balance / nextLevel.threshold) * 100; document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%'; document.getElementById('sageNext').innerHTML = `До уровня "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`; } else { document.getElementById('sageProgressFill').style.width = '100%'; document.getElementById('sageNext').innerHTML = '🎉 Вы достигли высшего уровня!'; } } catch(e) { console.error(e); } }
-        async function addTokenToWallet() { if (!window.ethereum) { showNotification('Установите MetaMask', 'error'); return; } try { await window.ethereum.request({ method: 'wallet_watchAsset', params: { type: 'ERC20', options: { address: TOKEN_ADDRESS, symbol: 'ZUZ', decimals: 18, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E' } } }); showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success'); } catch(e) { showNotification('Ошибка добавления токена', 'error'); } }
-        function isMobile() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
-        async function connectWallet(type) { if (type === 'metamask') { if (window.ethereum && window.ethereum.isMetaMask) { try { const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; web3Instance = new Web3(window.ethereum); presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS); tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS); updateWalletUI(); showNotification('✅ MetaMask подключен', 'success'); await loadPresaleData(); await updateSageLevel(); document.getElementById('addTokenBtn').style.display = 'inline-block'; } catch(e) { showNotification('Ошибка подключения', 'error'); } } else if (isMobile()) { window.location.href = 'https://metamask.app.link/dapp/' + window.location.host; showNotification('Открываем MetaMask...', 'info'); } else { showNotification('Установите MetaMask', 'error'); window.open('https://metamask.io/download/', '_blank'); } } else if (type === 'trustwallet') { if (window.ethereum && window.ethereum.isTrust) { try { const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; web3Instance = new Web3(window.ethereum); presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS); tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS); updateWalletUI(); showNotification('✅ Trust Wallet подключен', 'success'); await loadPresaleData(); await updateSageLevel(); document.getElementById('addTokenBtn').style.display = 'inline-block'; } catch(e) { showNotification('Ошибка подключения', 'error'); } } else if (isMobile()) { window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + window.location.host; showNotification('Открываем Trust Wallet...', 'info'); } else { showNotification('Trust Wallet только для телефона', 'info'); } } else if (type === 'coinbase') { if (window.ethereum && window.ethereum.isCoinbaseWallet) { try { const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; web3Instance = new Web3(window.ethereum); presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS); tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS); updateWalletUI(); showNotification('✅ Coinbase Wallet подключен', 'success'); await loadPresaleData(); await updateSageLevel(); document.getElementById('addTokenBtn').style.display = 'inline-block'; } catch(e) { showNotification('Ошибка подключения', 'error'); } } else if (isMobile()) { window.location.href = 'https://go.cb-w.com/dapp?url=https://' + window.location.host; showNotification('Открываем Coinbase Wallet...', 'info'); } else { showNotification('Установите Coinbase Wallet', 'info'); } } }
-        function updateWalletUI() { const btn = document.getElementById('connectWalletBtn'); if (currentAccount) { btn.innerHTML = `<i class="fas fa-wallet"></i> ${currentAccount.substring(0,6)}...${currentAccount.substring(38)}`; btn.style.background = 'rgba(0,209,140,0.2)'; if (!document.querySelector('.disconnect-btn')) { const dbtn = document.createElement('button'); dbtn.className = 'disconnect-btn'; dbtn.innerHTML = 'ОТКЛЮЧИТЬ'; dbtn.onclick = disconnectWallet; btn.parentNode.appendChild(dbtn); } } else { btn.innerHTML = '<i class="fas fa-wallet"></i> ПОДКЛЮЧИТЬ КОШЕЛЕК'; btn.style.background = ''; const dbtn = document.querySelector('.disconnect-btn'); if (dbtn) dbtn.remove(); } }
-        function disconnectWallet() { currentAccount = null; web3Instance = null; presaleContract = null; tokenContract = null; updateWalletUI(); document.getElementById('sagePreview').style.display = 'none'; document.getElementById('addTokenBtn').style.display = 'none'; showNotification('Кошелек отключен', 'info'); }
-        function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; } function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
-        function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; } function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
-        function openSagesModal() { let html = '<div style="display: flex; flex-direction: column; gap: 10px;">'; sageLevels.forEach(level => { html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;"><div style="font-size: 28px;">${level.badge}</div><div style="flex: 1;"><div style="font-weight: 600;">${level.name}</div><div style="font-size: 12px; color: var(--text-secondary);">от ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% к стейкингу</div></div></div>`; }); html += '</div>'; document.getElementById('sagesContent').innerHTML = html; document.getElementById('sagesModal').style.display = 'flex'; } function closeSagesModal() { document.getElementById('sagesModal').style.display = 'none'; }
-        function toggleCollapsible() { document.getElementById('proofchainCollapsible').classList.toggle('open'); }
-        async function buyTokens() { if (!presaleContract) { showNotification('Сначала подключите кошелек', 'error'); openWalletModal(); return; } const eth = parseFloat(document.getElementById('ethAmount').value || 0); if (!document.getElementById('acceptTerms').checked) { showNotification('Примите условия', 'error'); return; } if (eth < 0.01) { showNotification('Минимум 0.01 ETH', 'error'); return; } if (isProcessing) return; const now = Math.floor(Date.now() / 1000); if (now < stageStartTime) { showNotification('Продажа еще не началась', 'info'); return; } if (now > stageEndTime) { showNotification('Продажа завершена', 'error'); return; } isProcessing = true; const btn = document.getElementById('buyBtn'); btn.disabled = true; btn.textContent = '⏳ ОТПРАВКА...'; try { const weiAmount = web3Instance.utils.toWei(eth.toString(), 'ether'); await presaleContract.methods.buyTokens().send({ from: currentAccount, value: weiAmount, gas: 300000 }); showNotification(`✅ Куплено ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success'); document.getElementById('ethAmount').value = ''; document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ'; await loadPresaleData(); await updateSageLevel(); } catch(e) { let msg = e.message || 'Ошибка'; if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию'; else if (msg.includes('insufficient funds')) msg = 'Недостаточно ETH'; else if (msg.includes('execution reverted')) msg = 'Ошибка контракта'; showNotification(msg, 'error'); } finally { isProcessing = false; btn.disabled = false; btn.textContent = 'КУПИТЬ ZUZ'; } }
-        function createParticles() { const container = document.getElementById('goldParticles'); if (!container) return; for (let i = 0; i < 40; i++) { let p = document.createElement('div'); p.classList.add('gold-particle'); let s = Math.random() * 6 + 2; p.style.width = s + 'px'; p.style.height = s + 'px'; p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%'; p.style.animationDelay = Math.random() * 10 + 's'; p.style.animationDuration = 8 + Math.random() * 8 + 's'; container.appendChild(p); } }
-        function setSocialLinks() { document.getElementById('twitterLink').href = 'https://twitter.com/'; document.getElementById('telegramLink').href = 'https://t.me/'; document.getElementById('discordLink').href = 'https://discord.gg/'; document.getElementById('youtubeLink').href = 'https://youtube.com/'; }
-        document.getElementById('ethAmount').addEventListener('input', () => { const val = parseFloat(document.getElementById('ethAmount').value) || 0; document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`; });
-        document.getElementById('connectWalletBtn').onclick = () => { if (currentAccount) disconnectWallet(); else openWalletModal(); };
-        document.getElementById('buyBtn').onclick = buyTokens;
-        document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
-        document.getElementById('logoBtn').onclick = openIdeologyModal;
-        document.getElementById('addTokenBtn').onclick = addTokenToWallet;
-        document.querySelectorAll('.faq-item').forEach(item => { item.addEventListener('click', () => item.classList.toggle('active')); });
-        document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
-        document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
-        document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
-        document.querySelectorAll('.feature-card').forEach(card => { if (card.innerText.includes('7 Мудрецов')) { card.style.cursor = 'pointer'; card.onclick = openSagesModal; } });
-        createParticles(); updateTimer(); setInterval(updateTimer, 1000); loadPresaleData(); setSocialLinks();
-        if (window.ethereum && window.ethereum.selectedAddress) { setTimeout(() => connectWallet('metamask'), 500); }
-    </script>
+    // ========== КОНСТАНТЫ ==========
+    const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
+    const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
+    const TOKEN_PRICE_ETH = 0.0001;
+    
+    const PRESALE_ABI = [
+        {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
+        {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+    ];
+    
+    const TOKEN_ABI = [
+        {"inputs":[],"name":"balanceOf","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}
+    ];
+    
+    // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+    let web3Instance = null;
+    let currentAccount = null;
+    let presaleContract = null;
+    let tokenContract = null;
+    let isProcessing = false;
+    let stageStartTime = 1774775487;
+    let stageEndTime = 1788307200;
+    let publicWeb3 = null;
+    let publicPresaleContract = null;
+    
+    // ========== УРОВНИ МУДРЕЦОВ ==========
+    const sageLevels = [
+        { threshold: 0, name: "Новичок", badge: "🌱", bonus: 0, next: 1000 },
+        { threshold: 1000, name: "Мудрость", badge: "📜", bonus: 2, next: 5000 },
+        { threshold: 5000, name: "Процветание", badge: "🌾", bonus: 5, next: 10000 },
+        { threshold: 10000, name: "Защита", badge: "🛡️", bonus: 10, next: 25000 },
+        { threshold: 25000, name: "Инновации", badge: "⚡", bonus: 15, next: 50000 },
+        { threshold: 50000, name: "Гармония", badge: "☯️", bonus: 20, next: 100000 },
+        { threshold: 100000, name: "Сила", badge: "⚔️", bonus: 25, next: 250000 },
+        { threshold: 250000, name: "Бессмертие", badge: "👑", bonus: 30, next: Infinity }
+    ];
+    
+    // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+    function showNotification(msg, type) {
+        const n = document.createElement('div');
+        n.className = `notification ${type}`;
+        n.textContent = msg;
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), 5000);
+    }
+    
+    function updateTimer() {
+        const now = Math.floor(Date.now() / 1000);
+        const timerSpan = document.getElementById('timer');
+        const statusSpan = document.getElementById('saleStatus');
+        if (now < stageStartTime) {
+            statusSpan.innerHTML = 'СКОРО';
+            statusSpan.style.background = '#ff9800';
+            const diff = stageStartTime - now;
+            const days = Math.floor(diff / 86400);
+            timerSpan.innerText = `${days}д`;
+        } else if (now >= stageStartTime && now <= stageEndTime) {
+            statusSpan.innerHTML = 'АКТИВЕН';
+            statusSpan.style.background = '#00D18C';
+            const diff = stageEndTime - now;
+            const days = Math.floor(diff / 86400);
+            timerSpan.innerText = `${days}д`;
+        } else {
+            statusSpan.innerHTML = 'ЗАВЕРШЕН';
+            statusSpan.style.background = '#f44336';
+            timerSpan.innerText = 'ЗАВЕРШЕН';
+        }
+    }
+    
+    // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА (БЕЗ КОШЕЛЬКА) ==========
+    async function loadPublicPresaleData() {
+        try {
+            // Используем публичный RPC (без ключа, но с запасными вариантами)
+            const publicRPCs = [
+                'https://eth.llamarpc.com',
+                'https://rpc.ankr.com/eth',
+                'https://cloudflare-eth.com'
+            ];
+            
+            for (const rpc of publicRPCs) {
+                try {
+                    const provider = new Web3.providers.HttpProvider(rpc, { timeout: 5000 });
+                    const tempWeb3 = new Web3(provider);
+                    const tempContract = new tempWeb3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                    
+                    const sold = await tempContract.methods.tokensSold().call();
+                    const max = await tempContract.methods.maxTokensToSell().call();
+                    
+                    const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+                    const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+                    const percent = (raisedETH / maxETH) * 100;
+                    
+                    document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+                    document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+                    
+                    publicWeb3 = tempWeb3;
+                    publicPresaleContract = tempContract;
+                    break;
+                } catch(e) {
+                    console.log(`RPC ${rpc} не ответил, пробуем следующий`);
+                }
+            }
+        } catch(e) {
+            console.error('Ошибка загрузки данных пресейла:', e);
+            document.getElementById('raisedAmount').innerHTML = '-- ETH';
+        }
+    }
+    
+    // ========== ОБНОВЛЕНИЕ ДАННЫХ ПОСЛЕ ПОДКЛЮЧЕНИЯ ==========
+    async function updatePresaleData() {
+        if (!presaleContract) return;
+        try {
+            const sold = await presaleContract.methods.tokensSold().call();
+            const max = await presaleContract.methods.maxTokensToSell().call();
+            const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+            const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+            const percent = (raisedETH / maxETH) * 100;
+            document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+        } catch(e) { console.error(e); }
+    }
+    
+    // ========== УРОВЕНЬ МУДРЕЦА ==========
+    function getSageLevel(balance) {
+        for (let i = sageLevels.length - 1; i >= 0; i--) {
+            if (balance >= sageLevels[i].threshold) return sageLevels[i];
+        }
+        return sageLevels[0];
+    }
+    
+    async function updateSageLevel() {
+        if (!currentAccount || !tokenContract) return;
+        try {
+            const balanceWei = await tokenContract.methods.balanceOf(currentAccount).call();
+            const balance = Number(balanceWei) / 1e18;
+            const level = getSageLevel(balance);
+            
+            const previewDiv = document.getElementById('sagePreview');
+            previewDiv.style.display = 'block';
+            document.getElementById('sageBadge').innerHTML = level.badge;
+            document.getElementById('sageTitle').innerHTML = level.name;
+            document.getElementById('sageDesc').innerHTML = `Бонус к стейкингу: +${level.bonus}%`;
+            
+            let nextLevel = sageLevels.find(l => l.threshold > balance);
+            if (nextLevel) {
+                const needed = nextLevel.threshold - balance;
+                const percent = (balance / nextLevel.threshold) * 100;
+                document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%';
+                document.getElementById('sageNext').innerHTML = `До уровня "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`;
+            } else {
+                document.getElementById('sageProgressFill').style.width = '100%';
+                document.getElementById('sageNext').innerHTML = '🎉 Вы достигли высшего уровня!';
+            }
+        } catch(e) { console.error('Ошибка загрузки баланса:', e); }
+    }
+    
+    // ========== ДОБАВЛЕНИЕ ТОКЕНА В КОШЕЛЕК ==========
+    async function addTokenToWallet() {
+        if (!window.ethereum) {
+            showNotification('Установите MetaMask или Trust Wallet', 'error');
+            return;
+        }
+        try {
+            await window.ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'ERC20',
+                    options: {
+                        address: TOKEN_ADDRESS,
+                        symbol: 'ZUZ',
+                        decimals: 18,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E'
+                    }
+                }
+            });
+            showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success');
+        } catch(e) {
+            console.error(e);
+            showNotification('Ошибка добавления токена', 'error');
+        }
+    }
+    
+    // ========== ОПРЕДЕЛЕНИЕ МОБИЛЬНОГО УСТРОЙСТВА ==========
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    // ========== ПРОВЕРКА, КАКОЙ КОШЕЛЕК УСТАНОВЛЕН ==========
+    function getInstalledWallets() {
+        const wallets = [];
+        if (window.ethereum) {
+            if (window.ethereum.isMetaMask) wallets.push('metamask');
+            if (window.ethereum.isTrust) wallets.push('trustwallet');
+            if (window.ethereum.isCoinbaseWallet) wallets.push('coinbase');
+        }
+        return wallets;
+    }
+    
+    // ========== ПОДКЛЮЧЕНИЕ КОШЕЛЬКА ==========
+    async function connectWallet(type) {
+        // Если на мобильном — используем DeepLink
+        if (isMobile()) {
+            if (type === 'metamask') {
+                window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
+                showNotification('Открываем MetaMask...', 'info');
+                return;
+            } else if (type === 'trustwallet') {
+                window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + window.location.host;
+                showNotification('Открываем Trust Wallet...', 'info');
+                return;
+            } else if (type === 'coinbase') {
+                window.location.href = 'https://go.cb-w.com/dapp?url=https://' + window.location.host;
+                showNotification('Открываем Coinbase Wallet...', 'info');
+                return;
+            }
+        }
+        
+        // На компьютере — пробуем подключиться напрямую
+        if (!window.ethereum) {
+            showNotification('Установите кошелек (MetaMask, Trust Wallet или Coinbase)', 'error');
+            if (type === 'metamask') window.open('https://metamask.io/download/', '_blank');
+            if (type === 'trustwallet') window.open('https://trustwallet.com/download', '_blank');
+            if (type === 'coinbase') window.open('https://www.coinbase.com/wallet/downloads', '_blank');
+            return;
+        }
+        
+        try {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            web3Instance = new Web3(window.ethereum);
+            presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+            tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+            updateWalletUI();
+            showNotification(`✅ ${getWalletName(type)} подключен`, 'success');
+            await updatePresaleData();
+            await updateSageLevel();
+            document.getElementById('addTokenBtn').style.display = 'inline-block';
+            
+            // Слушаем смену аккаунта
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else {
+                    currentAccount = accounts[0];
+                    updateWalletUI();
+                    updateSageLevel();
+                    showNotification('Аккаунт сменен', 'info');
+                }
+            });
+            
+            // Слушаем смену сети
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+            
+        } catch(e) {
+            console.error(e);
+            showNotification('Ошибка подключения', 'error');
+        }
+    }
+    
+    function getWalletName(type) {
+        const names = { metamask: 'MetaMask', trustwallet: 'Trust Wallet', coinbase: 'Coinbase Wallet' };
+        return names[type] || 'Кошелек';
+    }
+    
+    function updateWalletUI() {
+        const btn = document.getElementById('connectWalletBtn');
+        if (currentAccount) {
+            btn.innerHTML = `<i class="fas fa-wallet"></i> ${currentAccount.substring(0,6)}...${currentAccount.substring(38)}`;
+            btn.style.background = 'rgba(0,209,140,0.2)';
+            if (!document.querySelector('.disconnect-btn')) {
+                const dbtn = document.createElement('button');
+                dbtn.className = 'disconnect-btn';
+                dbtn.innerHTML = 'ОТКЛЮЧИТЬ';
+                dbtn.onclick = disconnectWallet;
+                btn.parentNode.appendChild(dbtn);
+            }
+        } else {
+            btn.innerHTML = '<i class="fas fa-wallet"></i> ПОДКЛЮЧИТЬ КОШЕЛЕК';
+            btn.style.background = '';
+            const dbtn = document.querySelector('.disconnect-btn');
+            if (dbtn) dbtn.remove();
+        }
+    }
+    
+    function disconnectWallet() {
+        currentAccount = null;
+        web3Instance = null;
+        presaleContract = null;
+        tokenContract = null;
+        updateWalletUI();
+        document.getElementById('sagePreview').style.display = 'none';
+        document.getElementById('addTokenBtn').style.display = 'none';
+        showNotification('Кошелек отключен', 'info');
+        // Возвращаем публичные данные
+        loadPublicPresaleData();
+    }
+    
+    // ========== МОДАЛКИ ==========
+    function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
+    function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+    function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
+    function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
+    function openSagesModal() { 
+        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+        sageLevels.forEach(level => {
+            html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <div style="font-size: 28px;">${level.badge}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${level.name}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">от ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% к стейкингу</div>
+                        </div>
+                    </div>`;
+        });
+        html += '</div>';
+        document.getElementById('sagesContent').innerHTML = html;
+        document.getElementById('sagesModal').style.display = 'flex';
+    }
+    function closeSagesModal() { document.getElementById('sagesModal').style.display = 'none'; }
+    function toggleCollapsible() { document.getElementById('proofchainCollapsible').classList.toggle('open'); }
+    
+    // ========== ПОКУПКА ТОКЕНОВ ==========
+    async function buyTokens() {
+        if (!presaleContract) { 
+            showNotification('Сначала подключите кошелек', 'error'); 
+            openWalletModal(); 
+            return; 
+        }
+        const eth = parseFloat(document.getElementById('ethAmount').value || 0);
+        if (!document.getElementById('acceptTerms').checked) { 
+            showNotification('Примите условия', 'error'); 
+            return; 
+        }
+        if (eth < 0.01) { 
+            showNotification('Минимум 0.01 ETH', 'error'); 
+            return; 
+        }
+        if (isProcessing) return;
+        
+        const now = Math.floor(Date.now() / 1000);
+        if (now < stageStartTime) { 
+            showNotification('Продажа еще не началась', 'info'); 
+            return; 
+        }
+        if (now > stageEndTime) { 
+            showNotification('Продажа завершена', 'error'); 
+            return; 
+        }
+        
+        isProcessing = true;
+        const btn = document.getElementById('buyBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ ОТПРАВКА...';
+        
+        try {
+            const weiAmount = web3Instance.utils.toWei(eth.toString(), 'ether');
+            await presaleContract.methods.buyTokens().send({ 
+                from: currentAccount, 
+                value: weiAmount, 
+                gas: 300000 
+            });
+            showNotification(`✅ Куплено ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
+            document.getElementById('ethAmount').value = '';
+            document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
+            await updatePresaleData();
+            await updateSageLevel();
+        } catch(e) {
+            let msg = e.message || 'Ошибка';
+            if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию';
+            else if (msg.includes('insufficient funds')) msg = 'Недостаточно ETH';
+            else if (msg.includes('execution reverted')) msg = 'Ошибка контракта';
+            showNotification(msg, 'error');
+        } finally {
+            isProcessing = false;
+            btn.disabled = false;
+            btn.textContent = 'КУПИТЬ ZUZ';
+        }
+    }
+    
+    // ========== ЧАСТИЦЫ ==========
+    function createParticles() {
+        const container = document.getElementById('goldParticles');
+        if (!container) return;
+        for (let i = 0; i < 40; i++) {
+            let p = document.createElement('div');
+            p.classList.add('gold-particle');
+            let s = Math.random() * 6 + 2;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            p.style.animationDuration = 8 + Math.random() * 8 + 's';
+            container.appendChild(p);
+        }
+    }
+    
+    // ========== СОЦИАЛЬНЫЕ ССЫЛКИ ==========
+    function setSocialLinks() {
+        document.getElementById('twitterLink').href = 'https://twitter.com/';
+        document.getElementById('telegramLink').href = 'https://t.me/';
+        document.getElementById('discordLink').href = 'https://discord.gg/';
+        document.getElementById('youtubeLink').href = 'https://youtube.com/';
+    }
+    
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    document.getElementById('ethAmount').addEventListener('input', () => {
+        const val = parseFloat(document.getElementById('ethAmount').value) || 0;
+        document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
+    });
+    document.getElementById('connectWalletBtn').onclick = () => { 
+        if (currentAccount) disconnectWallet(); 
+        else openWalletModal(); 
+    };
+    document.getElementById('buyBtn').onclick = buyTokens;
+    document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
+    document.getElementById('logoBtn').onclick = openIdeologyModal;
+    document.getElementById('addTokenBtn').onclick = addTokenToWallet;
+    
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.addEventListener('click', () => item.classList.toggle('active'));
+    });
+    
+    document.getElementById('walletModal').addEventListener('click', (e) => { 
+        if (e.target === document.getElementById('walletModal')) closeWalletModal(); 
+    });
+    document.getElementById('ideologyModal').addEventListener('click', (e) => { 
+        if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); 
+    });
+    document.getElementById('sagesModal').addEventListener('click', (e) => { 
+        if (e.target === document.getElementById('sagesModal')) closeSagesModal(); 
+    });
+    
+    document.querySelectorAll('.feature-card').forEach(card => {
+        if (card.innerText.includes('7 Мудрецов')) {
+            card.style.cursor = 'pointer';
+            card.onclick = openSagesModal;
+        }
+    });
+    
+    createParticles();
+    updateTimer();
+    setInterval(updateTimer, 1000);
+    setSocialLinks();
+    
+    // Загружаем данные пресейла сразу (без кошелька)
+    loadPublicPresaleData();
+    
+    // Если кошелек уже был подключён — подключаемся
+    if (window.ethereum && window.ethereum.selectedAddress) {
+        setTimeout(() => {
+            const wallets = getInstalledWallets();
+            if (wallets.includes('metamask')) connectWallet('metamask');
+            else if (wallets.includes('trustwallet')) connectWallet('trustwallet');
+            else if (wallets.includes('coinbase')) connectWallet('coinbase');
+        }, 500);
+    }
+</script>
 </body>
 </html>
