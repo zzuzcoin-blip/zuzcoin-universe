@@ -121,7 +121,7 @@
         .trusted-section { padding: 60px 0; text-align: center; background: linear-gradient(180deg, transparent, rgba(212,175,55,0.05), transparent); }
         .trusted-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 30px; }
         .trusted-logos { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-        .trusted-logo { background: rgba(255,255,255,0.03); padding: 12px 28px; border-radius: 40px; font-weight: 600; color: var(--accent-gold); border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s; }
+        .trusted-logo { background: rgba(255,255,255,0.03); padding: 12px 28px; border-radius: 40px; font-weight: 600; color: var(--accent-gold); border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s; cursor: pointer; }
         .trusted-logo:hover { border-color: var(--accent-gold); transform: translateY(-3px); background: rgba(212,175,55,0.1); }
         .roadmap { padding: 80px 0; background: var(--bg-secondary); }
         .roadmap-timeline { position: relative; max-width: 800px; margin: 0 auto; }
@@ -151,7 +151,7 @@
         .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
         .footer-logo { display: flex; align-items: center; gap: 10px; }
         .footer-social { display: flex; gap: 20px; }
-        .footer-social a { color: var(--text-secondary); font-size: 24px; transition: color 0.3s; }
+        .footer-social a { color: var(--text-secondary); font-size: 24px; transition: color 0.3s; text-decoration: none; }
         .footer-social a:hover { color: var(--accent-gold); }
         .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 14px; }
         .loading { opacity: 0.7; pointer-events: none; }
@@ -177,6 +177,24 @@
         .wallet-item:hover { background: rgba(212,175,55,0.15); border-color: var(--accent-gold); transform: translateX(5px); }
         .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 8px; padding: 8px 16px; color: #ff6464; cursor: pointer; font-size: 12px; margin-left: 15px; transition: all 0.3s; }
         .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
+        
+        /* Sage Levels */
+        .sage-level-card { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.3)); border-radius: 16px; padding: 20px; margin: 20px 0; text-align: center; }
+        .sage-badge { font-size: 32px; margin-bottom: 10px; }
+        .sage-title { font-size: 20px; font-weight: 700; color: var(--accent-gold); }
+        .sage-description { font-size: 12px; color: var(--text-secondary); margin: 10px 0; }
+        .sage-progress { background: #333; height: 8px; border-radius: 4px; margin: 10px 0; }
+        .sage-progress-fill { background: var(--accent-gold); height: 100%; border-radius: 4px; width: 0%; }
+        
+        /* Collapsible */
+        .collapsible { background: rgba(212,175,55,0.1); border-radius: 12px; margin: 20px 0; overflow: hidden; }
+        .collapsible-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--accent-gold); }
+        .collapsible-header:hover { background: rgba(212,175,55,0.2); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px; }
+        .collapsible.open .collapsible-content { max-height: 500px; padding: 0 20px 20px 20px; }
+        
+        .add-token-btn { background: rgba(212,175,55,0.2); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer; font-size: 12px; transition: all 0.3s; }
+        .add-token-btn:hover { background: rgba(212,175,55,0.4); transform: translateY(-1px); }
     </style>
 </head>
 <body>
@@ -231,6 +249,17 @@
         </div>
     </div>
     
+    <!-- Модалка уровней мудрецов -->
+    <div class="modal-overlay" id="sagesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🏛️ 7 Мудрецов ZUZ</div>
+                <button class="close-modal" onclick="closeSagesModal()">&times;</button>
+            </div>
+            <div id="sagesContent"></div>
+        </div>
+    </div>
+    
     <div class="navbar">
         <div class="container">
             <div class="logo" id="logoBtn">
@@ -263,8 +292,8 @@
                         <div class="presale-badge" id="saleStatus">АКТИВЕН</div>
                     </div>
                     <div class="presale-stats">
-                        <div class="stat"><span class="stat-label">СОБРАНО</span><span class="stat-value" id="raisedAmount">$0</span></div>
-                        <div class="stat"><span class="stat-label">ЦЕЛЬ</span><span class="stat-value">$2,500,000</span></div>
+                        <div class="stat"><span class="stat-label">СОБРАНО</span><span class="stat-value" id="raisedAmount">-- ETH</span></div>
+                        <div class="stat"><span class="stat-label">ЦЕЛЬ</span><span class="stat-value">30,000 ETH</span></div>
                     </div>
                     <div class="progress-bar-container"><div class="progress-bar" id="progressFill" style="width: 0%"></div></div>
                     <div class="presale-details">
@@ -279,8 +308,18 @@
                         </div>
                         <div class="you-get"><span>Вы получите:</span><strong id="tokenAmountDisplay">0 ZUZ</strong></div>
                         <button class="btn-buy" id="buyBtn">КУПИТЬ ZUZ</button>
-                        <label class="accept-terms"><input type="checkbox" id="acceptTerms"> Я согласен с условиями</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <label class="accept-terms"><input type="checkbox" id="acceptTerms"> Я согласен с условиями</label>
+                            <button class="add-token-btn" id="addTokenBtn" style="display: none;">➕ Добавить ZUZ в кошелек</button>
+                        </div>
                     </div>
+                </div>
+                <div id="sagePreview" class="sage-level-card" style="display: none;">
+                    <div class="sage-badge" id="sageBadge">🏛️</div>
+                    <div class="sage-title" id="sageTitle">Мудрость</div>
+                    <div class="sage-description" id="sageDesc">Держите ZUZ, чтобы открыть уровни мудрецов</div>
+                    <div class="sage-progress"><div class="sage-progress-fill" id="sageProgressFill" style="width: 0%"></div></div>
+                    <div id="sageNext" style="font-size: 12px; color: var(--text-secondary);"></div>
                 </div>
             </div>
             <div class="hero-right hero-video" style="margin-top: 10px;">
@@ -305,22 +344,22 @@
         <div class="container">
             <h2 class="section-title">Почему <span class="gradient-text">ZUZ</span>?</h2>
             <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon">🏛️</div><h3>7 Мудрецов</h3><p>Сила 7 великих цивилизаций в одной монете</p></div>
-                <div class="feature-card"><div class="feature-icon">💰</div><h3>Стейкинг 25% APY</h3><p>Пассивный доход в золоте</p></div>
-                <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Аудит + Безопасность</h3><p>Проверенный смарт-контракт</p></div>
+                <div class="feature-card"><div class="feature-icon">🏛️</div><h3>7 Мудрецов</h3><p>Сила 7 великих цивилизаций в одной монете. Чем больше ZUZ — тем выше ваш уровень.</p></div>
+                <div class="feature-card"><div class="feature-icon">💰</div><h3>Стейкинг 25% APY</h3><p>Пассивный доход в золоте. Бонусы растут с уровнем мудреца.</p></div>
+                <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Аудит + Безопасность</h3><p>Проверенный смарт-контракт. Код открыт и верифицирован.</p></div>
             </div>
         </div>
     </div>
     
     <div class="trusted-section">
         <div class="container">
-            <div class="trusted-title">⚡ НАМ ДОВЕРЯЮТ ⚡</div>
+            <div class="trusted-title">⚡ ПАРТНЕРЫ ⚡</div>
             <div class="trusted-logos">
-                <div class="trusted-logo">CoinGecko</div>
-                <div class="trusted-logo">CoinMarketCap</div>
-                <div class="trusted-logo">Crypto.com</div>
-                <div class="trusted-logo">Binance Live</div>
-                <div class="trusted-logo">YouTube Crypto</div>
+                <div class="trusted-logo" onclick="window.open('https://www.coingecko.com', '_blank')">CoinGecko</div>
+                <div class="trusted-logo" onclick="window.open('https://coinmarketcap.com', '_blank')">CoinMarketCap</div>
+                <div class="trusted-logo" onclick="window.open('https://crypto.com', '_blank')">Crypto.com</div>
+                <div class="trusted-logo" onclick="window.open('https://www.binance.com/en/live', '_blank')">Binance Live</div>
+                <div class="trusted-logo" onclick="window.open('https://www.youtube.com', '_blank')">YouTube Crypto</div>
             </div>
         </div>
     </div>
@@ -345,8 +384,29 @@
         <div class="staking-card">
             <div class="staking-title">🏆 СТЕЙКИНГ ZUZ 🏆</div>
             <div class="apy-badge">25% APY</div>
-            <p style="color: var(--text-secondary);">Застейкайте свои ZUZ и получайте пассивный доход</p>
+            <p style="color: var(--text-secondary);">Застейкайте свои ZUZ и получайте пассивный доход. Бонусы от уровня мудреца до +30%</p>
             <button class="staking-btn" id="stakeBtn">📈 ЗАСТЕЙКАТЬ</button>
+        </div>
+    </div>
+    
+    <!-- ProofChain Collapsible (в разработке) -->
+    <div class="container">
+        <div class="collapsible" id="proofchainCollapsible">
+            <div class="collapsible-header" onclick="toggleCollapsible()">
+                <span><i class="fas fa-link"></i> ZUZCOIN ProofChain — в разработке</span>
+                <span>▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div style="padding: 10px 0; text-align: center;">
+                    <p style="color: var(--text-secondary);">🚀 Скоро — собственный L1 блокчейн ZUZ!</p>
+                    <p style="font-size: 12px; color: var(--text-secondary);">Полная децентрализация, 1% донаций на благотворительность, прозрачность каждой транзакции.</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/network-status', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">📊 Статус сети</button>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">👛 ZUZ Wallet</button>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">✨ Create Token</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -355,9 +415,9 @@
             <h2 class="section-title">Дорожная карта</h2>
             <div class="roadmap-timeline">
                 <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 1</h4><p>Запуск сайта, пресейл, аудит контракта</p></div></div>
-                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 2</h4><p>Листинг на DEX, запуск стейкинга</p></div></div>
+                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 2</h4><p>Листинг на DEX, запуск стейкинга, система мудрецов</p></div></div>
                 <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 3</h4><p>Листинг на CEX, маркетинговая кампания</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 4</h4><p>ZUZ Swap (собственная биржа), мост в 7 сетей</p></div></div>
+                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 4</h4><p>ZUZ Swap (собственная биржа), мост в 7 сетей, запуск ProofChain</p></div></div>
             </div>
         </div>
     </div>
@@ -366,10 +426,11 @@
         <div class="container">
             <h2 class="section-title">❓ Часто задаваемые вопросы</h2>
             <div class="faq-grid">
-                <div class="faq-item"><div class="faq-question">Кто такие 7 мудрецов? <span>+</span></div><div class="faq-answer">7 мудрецов — это хранители знаний 7 великих цивилизаций. Каждый передал ZUZ часть своей силы: мудрость, процветание, защиту, инновации, гармонию, силу и бессмертие.</div></div>
+                <div class="faq-item"><div class="faq-question">Кто такие 7 мудрецов? <span>+</span></div><div class="faq-answer">7 мудрецов — это хранители знаний 7 великих цивилизаций. Каждый передал ZUZ часть своей силы: мудрость, процветание, защиту, инновации, гармонию, силу и бессмертие. Чем больше ZUZ вы держите, тем выше ваш уровень мудреца.</div></div>
+                <div class="faq-item"><div class="faq-question">Как получить бонусы мудрецов? <span>+</span></div><div class="faq-answer">Бонусы начисляются автоматически в зависимости от количества ZUZ на вашем кошельке. Уровни: 1 000 ZUZ → +2% к стейкингу, 5 000 → +5%, 10 000 → +10%, 25 000 → +15%, 50 000 → +20%, 100 000 → +25%, 250 000 → +30% + NFT.</div></div>
                 <div class="faq-item"><div class="faq-question">Когда листинг на биржах? <span>+</span></div><div class="faq-answer">Листинг на DEX через 14 дней после пресейла. CEX — Q3 2026.</div></div>
-                <div class="faq-item"><div class="faq-question">Как получить бонусы мудрецов? <span>+</span></div><div class="faq-answer">Чем больше ZUZ вы держите или стейкаете, тем больше уровней мудрецов открывается. На максимальном уровне — доступ к закрытому сообществу и ZUZ Swap.</div></div>
-                <div class="faq-item"><div class="faq-question">Безопасен ли смарт-контракт? <span>+</span></div><div class="faq-answer">Да! Контракт ZUZ прошел аудит, код открыт.</div></div>
+                <div class="faq-item"><div class="faq-question">Безопасен ли смарт-контракт? <span>+</span></div><div class="faq-answer">Да! Контракт ZUZ прошел аудит, код открыт и верифицирован.</div></div>
+                <div class="faq-item"><div class="faq-question">Что такое ProofChain? <span>+</span></div><div class="faq-answer">ZUZCOIN ProofChain — наш собственный L1 блокчейн в разработке. Он обеспечит полную прозрачность донаций и децентрализованное управление.</div></div>
             </div>
         </div>
     </div>
@@ -378,7 +439,12 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo"><div class="coin-icon small">ZUZ</div><span>ZUZ Universe</span></div>
-                <div class="footer-social"><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-telegram"></i></a><a href="#"><i class="fab fa-discord"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div>
+                <div class="footer-social">
+                    <a href="#" id="twitterLink" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="#" id="telegramLink" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="#" id="discordLink" target="_blank"><i class="fab fa-discord"></i></a>
+                    <a href="#" id="youtubeLink" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
             </div>
             <div class="footer-bottom">© 2026 ZUZ Universe. 7 мудрецов ведут к истине. Криптовалюта — высокорисковый актив. Инвестируйте осознанно.</div>
         </div>
@@ -395,13 +461,31 @@
             {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
             {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
         ];
+        
+        const TOKEN_ABI = [
+            {"inputs":[],"name":"balanceOf","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+            {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}
+        ];
 
         let web3Instance = null;
         let currentAccount = null;
         let presaleContract = null;
+        let tokenContract = null;
         let isProcessing = false;
         let stageStartTime = 1774775487;
         let stageEndTime = 1788307200;
+        
+        // Уровни мудрецов
+        const sageLevels = [
+            { threshold: 0, name: "Новичок", badge: "🌱", bonus: 0, next: 1000 },
+            { threshold: 1000, name: "Мудрость", badge: "📜", bonus: 2, next: 5000 },
+            { threshold: 5000, name: "Процветание", badge: "🌾", bonus: 5, next: 10000 },
+            { threshold: 10000, name: "Защита", badge: "🛡️", bonus: 10, next: 25000 },
+            { threshold: 25000, name: "Инновации", badge: "⚡", bonus: 15, next: 50000 },
+            { threshold: 50000, name: "Гармония", badge: "☯️", bonus: 20, next: 100000 },
+            { threshold: 100000, name: "Сила", badge: "⚔️", bonus: 25, next: 250000 },
+            { threshold: 250000, name: "Бессмертие", badge: "👑", bonus: 30, next: Infinity }
+        ];
 
         function showNotification(msg, type) {
             const n = document.createElement('div');
@@ -434,7 +518,107 @@
             }
         }
 
-        // Mobile deep link detection
+        // Загрузка данных пресейла БЕЗ подключения кошелька
+        async function loadPresaleData() {
+            try {
+                const provider = new Web3.providers.HttpProvider('https://ethereum.publicnode.com');
+                const tempWeb3 = new Web3(provider);
+                const tempContract = new tempWeb3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                
+                const sold = await tempContract.methods.tokensSold().call();
+                const max = await tempContract.methods.maxTokensToSell().call();
+                
+                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+                const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+                const percent = (raisedETH / maxETH) * 100;
+                
+                document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+                
+                window.presaleData = { sold, max, raisedETH, percent };
+            } catch(e) {
+                console.error('Ошибка загрузки данных пресейла:', e);
+                document.getElementById('raisedAmount').innerHTML = '-- ETH';
+            }
+        }
+        
+        // Обновление данных после подключения
+        async function updatePresaleData() {
+            if (!presaleContract) return;
+            try {
+                const sold = await presaleContract.methods.tokensSold().call();
+                const max = await presaleContract.methods.maxTokensToSell().call();
+                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+                const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+                const percent = (raisedETH / maxETH) * 100;
+                document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            } catch(e) { console.error(e); }
+        }
+        
+        // Определение уровня мудреца по балансу
+        function getSageLevel(balance) {
+            for (let i = sageLevels.length - 1; i >= 0; i--) {
+                if (balance >= sageLevels[i].threshold) {
+                    return sageLevels[i];
+                }
+            }
+            return sageLevels[0];
+        }
+        
+        // Обновление UI уровня мудреца
+        async function updateSageLevel() {
+            if (!currentAccount || !tokenContract) return;
+            try {
+                const balanceWei = await tokenContract.methods.balanceOf(currentAccount).call();
+                const balance = Number(balanceWei) / 1e18;
+                const level = getSageLevel(balance);
+                
+                const previewDiv = document.getElementById('sagePreview');
+                previewDiv.style.display = 'block';
+                document.getElementById('sageBadge').innerHTML = level.badge;
+                document.getElementById('sageTitle').innerHTML = level.name;
+                document.getElementById('sageDesc').innerHTML = `Бонус к стейкингу: +${level.bonus}%`;
+                
+                let nextLevel = sageLevels.find(l => l.threshold > balance);
+                if (nextLevel) {
+                    const needed = nextLevel.threshold - balance;
+                    const percent = (balance / nextLevel.threshold) * 100;
+                    document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%';
+                    document.getElementById('sageNext').innerHTML = `До уровня "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`;
+                } else {
+                    document.getElementById('sageProgressFill').style.width = '100%';
+                    document.getElementById('sageNext').innerHTML = '🎉 Вы достигли высшего уровня!';
+                }
+            } catch(e) { console.error('Ошибка загрузки баланса:', e); }
+        }
+        
+        // Добавление токена в кошелек
+        async function addTokenToWallet() {
+            if (!window.ethereum) {
+                showNotification('Установите MetaMask', 'error');
+                return;
+            }
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: TOKEN_ADDRESS,
+                            symbol: 'ZUZ',
+                            decimals: 18,
+                            image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E'
+                        }
+                    }
+                });
+                showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success');
+            } catch(e) {
+                console.error(e);
+                showNotification('Ошибка добавления токена', 'error');
+            }
+        }
+
         function isMobile() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
@@ -447,9 +631,12 @@
                         currentAccount = accounts[0];
                         web3Instance = new Web3(window.ethereum);
                         presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
                         updateWalletUI();
                         showNotification('✅ MetaMask подключен', 'success');
-                        await loadPresaleData();
+                        await updatePresaleData();
+                        await updateSageLevel();
+                        document.getElementById('addTokenBtn').style.display = 'inline-block';
                     } catch(e) { showNotification('Ошибка подключения', 'error'); }
                 } else if (isMobile()) {
                     window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
@@ -465,9 +652,12 @@
                         currentAccount = accounts[0];
                         web3Instance = new Web3(window.ethereum);
                         presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
                         updateWalletUI();
                         showNotification('✅ Trust Wallet подключен', 'success');
-                        await loadPresaleData();
+                        await updatePresaleData();
+                        await updateSageLevel();
+                        document.getElementById('addTokenBtn').style.display = 'inline-block';
                     } catch(e) { showNotification('Ошибка подключения', 'error'); }
                 } else if (isMobile()) {
                     window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + window.location.host;
@@ -482,9 +672,12 @@
                         currentAccount = accounts[0];
                         web3Instance = new Web3(window.ethereum);
                         presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
                         updateWalletUI();
                         showNotification('✅ Coinbase Wallet подключен', 'success');
-                        await loadPresaleData();
+                        await updatePresaleData();
+                        await updateSageLevel();
+                        document.getElementById('addTokenBtn').style.display = 'inline-block';
                     } catch(e) { showNotification('Ошибка подключения', 'error'); }
                 } else if (isMobile()) {
                     window.location.href = 'https://go.cb-w.com/dapp?url=https://' + window.location.host;
@@ -519,7 +712,10 @@
             currentAccount = null;
             web3Instance = null;
             presaleContract = null;
+            tokenContract = null;
             updateWalletUI();
+            document.getElementById('sagePreview').style.display = 'none';
+            document.getElementById('addTokenBtn').style.display = 'none';
             showNotification('Кошелек отключен', 'info');
         }
 
@@ -527,19 +723,25 @@
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
         function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
         function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
-
-        async function loadPresaleData() {
-            if (!presaleContract) return;
-            try {
-                const sold = await presaleContract.methods.tokensSold().call();
-                const max = await presaleContract.methods.maxTokensToSell().call();
-                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-                const raisedUSD = raisedETH * 4000;
-                const maxUSD = (Number(max) * TOKEN_PRICE_ETH / 1e18) * 4000;
-                const percent = (raisedUSD / maxUSD) * 100;
-                document.getElementById('raisedAmount').innerText = `$${Math.round(raisedUSD).toLocaleString()}`;
-                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-            } catch(e) { console.error(e); }
+        function openSagesModal() { 
+            let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+            sageLevels.forEach(level => {
+                html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <div style="font-size: 28px;">${level.badge}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${level.name}</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">от ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% к стейкингу</div>
+                            </div>
+                        </div>`;
+            });
+            html += '</div>';
+            document.getElementById('sagesContent').innerHTML = html;
+            document.getElementById('sagesModal').style.display = 'flex';
+        }
+        function closeSagesModal() { document.getElementById('sagesModal').style.display = 'none'; }
+        
+        function toggleCollapsible() {
+            document.getElementById('proofchainCollapsible').classList.toggle('open');
         }
 
         async function buyTokens() {
@@ -561,7 +763,8 @@
                 showNotification(`✅ Куплено ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
                 document.getElementById('ethAmount').value = '';
                 document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
-                await loadPresaleData();
+                await updatePresaleData();
+                await updateSageLevel();
             } catch(e) {
                 let msg = e.message || 'Ошибка';
                 if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию';
@@ -592,6 +795,14 @@
             }
         }
 
+        // Социальные ссылки (временно пустые, ты добавишь адреса)
+        function setSocialLinks() {
+            document.getElementById('twitterLink').href = 'https://twitter.com/';
+            document.getElementById('telegramLink').href = 'https://t.me/';
+            document.getElementById('discordLink').href = 'https://discord.gg/';
+            document.getElementById('youtubeLink').href = 'https://youtube.com/';
+        }
+
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
@@ -600,15 +811,27 @@
         document.getElementById('buyBtn').onclick = buyTokens;
         document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
         document.getElementById('logoBtn').onclick = openIdeologyModal;
+        document.getElementById('addTokenBtn').onclick = addTokenToWallet;
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
         document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
         document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
+        document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
+        
+        // Клик по карточке мудрецов в разделе features
+        document.querySelectorAll('.feature-card').forEach(card => {
+            if (card.innerText.includes('7 Мудрецов')) {
+                card.style.cursor = 'pointer';
+                card.onclick = openSagesModal;
+            }
+        });
         
         createParticles();
         updateTimer();
         setInterval(updateTimer, 1000);
+        loadPresaleData(); // Загружаем данные сразу без кошелька
+        setSocialLinks();
         
         if (window.ethereum && window.ethereum.selectedAddress) {
             setTimeout(() => connectWallet('metamask'), 500);
