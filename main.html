@@ -19,7 +19,7 @@
             --border-color: #333333;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; position: relative; }
+        body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; position: relative; overflow-x: hidden; }
         body::before {
             content: '';
             position: fixed;
@@ -31,9 +31,69 @@
             pointer-events: none;
             z-index: 0;
         }
+        
+        /* ========== МАГИЧЕСКИЕ ЭФФЕКТЫ ========== */
+        .magic-dot {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: particle-fly 0.8s ease-out forwards;
+        }
+        @keyframes particle-fly {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0); opacity: 0; }
+        }
+        
+        /* Эффект молнии для кнопок */
+        .lightning-effect {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .lightning-effect:active {
+            animation: lightning-flash 0.2s ease-out;
+        }
+        @keyframes lightning-flash {
+            0% { box-shadow: 0 0 0px #fff; filter: brightness(1); }
+            50% { box-shadow: 0 0 30px #D4AF37; filter: brightness(1.5); }
+            100% { box-shadow: 0 0 0px #fff; filter: brightness(1); }
+        }
+        
+        /* Мистический туман */
+        .mist-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.2;
+            background: radial-gradient(circle at 20% 40%, rgba(212,175,55,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(255,215,0,0.1) 0%, transparent 50%);
+            animation: mistMove 20s ease-in-out infinite;
+        }
+        @keyframes mistMove {
+            0% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.05); }
+            100% { opacity: 0.1; transform: scale(1); }
+        }
+        
+        /* Карточки с огненным свечением при наведении */
+        .feature-card:hover, .token-item:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2);
+            border-color: var(--accent-gold);
+            background: radial-gradient(circle at center, rgba(212,175,55,0.1) 0%, var(--bg-card) 70%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-4px);
+        }
+        
         .gold-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
         .gold-particle { position: absolute; background: radial-gradient(circle, #ffd966, #b8860b); border-radius: 50%; opacity: 0.3; animation: floatParticle 10s infinite ease-in-out; }
         @keyframes floatParticle { 0%,100% { transform: translateY(0) translateX(0); opacity: 0.1; } 50% { transform: translateY(-50px) translateX(30px); opacity: 0.4; } }
+        
         .container, .navbar, .hero, .features, .tokenomics, .roadmap, .footer { position: relative; z-index: 1; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         .navbar { background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border-color); padding: 15px 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
@@ -87,17 +147,16 @@
         .section-title { font-size: 36px; text-align: center; margin-bottom: 50px; font-family: 'Poppins', sans-serif; }
         .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
         @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
-        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.4s; }
-        .feature-card:hover { transform: translateY(-8px); border-color: var(--accent-gold); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.4s; cursor: pointer; }
         .feature-icon { font-size: 48px; margin-bottom: 20px; }
         .feature-card h3 { margin-bottom: 15px; font-size: 20px; }
         .feature-card p { color: var(--text-secondary); font-size: 14px; }
         .tokenomics { padding: 80px 0; }
         .tokenomics-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
         @media (max-width: 768px) { .tokenomics-content { grid-template-columns: 1fr; } }
-        .pie-chart { width: 300px; height: 300px; border-radius: 50%; background: conic-gradient(#4CAF50 0% 30%, #2196F3 30% 60%, #FF9800 60% 80%, #9C27B0 80% 87.5%, #f44336 87.5% 100%); margin: 0 auto; }
+        .pie-chart { width: 300px; height: 300px; border-radius: 50%; background: conic-gradient(#4CAF50 0% 40%, #2196F3 40% 70%, #FF9800 70% 85%, #9C27B0 85% 95%, #f44336 95% 100%); margin: 0 auto; }
         .tokenomics-list { display: flex; flex-direction: column; gap: 15px; }
-        .token-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border-radius: 8px; }
+        .token-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border-radius: 8px; transition: all 0.3s; cursor: pointer; }
         .color-dot { width: 16px; height: 16px; border-radius: 4px; }
         .color-dot.presale { background: #4CAF50; }
         .color-dot.staking { background: #2196F3; }
@@ -118,20 +177,22 @@
         .trusted-logo { background: rgba(255,255,255,0.03); padding: 12px 28px; border-radius: 40px; font-weight: 600; color: var(--accent-gold); border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s; cursor: pointer; }
         .trusted-logo:hover { border-color: var(--accent-gold); transform: translateY(-3px); background: rgba(212,175,55,0.1); }
         .roadmap { padding: 80px 0; background: var(--bg-secondary); }
-        .roadmap-timeline { position: relative; max-width: 800px; margin: 0 auto; }
-        .roadmap-timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 2px; height: 100%; background: var(--border-color); }
+        .roadmap-timeline { position: relative; max-width: 900px; margin: 0 auto; }
+        .roadmap-timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 2px; height: 100%; background: linear-gradient(to bottom, var(--accent-gold), transparent); }
         @media (max-width: 768px) { .roadmap-timeline::before { left: 30px; } }
         .roadmap-phase { display: flex; justify-content: flex-end; padding: 20px 0; position: relative; width: 50%; }
         .roadmap-phase:nth-child(even) { margin-left: 50%; justify-content: flex-start; }
         @media (max-width: 768px) { .roadmap-phase { width: 100%; margin-left: 50px !important; justify-content: flex-start; } }
-        .phase-marker { width: 20px; height: 20px; background: var(--accent-gold); border: 4px solid var(--bg-primary); border-radius: 50%; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); }
+        .phase-marker { width: 20px; height: 20px; background: var(--accent-gold); border: 4px solid var(--bg-primary); border-radius: 50%; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); z-index: 2; }
         .roadmap-phase:nth-child(even) .phase-marker { left: -10px; right: auto; }
         @media (max-width: 768px) { .phase-marker { left: -30px !important; right: auto !important; } }
-        .roadmap-phase.completed .phase-marker { background: var(--accent-green); }
-        .roadmap-phase.active .phase-marker { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100% { box-shadow: 0 0 20px var(--accent-gold); } 50% { box-shadow: 0 0 40px var(--accent-gold); } }
-        .phase-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; width: 90%; }
+        .roadmap-phase.completed .phase-marker { background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+        .roadmap-phase.active .phase-marker { animation: pulse-glow 2s infinite; background: var(--accent-gold); }
+        @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 5px var(--accent-gold); } 50% { box-shadow: 0 0 20px var(--accent-gold); } }
+        .phase-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; width: 90%; transition: all 0.3s; }
+        .phase-content:hover { border-color: var(--accent-gold); transform: translateY(-3px); }
         .phase-content h4 { color: var(--accent-gold); margin-bottom: 10px; }
+        .phase-content p { color: var(--text-secondary); font-size: 14px; }
         .faq-section { padding: 80px 0; }
         .faq-grid { max-width: 800px; margin: 0 auto; }
         .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s; }
@@ -157,12 +218,27 @@
         .close-modal:hover { color: var(--accent-gold); }
         .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 8px; padding: 8px 16px; color: #ff6464; cursor: pointer; font-size: 12px; margin-left: 15px; transition: all 0.3s; }
         .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
-        .sage-level-card { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.3)); border-radius: 16px; padding: 20px; margin: 20px 0; text-align: center; }
-        .sage-badge { font-size: 32px; margin-bottom: 10px; }
-        .sage-title { font-size: 20px; font-weight: 700; color: var(--accent-gold); }
-        .sage-description { font-size: 12px; color: var(--text-secondary); margin: 10px 0; }
-        .sage-progress { background: #333; height: 8px; border-radius: 4px; margin: 10px 0; }
-        .sage-progress-fill { background: var(--accent-gold); height: 100%; border-radius: 4px; width: 0%; }
+        
+        /* Dashboard Алтарь */
+        .sage-level-card {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.4));
+            border: 1px solid var(--accent-gold);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        .sage-level-card:hover {
+            box-shadow: 0 0 25px rgba(212,175,55,0.3);
+            border-color: var(--accent-gold);
+        }
+        .sage-badge { font-size: 48px; margin-bottom: 10px; }
+        .sage-title { font-size: 24px; font-weight: 700; color: var(--accent-gold); }
+        .sage-description { font-size: 14px; color: var(--text-secondary); margin: 10px 0; }
+        .sage-progress { background: #333; height: 12px; border-radius: 6px; margin: 15px 0; overflow: hidden; }
+        .sage-progress-fill { background: linear-gradient(90deg, #D4AF37, #FFD700); height: 100%; border-radius: 6px; width: 0%; transition: width 0.3s ease; }
+        
         .collapsible { background: rgba(212,175,55,0.1); border-radius: 12px; margin: 20px 0; overflow: hidden; }
         .collapsible-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--accent-gold); }
         .collapsible-header:hover { background: rgba(212,175,55,0.2); }
@@ -195,19 +271,12 @@
             position: relative;
         }
         .wallet-option-item:hover {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(212, 175, 55, 0.15);
             border-color: var(--accent-gold);
             transform: translateY(-2px);
         }
-        .wallet-option-item img {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-        }
-        .wallet-option-item span {
-            font-size: 18px;
-            font-weight: 600;
-        }
+        .wallet-option-item img { width: 35px; height: 35px; object-fit: contain; }
+        .wallet-option-item span { font-size: 18px; font-weight: 600; }
         .wallet-badge {
             position: absolute;
             right: 15px;
@@ -218,18 +287,18 @@
             font-weight: 800;
             padding: 2px 8px;
             border-radius: 20px;
-            text-transform: uppercase;
         }
-        .wallet-subtext {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            display: block;
-        }
+        .wallet-subtext { font-size: 11px; color: var(--text-secondary); margin-top: 4px; display: block; }
+        
+        .action-btn { background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer; transition: all 0.3s; }
+        .action-btn:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
+        .functional-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
+    <div class="mist-container"></div>
     
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
@@ -313,12 +382,21 @@
                         </div>
                     </div>
                 </div>
-                <div id="sagePreview" class="sage-level-card" style="display: none;">
-                    <div class="sage-badge" id="sageBadge">🏛️</div>
-                    <div class="sage-title" id="sageTitle">Мудрость</div>
-                    <div class="sage-description" id="sageDesc">Держите ZUZ, чтобы открыть уровни мудрецов</div>
-                    <div class="sage-progress"><div class="sage-progress-fill" id="sageProgressFill" style="width: 0%"></div></div>
-                    <div id="sageNext" style="font-size: 12px; color: var(--text-secondary);"></div>
+                <div id="sageDashboard" class="sage-level-card" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <h3 style="color: var(--accent-gold); font-family: 'Poppins'; margin: 0;">Мой Алтарь</h3>
+                        <span id="currentSageBadge" style="font-size: 48px;">🌱</span>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span id="currentLevelName" style="font-weight: 700; font-size: 20px;">Новичок</span>
+                            <span id="nextLevelInfo" style="color: var(--text-secondary); font-size: 12px;">До "Мудрости": 1,000 ZUZ</span>
+                        </div>
+                        <div class="sage-progress"><div id="sageProgressFill" class="sage-progress-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div style="background: rgba(0,209,140,0.1); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                        <p style="font-size: 13px; margin: 0;"><i class="fas fa-bolt" style="color: var(--accent-green);"></i> Бонус к стейкингу: <strong id="currentBonus">+0%</strong></p>
+                    </div>
                 </div>
             </div>
             <div class="hero-right hero-video" style="margin-top: 10px;">
@@ -336,9 +414,9 @@
         <div class="container">
             <h2 class="section-title">Почему <span class="gradient-text">ZUZ</span>?</h2>
             <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon">🏛️</div><h3>7 Мудрецов</h3><p>Сила 7 великих цивилизаций. Чем больше ZUZ — тем выше ваш уровень.</p></div>
-                <div class="feature-card"><div class="feature-icon">💰</div><h3>Стейкинг 25% APY</h3><p>Пассивный доход. Бонусы растут с уровнем мудреца.</p></div>
-                <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Аудит + Безопасность</h3><p>Проверенный смарт-контракт. Код открыт.</p></div>
+                <div class="feature-card" onclick="openSagesModal()"><div class="feature-icon">🏛️</div><h3>7 Мудрецов</h3><p>Сила 7 великих цивилизаций. Чем больше ZUZ — тем выше ваш уровень.</p></div>
+                <div class="feature-card" onclick="openSagesModal()"><div class="feature-icon">💰</div><h3>Стейкинг 25% APY</h3><p>Пассивный доход. Бонусы растут с уровнем мудреца до +30%.</p></div>
+                <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Аудит + Безопасность</h3><p>Проверенный смарт-контракт. Команда в вестинге.</p></div>
             </div>
         </div>
     </div>
@@ -362,11 +440,11 @@
             <div class="tokenomics-content">
                 <div class="pie-chart"></div>
                 <div class="tokenomics-list">
-                    <div class="token-item"><div class="color-dot presale"></div><span class="token-label">Пресейл</span><span class="token-percent">30%</span><span class="token-amount">300M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot staking"></div><span class="token-label">Стейкинг & Награды</span><span class="token-percent">30%</span><span class="token-amount">300M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot marketing"></div><span class="token-label">Маркетинг</span><span class="token-percent">20%</span><span class="token-amount">200M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot dev"></div><span class="token-label">Команда (вестинг)</span><span class="token-percent">7.5%</span><span class="token-amount">75M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot liquidity"></div><span class="token-label">Ликвидность</span><span class="token-percent">12.5%</span><span class="token-amount">125M ZUZ</span></div>
+                    <div class="token-item"><div class="color-dot presale"></div><span class="token-label">Пресейл</span><span class="token-percent">40%</span><span class="token-amount">400M ZUZ</span></div>
+                    <div class="token-item"><div class="color-dot staking"></div><span class="token-label">Стейкинг & Награды</span><span class="token-percent">15%</span><span class="token-amount">150M ZUZ</span></div>
+                    <div class="token-item"><div class="color-dot marketing"></div><span class="token-label">Маркетинг</span><span class="token-percent">10%</span><span class="token-amount">100M ZUZ</span></div>
+                    <div class="token-item"><div class="color-dot dev"></div><span class="token-label">Команда (вестинг 12м)</span><span class="token-percent">5%</span><span class="token-amount">50M ZUZ</span></div>
+                    <div class="token-item"><div class="color-dot liquidity"></div><span class="token-label">Ликвидность (заблокирована)</span><span class="token-percent">30%</span><span class="token-amount">300M ZUZ</span></div>
                 </div>
             </div>
         </div>
@@ -389,9 +467,9 @@
                     <p style="color: var(--text-secondary);">🚀 Скоро — собственный L1 блокчейн ZUZ!</p>
                     <p style="font-size: 12px; color: var(--text-secondary);">Полная децентрализация, 1% донаций на благотворительность.</p>
                     <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/network-status', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">📊 Статус сети</button>
-                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">👛 ZUZ Wallet</button>
-                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer;">✨ Create Token</button>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/network-status', '_blank')">📊 Статус сети</button>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')">👛 ZUZ Wallet</button>
+                        <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')">✨ Create Token</button>
                     </div>
                 </div>
             </div>
@@ -400,24 +478,25 @@
     
     <div class="roadmap" id="roadmap">
         <div class="container">
-            <h2 class="section-title">Дорожная карта</h2>
+            <h2 class="section-title">🗺️ ПУТЬ СЕМИ МУДРЕЦОВ</h2>
             <div class="roadmap-timeline">
-                <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 1</h4><p>Запуск сайта, пресейл, аудит контракта</p></div></div>
-                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 2</h4><p>Листинг на DEX, запуск стейкинга, система мудрецов</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 3</h4><p>Листинг на CEX, маркетинговая кампания</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>Этап 4</h4><p>ZUZ Swap, мост в 7 сетей, запуск ProofChain</p></div></div>
+                <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>🌱 Фаза I: Пробуждение (Q1 2025)</h4><p>Сбор Совета: запуск сайта и соцсетей. Ритуал смарт-контракта: деплой $ZUZ и пресейла. Открытие врат для первых последователей.</p></div></div>
+                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>⚔️ Фаза II: Обретение Силы (Q2 2025)</h4><p>Великое Крещение: листинг на Uniswap, блокировка ликвидности. Алтарь Стейкинга: запуск платформы с бонусами за уровни. Листинг на CMC/CG.</p></div></div>
+                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>🌍 Фаза III: Гармония Миров (Q3-Q4 2025)</h4><p>Совет Старейшин (DAO): запуск голосования. Артефакты Мудрецов: NFT-коллекция с бонусами. Мосты Мудрости: кросс-чейн расширение.</p></div></div>
+                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>👑 Фаза IV: Бессмертие (2026+)</h4><p>Экосистема ZUZ: собственный Launchpad. Метавселенная: интеграция 7 Мудрецов. Вечное Хранение: полная децентрализация.</p></div></div>
             </div>
         </div>
     </div>
     
     <div class="faq-section" id="faq">
         <div class="container">
-            <h2 class="section-title">❓ Часто задаваемые вопросы</h2>
+            <h2 class="section-title">❓ Священное Писание (FAQ)</h2>
             <div class="faq-grid">
-                <div class="faq-item"><div class="faq-question">Кто такие 7 мудрецов? <span>+</span></div><div class="faq-answer">7 мудрецов — хранители знаний 7 великих цивилизаций. Чем больше ZUZ, тем выше уровень мудреца.</div></div>
-                <div class="faq-item"><div class="faq-question">Как получить бонусы мудрецов? <span>+</span></div><div class="faq-answer">Автоматически: 1 000 ZUZ → +2%, 5 000 → +5%, 10 000 → +10%, 25 000 → +15%, 50 000 → +20%, 100 000 → +25%, 250 000 → +30% + NFT.</div></div>
-                <div class="faq-item"><div class="faq-question">Когда листинг на биржах? <span>+</span></div><div class="faq-answer">Листинг на DEX через 14 дней после пресейла. CEX — Q3 2026.</div></div>
-                <div class="faq-item"><div class="faq-question">Безопасен ли смарт-контракт? <span>+</span></div><div class="faq-answer">Да! Контракт прошел аудит, код открыт.</div></div>
+                <div class="faq-item"><div class="faq-question">Куда уходят деньги с пресейла? <span>+</span></div><div class="faq-answer">80% средств идут на создание ликвидности на DEX (Uniswap/PancakeSwap). 15% — на маркетинг и развитие экосистемы. 5% — на развитие ProofChain. Команда получит токены только через 12 месяцев вестинга.</div></div>
+                <div class="faq-item"><div class="faq-question">Когда я получу токены после покупки? <span>+</span></div><div class="faq-answer">Мгновенно! После подтверждения транзакции ZUZ появляются в вашем кошельке. Вы можете сразу использовать их для стейкинга или держать.</div></div>
+                <div class="faq-item"><div class="faq-question">Что такое бонусы мудрецов и как их получить? <span>+</span></div><div class="faq-answer">Автоматически! Чем больше ZUZ на вашем балансе, тем выше уровень: 1 000 ZUZ → +2%, 5 000 → +5%, 10 000 → +10%, 25 000 → +15%, 50 000 → +20%, 100 000 → +25%, 250 000 → +30% + NFT.</div></div>
+                <div class="faq-item"><div class="faq-question">Безопасен ли контракт? Кто его проверял? <span>+</span></div><div class="faq-answer">Да! Контракт ZUZ прошел аудит. Код открыт и верифицирован. Токены команды заморожены на 12 месяцев, ликвидность будет заблокирована на 2 года.</div></div>
+                <div class="faq-item"><div class="faq-question">Что такое ProofChain и зачем он нужен? <span>+</span></div><div class="faq-answer">Наш собственный L1 блокчейн. Он обеспечит прозрачность донаций (1% от каждой транзакции), снизит комиссии и даст полную децентрализацию экосистемы ZUZ.</div></div>
             </div>
         </div>
     </div>
@@ -454,17 +533,56 @@
         let stageStartTime = 1774775487;
         let stageEndTime = 1788307200;
         
-        // ========== УРОВНИ МУДРЕЦОВ ==========
+        // Уровни мудрецов
         const sageLevels = [
-            { threshold: 0, name: "Новичок", badge: "🌱", bonus: 0 },
-            { threshold: 1000, name: "Мудрость", badge: "📜", bonus: 2 },
-            { threshold: 5000, name: "Процветание", badge: "🌾", bonus: 5 },
-            { threshold: 10000, name: "Защита", badge: "🛡️", bonus: 10 },
-            { threshold: 25000, name: "Инновации", badge: "⚡", bonus: 15 },
-            { threshold: 50000, name: "Гармония", badge: "☯️", bonus: 20 },
-            { threshold: 100000, name: "Сила", badge: "⚔️", bonus: 25 },
-            { threshold: 250000, name: "Бессмертие", badge: "👑", bonus: 30 }
+            { threshold: 0, name: "Новичок", badge: "🌱", bonus: 0, next: 1000 },
+            { threshold: 1000, name: "Мудрость", badge: "📜", bonus: 2, next: 5000 },
+            { threshold: 5000, name: "Процветание", badge: "🌾", bonus: 5, next: 10000 },
+            { threshold: 10000, name: "Защита", badge: "🛡️", bonus: 10, next: 25000 },
+            { threshold: 25000, name: "Инновации", badge: "⚡", bonus: 15, next: 50000 },
+            { threshold: 50000, name: "Гармония", badge: "☯️", bonus: 20, next: 100000 },
+            { threshold: 100000, name: "Сила", badge: "⚔️", bonus: 25, next: 250000 },
+            { threshold: 250000, name: "Бессмертие", badge: "👑", bonus: 30, next: Infinity }
         ];
+        
+        // ========== МАГИЧЕСКИЕ ЭФФЕКТЫ ==========
+        function spawnMagic(e) {
+            const amount = 12;
+            const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#FF4500'];
+            for (let i = 0; i < amount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'magic-dot';
+                dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.random() * 5 + 2;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.left = `${e.clientX}px`;
+                dot.style.top = `${e.clientY}px`;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 100 + 50;
+                dot.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
+                dot.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
+                document.body.appendChild(dot);
+                setTimeout(() => dot.remove(), 800);
+            }
+        }
+        
+        function playMagicSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch(e) { console.log('Audio not supported'); }
+        }
         
         // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
         function showNotification(msg, type) {
@@ -500,124 +618,63 @@
         
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
-    // Список надежных публичных RPC для Ethereum Mainnet
-    const rpcList = [
-        'https://rpc.ankr.com/eth',      // Ankr
-        'https://ethereum.publicnode.com', // PublicNode
-        'https://eth.drpc.org',          // dRPC
-        'https://cloudflare-eth.com'     // Cloudflare (запасной)
-    ];
-
-    // ABI для запроса данных
-    const presaleABI = [
-        {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-        {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-    ];
-
-    // Перебираем RPC, пока не получим данные
-    for (const rpc of rpcList) {
-        try {
-            const web3 = new Web3(rpc);
-            const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
-            
-            const [sold, max] = await Promise.all([
-                contract.methods.tokensSold().call(),
-                contract.methods.maxTokensToSell().call()
-            ]);
-            
-            const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-            const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-            const percent = (raisedETH / maxETH) * 100;
-            
-            document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-            
-            console.log(`✅ Баланс загружен через ${rpc}:`, raisedETH, 'ETH');
-            return; // Если всё успешно, выходим из функции
-        } catch (error) {
-            console.warn(`❌ RPC ${rpc} не работает:`, error.message);
-            // Если это был последний RPC, показываем прочерки
-            if (rpc === rpcList[rpcList.length - 1]) {
-                document.getElementById('raisedAmount').innerHTML = '-- ETH';
-                console.error('Все RPC недоступны');
+            const rpcList = ['https://rpc.ankr.com/eth', 'https://ethereum.publicnode.com', 'https://eth.drpc.org', 'https://cloudflare-eth.com'];
+            const presaleABI = [{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
+            for (const rpc of rpcList) {
+                try {
+                    const web3 = new Web3(rpc);
+                    const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
+                    const [sold, max] = await Promise.all([contract.methods.tokensSold().call(), contract.methods.maxTokensToSell().call()]);
+                    const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+                    const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+                    const percent = (raisedETH / maxETH) * 100;
+                    document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+                    document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+                    console.log(`✅ Баланс загружен: ${raisedETH} ETH`);
+                    return;
+                } catch(e) { console.warn(`RPC ${rpc} не работает`); }
             }
+            document.getElementById('raisedAmount').innerHTML = '-- ETH';
         }
-    }
-}
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
         async function connectMetaMask() {
             closeWalletModal();
-            
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    // Принудительный выбор аккаунта
                     try {
-                        await window.ethereum.request({
-                            method: 'wallet_requestPermissions',
-                            params: [{ eth_accounts: {} }]
-                        });
-                    } catch (permError) {
-                        if (permError.code === 4001) {
-                            showNotification("Выбор аккаунта отменен", "info");
-                            return;
-                        }
-                    }
-                    
+                        await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+                    } catch(e) { if (e.code === 4001) { showNotification("Выбор аккаунта отменен", "info"); return; } }
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     currentAccount = accounts[0];
                     const web3 = new Web3(window.ethereum);
-                    
                     presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
                     tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
-                    
                     updateUI(currentAccount);
                     showNotification(`✅ Кошелек подключен: ${currentAccount.substring(0,6)}...`, 'success');
-                    
                     await loadPresaleData();
-                    await loadTokenBalance(web3, currentAccount);
-                    
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) disconnectWallet();
-                        else window.location.reload();
-                    });
-                    
-                } catch(e) {
-                    console.error(e);
-                    showNotification("Ошибка подключения", "error");
-                }
+                    await updateSageDashboard();
+                    window.ethereum.on('accountsChanged', (accounts) => { if (accounts.length === 0) disconnectWallet(); else window.location.reload(); });
+                } catch(e) { showNotification("Ошибка подключения", "error"); }
             } else {
                 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile) {
-                    const dappUrl = window.location.href.replace(/https?:\/\//, "");
-                    window.open(`https://metamask.app.link/dapp/${dappUrl}`, '_blank');
-                } else {
-                    alert("Установите MetaMask!");
-                    window.open('https://metamask.io/download/', '_blank');
-                }
+                if (isMobile) window.open(`https://metamask.app.link/dapp/${window.location.href.replace(/https?:\/\//, "")}`, '_blank');
+                else { alert("Установите MetaMask!"); window.open('https://metamask.io/download/', '_blank'); }
             }
         }
         
-        // ========== TRUST WALLET DEEP LINK ==========
         function openTrustWallet() {
             closeWalletModal();
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (isMobile) {
-                const dappUrl = window.location.href.replace(/https?:\/\//, "");
-                window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${dappUrl}`;
-            } else {
-                showNotification("Trust Wallet доступен только на телефоне", "info");
-            }
+            if (isMobile) window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${window.location.href.replace(/https?:\/\//, "")}`;
+            else showNotification("Trust Wallet доступен только на телефоне", "info");
         }
         
         function updateUI(address) {
             const connectBtn = document.getElementById('connectBtn');
             if (connectBtn) {
-                const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-                connectBtn.innerHTML = `<i class="fas fa-wallet"></i> ${shortAddress}`;
+                connectBtn.innerHTML = `<i class="fas fa-wallet"></i> ${address.substring(0,6)}...${address.substring(38)}`;
                 connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
-                connectBtn.style.color = "black";
-                
                 if (!document.querySelector('.disconnect-btn')) {
                     const dbtn = document.createElement('button');
                     dbtn.className = 'disconnect-btn';
@@ -632,65 +689,93 @@
             currentAccount = null;
             presaleContract = null;
             tokenContract = null;
-            
             const connectBtn = document.getElementById('connectBtn');
             connectBtn.innerHTML = '<i class="fas fa-wallet"></i> ПОДКЛЮЧИТЬ КОШЕЛЕК';
             connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
-            connectBtn.style.color = "black";
-            
             const dbtn = document.querySelector('.disconnect-btn');
             if (dbtn) dbtn.remove();
-            
-            document.getElementById('sagePreview').style.display = 'none';
-            document.getElementById('raisedAmount').innerHTML = '-- ETH';
-            document.getElementById('progressFill').style.width = '0%';
-            
+            document.getElementById('sageDashboard').style.display = 'none';
             showNotification('Кошелек отключен', 'info');
         }
         
-        async function loadTokenBalance(web3, address) {
-            if (!tokenContract) return;
+        // ========== DASHBOARD МУДРЕЦА ==========
+        async function updateSageDashboard() {
+            if (!currentAccount || !tokenContract) return;
             try {
-                const balanceWei = await tokenContract.methods.balanceOf(address).call();
+                const balanceWei = await tokenContract.methods.balanceOf(currentAccount).call();
                 const balance = Number(balanceWei) / 1e18;
-                updateSageLevel(balance);
-            } catch(e) {
-                console.error('Ошибка загрузки баланса:', e);
-            }
+                let level = sageLevels[0];
+                for (let i = sageLevels.length - 1; i >= 0; i--) {
+                    if (balance >= sageLevels[i].threshold) { level = sageLevels[i]; break; }
+                }
+                const dashboard = document.getElementById('sageDashboard');
+                dashboard.style.display = 'block';
+                document.getElementById('currentSageBadge').innerHTML = level.badge;
+                document.getElementById('currentLevelName').innerHTML = level.name;
+                document.getElementById('currentBonus').innerHTML = `+${level.bonus}%`;
+                let nextLevel = sageLevels.find(l => l.threshold > balance);
+                if (nextLevel) {
+                    const needed = nextLevel.threshold - balance;
+                    const percent = (balance / nextLevel.threshold) * 100;
+                    document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%';
+                    document.getElementById('nextLevelInfo').innerHTML = `До "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`;
+                } else {
+                    document.getElementById('sageProgressFill').style.width = '100%';
+                    document.getElementById('nextLevelInfo').innerHTML = '🎉 Вы достигли Бессмертия!';
+                }
+            } catch(e) { console.error(e); }
         }
         
-        function updateSageLevel(balance) {
-            let level = sageLevels[0];
-            for (let i = sageLevels.length - 1; i >= 0; i--) {
-                if (balance >= sageLevels[i].threshold) {
-                    level = sageLevels[i];
-                    break;
-                }
+        // Обновление прогресса при вводе суммы
+        document.getElementById('ethAmount').addEventListener('input', () => {
+            const val = parseFloat(document.getElementById('ethAmount').value) || 0;
+            const tokens = val / TOKEN_PRICE_ETH;
+            document.getElementById('tokenAmountDisplay').textContent = `${tokens.toLocaleString()} ZUZ`;
+            if (currentAccount) {
+                updateSageDashboard();
             }
-            
-            const previewDiv = document.getElementById('sagePreview');
-            previewDiv.style.display = 'block';
-            document.getElementById('sageBadge').innerHTML = level.badge;
-            document.getElementById('sageTitle').innerHTML = level.name;
-            document.getElementById('sageDesc').innerHTML = `Бонус к стейкингу: +${level.bonus}%`;
-            
-            let nextLevel = sageLevels.find(l => l.threshold > balance);
-            if (nextLevel) {
-                const needed = nextLevel.threshold - balance;
-                const percent = (balance / nextLevel.threshold) * 100;
-                document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%';
-                document.getElementById('sageNext').innerHTML = `До "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`;
-            } else {
-                document.getElementById('sageProgressFill').style.width = '100%';
-                document.getElementById('sageNext').innerHTML = '🎉 Вы достигли высшего уровня!';
+        });
+        
+        // ========== ПОКУПКА ТОКЕНОВ ==========
+        async function buyTokens() {
+            if (!presaleContract) { showNotification('Сначала подключите кошелек', 'error'); openWalletModal(); return; }
+            const ethAmount = parseFloat(document.getElementById('ethAmount').value || 0);
+            if (!document.getElementById('acceptTerms').checked) { showNotification('Примите условия', 'error'); return; }
+            if (ethAmount < 0.01) { showNotification('Минимальная покупка 0.01 ETH', 'error'); return; }
+            if (isProcessing) return;
+            const now = Math.floor(Date.now() / 1000);
+            if (now < stageStartTime) { showNotification('Продажа еще не началась', 'info'); return; }
+            if (now > stageEndTime) { showNotification('Продажа завершена', 'error'); return; }
+            isProcessing = true;
+            const btn = document.getElementById('buyBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ ОТПРАВКА...';
+            try {
+                const web3 = new Web3(window.ethereum);
+                const weiAmount = web3.utils.toWei(ethAmount.toString(), 'ether');
+                const accounts = await web3.eth.getAccounts();
+                await presaleContract.methods.buyTokens().send({ from: accounts[0], value: weiAmount, gas: 300000 });
+                showNotification(`✅ Куплено ${(ethAmount / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
+                playMagicSound();
+                document.getElementById('ethAmount').value = '';
+                document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
+                await loadPresaleData();
+                await updateSageDashboard();
+            } catch(e) {
+                let msg = e.message || 'Ошибка';
+                if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию';
+                else if (msg.includes('insufficient funds')) msg = 'Недостаточно ETH';
+                else if (msg.includes('execution reverted')) msg = 'Ошибка контракта';
+                showNotification(msg, 'error');
+            } finally {
+                isProcessing = false;
+                btn.disabled = false;
+                btn.textContent = 'КУПИТЬ ZUZ';
             }
         }
         
         async function addTokenToWallet() {
-            if (!window.ethereum) {
-                showNotification('Подключите кошелек', 'error');
-                return;
-            }
+            if (!window.ethereum) { showNotification('Подключите кошелек', 'error'); return; }
             try {
                 await window.ethereum.request({
                     method: 'wallet_watchAsset',
@@ -705,74 +790,7 @@
                     }
                 });
                 showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success');
-            } catch(e) {
-                showNotification('Ошибка добавления токена', 'error');
-            }
-        }
-        
-        async function buyTokens() {
-            if (!presaleContract) {
-                showNotification('Сначала подключите кошелек', 'error');
-                openWalletModal();
-                return;
-            }
-            
-            const ethAmount = parseFloat(document.getElementById('ethAmount').value || 0);
-            if (!document.getElementById('acceptTerms').checked) {
-                showNotification('Примите условия', 'error');
-                return;
-            }
-            if (ethAmount < 0.01) {
-                showNotification('Минимальная покупка 0.01 ETH', 'error');
-                return;
-            }
-            if (isProcessing) return;
-            
-            const now = Math.floor(Date.now() / 1000);
-            if (now < stageStartTime) {
-                showNotification('Продажа еще не началась', 'info');
-                return;
-            }
-            if (now > stageEndTime) {
-                showNotification('Продажа завершена', 'error');
-                return;
-            }
-            
-            isProcessing = true;
-            const btn = document.getElementById('buyBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ ОТПРАВКА...';
-            
-            try {
-                const web3 = new Web3(window.ethereum);
-                const weiAmount = web3.utils.toWei(ethAmount.toString(), 'ether');
-                const accounts = await web3.eth.getAccounts();
-                
-                await presaleContract.methods.buyTokens().send({
-                    from: accounts[0],
-                    value: weiAmount,
-                    gas: 300000
-                });
-                
-                showNotification(`✅ Куплено ${(ethAmount / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
-                document.getElementById('ethAmount').value = '';
-                document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
-                
-                await loadPresaleData();
-                await loadTokenBalance(web3, accounts[0]);
-                
-            } catch(e) {
-                console.error(e);
-                let msg = e.message || 'Ошибка';
-                if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию';
-                else if (msg.includes('insufficient funds')) msg = 'Недостаточно ETH';
-                else if (msg.includes('execution reverted')) msg = 'Ошибка контракта';
-                showNotification(msg, 'error');
-            } finally {
-                isProcessing = false;
-                btn.disabled = false;
-                btn.textContent = 'КУПИТЬ ZUZ';
-            }
+            } catch(e) { showNotification('Ошибка добавления токена', 'error'); }
         }
         
         // ========== МОДАЛКИ ==========
@@ -785,10 +803,7 @@
             sageLevels.forEach(level => {
                 html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
                             <div style="font-size: 28px;">${level.badge}</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600;">${level.name}</div>
-                                <div style="font-size: 12px; color: var(--text-secondary);">от ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% к стейкингу</div>
-                            </div>
+                            <div style="flex: 1;"><div style="font-weight: 600;">${level.name}</div><div style="font-size: 12px; color: var(--text-secondary);">от ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% к стейкингу</div></div>
                         </div>`;
             });
             html += '</div>';
@@ -822,17 +837,15 @@
             document.getElementById('youtubeLink').href = 'https://youtube.com/';
         }
         
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        document.getElementById('ethAmount').addEventListener('input', () => {
-            const val = parseFloat(document.getElementById('ethAmount').value) || 0;
-            document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
+        // Магия при кликах
+        document.addEventListener('mousedown', (e) => {
+            if (e.target.closest('button') || e.target.closest('.feature-card') || e.target.closest('.token-item')) {
+                spawnMagic(e);
+                if (navigator.vibrate) navigator.vibrate(10);
+            }
         });
         
-        document.getElementById('connectBtn').onclick = () => {
-            if (currentAccount) disconnectWallet();
-            else openWalletModal();
-        };
-        
+        document.getElementById('connectBtn').onclick = () => { if (currentAccount) disconnectWallet(); else openWalletModal(); };
         document.getElementById('buyBtn').onclick = buyTokens;
         document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
         document.getElementById('logoBtn').onclick = openIdeologyModal;
@@ -842,33 +855,22 @@
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
         
-        document.getElementById('walletModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('walletModal')) closeWalletModal();
-        });
-        document.getElementById('ideologyModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal();
-        });
-        document.getElementById('sagesModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('sagesModal')) closeSagesModal();
-        });
-        
-        document.querySelectorAll('.feature-card').forEach(card => {
-            if (card.innerText.includes('7 Мудрецов')) {
-                card.style.cursor = 'pointer';
-                card.onclick = openSagesModal;
-            }
-        });
+        document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
+        document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
+        document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
         
         createParticles();
         updateTimer();
         setInterval(updateTimer, 1000);
         setSocialLinks();
-        
         loadPresaleData();
         
         if (window.ethereum && window.ethereum.selectedAddress) {
             setTimeout(() => connectMetaMask(), 500);
         }
+        
+        // Добавляем класс молнии кнопкам
+        document.querySelectorAll('button').forEach(btn => btn.classList.add('lightning-effect'));
     </script>
 </body>
 </html>
