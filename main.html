@@ -6,10 +6,7 @@
     <title>ZUZ Universe — 7 мудрецов</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Web3.js -->
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-    <!-- WalletConnect 2.0 (загружаем через скрипт, а не динамический import) -->
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.min.js"></script>
     <style>
         :root {
             --bg-primary: #0A0A0A;
@@ -234,7 +231,6 @@
 <body>
     <div class="gold-particles" id="goldParticles"></div>
     
-    <!-- Модальное окно выбора кошелька -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -568,27 +564,16 @@
             }
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ WALLETCONNECT 2.0 ==========
+        // ========== ПОДКЛЮЧЕНИЕ WALLETCONNECT 2.0 (динамический импорт) ==========
         async function connectWalletConnect() {
             closeWalletModal();
-            showNotification("Открываем WalletConnect...", "info");
+            showNotification("Загрузка WalletConnect...", "info");
             
             try {
-                // Проверяем, загружена ли библиотека
-                if (typeof window.WalletConnectProvider === 'undefined') {
-                    showNotification("Загрузка WalletConnect...", "info");
-                    await new Promise((resolve) => {
-                        const check = setInterval(() => {
-                            if (typeof window.WalletConnectProvider !== 'undefined') {
-                                clearInterval(check);
-                                resolve();
-                            }
-                        }, 100);
-                        setTimeout(resolve, 5000);
-                    });
-                }
+                // Динамический импорт ESM-модуля
+                const { EthereumProvider } = await import('https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.min.js');
                 
-                const provider = await window.WalletConnectProvider.init({
+                const provider = await EthereumProvider.init({
                     projectId: WALLETCONNECT_PROJECT_ID,
                     chains: [1],
                     methods: ['eth_sendTransaction', 'eth_sign'],
@@ -627,11 +612,7 @@
                 
             } catch (e) {
                 console.error("WalletConnect ошибка:", e);
-                if (e.message && e.message.includes("User closed modal")) {
-                    showNotification("Подключение отменено", "info");
-                } else {
-                    showNotification("Ошибка WalletConnect. Попробуйте MetaMask.", "error");
-                }
+                showNotification("Ошибка WalletConnect. Попробуйте MetaMask.", "error");
             }
         }
         
