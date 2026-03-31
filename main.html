@@ -618,24 +618,65 @@
         
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
-            const rpcList = ['https://rpc.ankr.com/eth', 'https://ethereum.publicnode.com', 'https://eth.drpc.org', 'https://cloudflare-eth.com'];
-            const presaleABI = [{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
-            for (const rpc of rpcList) {
-                try {
-                    const web3 = new Web3(rpc);
-                    const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
-                    const [sold, max] = await Promise.all([contract.methods.tokensSold().call(), contract.methods.maxTokensToSell().call()]);
-                    const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-                    const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-                    const percent = (raisedETH / maxETH) * 100;
-                    document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-                    document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-                    console.log(`✅ Баланс загружен: ${raisedETH} ETH`);
-                    return;
-                } catch(e) { console.warn(`RPC ${rpc} не работает`); }
-            }
-            document.getElementById('raisedAmount').innerHTML = '-- ETH';
+    const rpcList = [
+        'https://rpc.ankr.com/eth',
+        'https://ethereum.publicnode.com',
+        'https://eth.drpc.org',
+        'https://cloudflare-eth.com'
+    ];
+    
+    // Сигнатуры функций
+    const tokensSoldSig = '0x240a3cb4';  // tokensSold()
+    const maxTokensToSellSig = '0xa9c55b38';  // maxTokensToSell()
+    
+    for (const rpc of rpcList) {
+        try {
+            // Запрос tokensSold
+            const soldResponse = await fetch(rpc, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'eth_call',
+                    params: [{ to: PRESALE_ADDRESS, data: tokensSoldSig }, 'latest'],
+                    id: 1
+                })
+            });
+            const soldData = await soldResponse.json();
+            if (soldData.error) throw new Error(soldData.error.message);
+            const sold = parseInt(soldData.result, 16);
+            
+            // Запрос maxTokensToSell
+            const maxResponse = await fetch(rpc, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'eth_call',
+                    params: [{ to: PRESALE_ADDRESS, data: maxTokensToSellSig }, 'latest'],
+                    id: 2
+                })
+            });
+            const maxData = await maxResponse.json();
+            if (maxData.error) throw new Error(maxData.error.message);
+            const max = parseInt(maxData.result, 16);
+            
+            const raisedETH = (sold * TOKEN_PRICE_ETH) / 1e18;
+            const maxETH = (max * TOKEN_PRICE_ETH) / 1e18;
+            const percent = (raisedETH / maxETH) * 100;
+            
+            document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            console.log(`✅ Баланс загружен через ${rpc}: ${raisedETH} ETH`);
+            return;
+        } catch(e) {
+            console.warn(`RPC ${rpc} не работает:`, e.message);
         }
+    }
+    
+    document.getElementById('raisedAmount').innerHTML = '-- ETH';
+    console.error('Все RPC недоступны');
+}
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
         async function connectMetaMask() {
