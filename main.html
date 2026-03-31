@@ -500,27 +500,48 @@
         
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
-    try {
-        const web3 = new Web3('https://cloudflare-eth.com');
-        const contract = new web3.eth.Contract([
-            {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-        ], PRESALE_ADDRESS);
-        
-        const sold = await contract.methods.tokensSold().call();
-        const max = await contract.methods.maxTokensToSell().call();
-        
-        const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-        const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-        const percent = (raisedETH / maxETH) * 100;
-        
-        document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-        document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-        
-        console.log('✅ Баланс загружен:', raisedETH, 'ETH');
-    } catch(e) {
-        console.error('Ошибка загрузки баланса:', e);
-        document.getElementById('raisedAmount').innerHTML = '-- ETH';
+    // Список надежных публичных RPC для Ethereum Mainnet
+    const rpcList = [
+        'https://rpc.ankr.com/eth',      // Ankr
+        'https://ethereum.publicnode.com', // PublicNode
+        'https://eth.drpc.org',          // dRPC
+        'https://cloudflare-eth.com'     // Cloudflare (запасной)
+    ];
+
+    // ABI для запроса данных
+    const presaleABI = [
+        {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+    ];
+
+    // Перебираем RPC, пока не получим данные
+    for (const rpc of rpcList) {
+        try {
+            const web3 = new Web3(rpc);
+            const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
+            
+            const [sold, max] = await Promise.all([
+                contract.methods.tokensSold().call(),
+                contract.methods.maxTokensToSell().call()
+            ]);
+            
+            const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+            const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+            const percent = (raisedETH / maxETH) * 100;
+            
+            document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            
+            console.log(`✅ Баланс загружен через ${rpc}:`, raisedETH, 'ETH');
+            return; // Если всё успешно, выходим из функции
+        } catch (error) {
+            console.warn(`❌ RPC ${rpc} не работает:`, error.message);
+            // Если это был последний RPC, показываем прочерки
+            if (rpc === rpcList[rpcList.length - 1]) {
+                document.getElementById('raisedAmount').innerHTML = '-- ETH';
+                console.error('Все RPC недоступны');
+            }
+        }
     }
 }
         
