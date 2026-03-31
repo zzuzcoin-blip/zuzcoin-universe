@@ -507,54 +507,47 @@
         }
         
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА (РАБОТАЕТ БЕЗ КОШЕЛЬКА) ==========
-        async function loadPresaleData(web3Instance) {
-            const web3 = web3Instance || new Web3('https://eth.llamarpc.com');
-            try {
-                const contract = new web3.eth.Contract([
-                    {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-                    {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-                ], PRESALE_ADDRESS);
-                
-                const sold = await contract.methods.tokensSold().call();
-                const max = await contract.methods.maxTokensToSell().call();
-                
-                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-                const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-                const percent = (raisedETH / maxETH) * 100;
-                
-                document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-            } catch(e) {
-                console.error('Ошибка загрузки данных пресейла:', e);
-                document.getElementById('raisedAmount').innerHTML = '-- ETH';
-            }
-        }
-        
-        // ========== ИНИЦИАЛИЗАЦИЯ WEB3 ПОСЛЕ ПОДКЛЮЧЕНИЯ ==========
-        async function initWeb3(provider, accounts) {
+        async function loadPresaleData() {
+    // Список надежных RPC с поддержкой CORS
+    const rpcList = [
+        'https://rpc.ankr.com/eth',
+        'https://cloudflare-eth.com',
+        'https://ethereum.publicnode.com',
+        'https://eth.drpc.org'
+    ];
+    
+    const presaleABI = [
+        {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+    ];
+    
+    for (const rpc of rpcList) {
+        try {
+            const provider = new Web3.providers.HttpProvider(rpc, { timeout: 10000 });
             const web3 = new Web3(provider);
-            currentAccount = accounts[0];
+            const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
             
-            presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
-            tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+            const [sold, max] = await Promise.all([
+                contract.methods.tokensSold().call(),
+                contract.methods.maxTokensToSell().call()
+            ]);
             
-            updateUI(currentAccount);
-            showNotification(`✅ Успешно: ${currentAccount.substring(0,6)}...`, "success");
+            const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+            const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+            const percent = (raisedETH / maxETH) * 100;
             
-            await loadPresaleData(web3);
-            await loadTokenBalance(web3, currentAccount);
+            document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            console.log(`✅ Данные пресейла загружены через ${rpc}`);
+            return;
+        } catch(e) {
+            console.log(`❌ RPC ${rpc} не работает:`, e.message);
         }
-        
-        async function loadTokenBalance(web3, address) {
-            if (!tokenContract) return;
-            try {
-                const balanceWei = await tokenContract.methods.balanceOf(address).call();
-                const balance = Number(balanceWei) / 1e18;
-                updateSageLevel(balance);
-            } catch(e) {
-                console.error('Ошибка загрузки баланса:', e);
-            }
-        }
+    }
+    
+    document.getElementById('raisedAmount').innerHTML = '-- ETH';
+    console.error('Все RPC недоступны');
+}
         
         function updateSageLevel(balance) {
             let level = sageLevels[0];
