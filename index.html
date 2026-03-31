@@ -2,14 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>ZUZ Universe — 7 мудрецов</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Web3 + WalletConnect -->
     <script src="https://cdn.jsdelivr.net/npm/web3@4.4.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3wallet@1.12.0/dist/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.11/dist/index.js"></script>
     <style>
         :root {
             --bg-primary: #0A0A0A;
@@ -43,8 +40,9 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         .navbar { background: rgba(10,10,10,0.95); border-bottom: 1px solid var(--border-color); padding: 15px 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
         .navbar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .logo { display: flex; align-items: center; gap: 15px; }
-        .coin-icon { width: 50px; height: 50px; background: #000; border: 2px solid var(--accent-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-gold); font-size: 28px; font-weight: 900; }
+        .logo { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .coin-icon { width: 50px; height: 50px; background: #000; border: 2px solid var(--accent-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-gold); font-size: 28px; font-weight: 900; transition: all 0.3s; }
+        .coin-icon:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212,175,55,0.5); }
         .coin-icon.small { width: 30px; height: 30px; font-size: 16px; }
         .logo-text { display: flex; flex-direction: column; }
         .logo-main { font-size: 22px; font-weight: 800; font-family: 'Poppins', sans-serif; color: white; }
@@ -85,12 +83,6 @@
         .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
         .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .accept-terms { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 14px; cursor: pointer; }
-        .supported-wallets { display: flex; align-items: center; gap: 15px; margin-top: 20px; color: var(--text-secondary); font-size: 12px; flex-wrap: wrap; }
-        .wallet-option { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; }
-        .wallet-option:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
-        .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 8px; padding: 8px 16px; color: #ff6464; cursor: pointer; font-size: 12px; margin-left: 15px; transition: all 0.3s; }
-        .disconnect-btn:hover { background: rgba(255,100,100,0.4); transform: translateY(-1px); }
-        
         .hero-video { display: flex; justify-content: center; align-items: center; }
         .video-sidebar-large { width: 100%; padding: 15px; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); background: linear-gradient(145deg, #0f212e, #1a2f3f); }
         .presale-video-large { width: 100%; border-radius: 20px; display: block; }
@@ -172,34 +164,25 @@
         .notification.error { background: #f44336; color: white; }
         .notification.info { background: #2196f3; color: white; }
         
-        /* Functional grid for ProofChain */
-        .functional-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; }
-        .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
-        .action-btn { background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 10px 20px; color: var(--accent-gold); cursor: pointer; transition: all 0.3s; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-        .action-btn:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
-        .action-btn.success { background: rgba(0,209,140,0.15); border-color: var(--accent-green); color: var(--accent-green); }
-        .action-btn.success:hover { background: rgba(0,209,140,0.3); }
-        .action-btn.primary { background: linear-gradient(135deg, var(--accent-gold), #FFD700); color: black; border: none; }
-        .action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
-        .feature-description { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin: 15px 0; }
-        
-        /* Modal для выбора кошелька */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; display: none; justify-content: center; align-items: center; }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--accent-gold); border-radius: 24px; padding: 30px; max-width: 400px; width: 90%; text-align: center; }
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--accent-gold); border-radius: 24px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-size: 24px; font-weight: 700; color: var(--accent-gold); }
-        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
+        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 32px; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--accent-gold); }
+        
         .wallet-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
         .wallet-item { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 15px; }
-        .wallet-item:hover { background: rgba(212,175,55,0.1); border-color: var(--accent-gold); transform: translateX(5px); }
-        .wallet-item img { width: 32px; height: 32px; }
+        .wallet-item:hover { background: rgba(212,175,55,0.15); border-color: var(--accent-gold); transform: translateX(5px); }
+        .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 8px; padding: 8px 16px; color: #ff6464; cursor: pointer; font-size: 12px; margin-left: 15px; transition: all 0.3s; }
+        .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
     </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
     
-    <!-- Modal выбора кошелька -->
+    <!-- Модалка выбора кошелька -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -209,24 +192,48 @@
             <p style="color: var(--text-secondary); margin-bottom: 20px;">Выберите способ подключения</p>
             <div class="wallet-list">
                 <div class="wallet-item" onclick="connectWallet('metamask')">
-                    <img src="https://cdn.jsdelivr.net/gh/ethereum/metamask-extension/app/images/icon-128.png" width="32" height="32" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg'">
+                    <i class="fab fa-ethereum" style="font-size: 32px; color: #E2761B;"></i>
                     <span>MetaMask</span>
                 </div>
-                <div class="wallet-item" onclick="connectWallet('walletconnect')">
-                    <i class="fas fa-qrcode" style="font-size: 32px; color: var(--accent-gold);"></i>
-                    <span>WalletConnect (Trust Wallet, Rainbow, OKX и др.)</span>
+                <div class="wallet-item" onclick="connectWallet('trustwallet')">
+                    <i class="fas fa-check-circle" style="font-size: 32px; color: #3b73b9;"></i>
+                    <span>Trust Wallet</span>
                 </div>
                 <div class="wallet-item" onclick="connectWallet('coinbase')">
                     <i class="fab fa-bitcoin" style="font-size: 32px; color: var(--accent-gold);"></i>
                     <span>Coinbase Wallet</span>
                 </div>
             </div>
+            <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 15px;">На телефоне откроется приложение кошелька</p>
+        </div>
+    </div>
+    
+    <!-- Модалка идеологии -->
+    <div class="modal-overlay" id="ideologyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">✡️ Идеология ZUZ</div>
+                <button class="close-modal" onclick="closeIdeologyModal()">&times;</button>
+            </div>
+            <div style="text-align: center; margin: 10px 0;">
+                <div class="coin-icon" style="width: 60px; height: 60px; font-size: 30px; margin: 0 auto;">Z</div>
+            </div>
+            <div style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">
+                <p><strong>📜 Из Талмуда (Сукка 52а):</strong></p>
+                <p>Мудрецы говорят о <strong>Йецер ха-Ра</strong> — внутреннем огненном начале, движущей силе мира. Это не зло, а энергия созидания, страсти, стремления.</p>
+                <p>Однажды человек поймал Йецер ха-Ра, запер в сосуд и хотел усмирить. Но на утро открыл — а внутри <strong>две монеты (зузим)</strong>.</p>
+                <p>Мудрецы сказали: <em>«Вот он — Йецер ха-Ра, теперь его сила заключена в деньгах»</em>.</p>
+                <p><strong>💎 Смысл:</strong> Деньги — не зло. Это <strong>обузданная, цивилизованная форма</strong> той самой жизненной силы. Грех — быть одержимым. Святость — направить энергию на созидание, семью, благотворительность, общину.</p>
+                <p>🌍 <strong>ZUZ сегодня:</strong> Мы входим в цифровую эпоху. Государства создают CBDC — деньги под контролем. Нам нужен <strong>честный, децентрализованный цифровой сосуд</strong> для нашей созидательной энергии.</p>
+                <p>✨ <strong>ZUZ на блокчейне</strong> — это современный «зуз». Это свобода, прозрачность и возможность творить добро без границ.</p>
+                <p style="margin-top: 15px; text-align: center;"><strong>«Ослепи разрушительное — и направь огонь на созидание»</strong></p>
+            </div>
         </div>
     </div>
     
     <div class="navbar">
         <div class="container">
-            <div class="logo">
+            <div class="logo" id="logoBtn">
                 <div class="coin-icon">ZUZ</div>
                 <div class="logo-text">
                     <div class="logo-main">ZUZ UNIVERSE</div>
@@ -244,6 +251,7 @@
             </button>
         </div>
     </div>
+    
     <div class="hero">
         <div class="container">
             <div class="hero-left">
@@ -275,30 +283,24 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-right hero-video" style="margin-top: 150px;">
-    <div class="video-sidebar-large">
-        <iframe 
-            src="https://vkvideo.ru/video_ext.php?oid=-237203936&id=456239018&hash=beca8185326e9426&hd=2&autoplay=1&mute=1&loop=1" 
-            width="100%" 
-            height="400" 
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-    </div>
-</div>
+            <div class="hero-right hero-video" style="margin-top: 10px;">
+                <div class="video-sidebar-large">
+                    <video autoplay loop muted playsinline class="presale-video-large">
+                        <source src="zuz.mp4" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                </div>
+            </div>
         </div>
     </div>
+    
     <div class="video-container">
-    <iframe 
-        src="https://vkvideo.ru/video_ext.php?oid=-237203936&id=456239017&hash=3f583cce3b2294d8&hd=2&autoplay=1&mute=1&loop=1" 
-        width="100%" 
-        height="500" 
-        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" 
-        frameborder="0" 
-        allowfullscreen>
-    </iframe>
-</div>
+        <video autoplay loop muted playsinline class="sages-video">
+            <source src="zzuz.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+    
     <div class="features" id="features">
         <div class="container">
             <h2 class="section-title">Почему <span class="gradient-text">ZUZ</span>?</h2>
@@ -309,6 +311,7 @@
             </div>
         </div>
     </div>
+    
     <div class="trusted-section">
         <div class="container">
             <div class="trusted-title">⚡ НАМ ДОВЕРЯЮТ ⚡</div>
@@ -321,6 +324,7 @@
             </div>
         </div>
     </div>
+    
     <div class="tokenomics" id="tokenomics">
         <div class="container">
             <h2 class="section-title">Токеномика <span class="gradient-text">ZUZ</span></h2>
@@ -336,90 +340,13 @@
             </div>
         </div>
     </div>
+    
     <div class="container">
         <div class="staking-card">
             <div class="staking-title">🏆 СТЕЙКИНГ ZUZ 🏆</div>
             <div class="apy-badge">25% APY</div>
             <p style="color: var(--text-secondary);">Застейкайте свои ZUZ и получайте пассивный доход</p>
             <button class="staking-btn" id="stakeBtn">📈 ЗАСТЕЙКАТЬ</button>
-        </div>
-    </div>
-    
-    <!-- ProofChain Section -->
-    <div class="container" id="proofchain">
-        <div class="section-header">
-            <h2 class="section-title">
-                <i class="fas fa-link" style="color: var(--talmud-gold);"></i>
-                ProofChain <span style="font-size: 14px; background: #00c087; padding: 5px 10px; border-radius: 20px; margin-left: 15px;">L1 ACTIVE</span>
-            </h2>
-            <div class="action-buttons">
-                <button class="action-btn success" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')">
-                    <i class="fas fa-wallet"></i> ZUZ Wallet
-                </button>
-                <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')">
-                    <i class="fas fa-plus-circle"></i> Create Token
-                </button>
-                <button class="action-btn primary" onclick="loadProofChainStats()">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-            </div>
-        </div>
-        <div class="functional-grid" id="proofchainStats">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-link"></i></div>
-                <h3 class="feature-title">ZUZCOIN ProofChain</h3>
-                <div class="feature-description">
-                    <div style="display: flex; justify-content: space-between; margin: 10px 0;"><span>Chain ID:</span><span style="color: var(--talmud-gold); font-weight: 600;" id="chainId">7777</span></div>
-                    <div style="display: flex; justify-content: space-between; margin: 10px 0;"><span>Blocks:</span><span style="color: var(--positive); font-weight: 600;" id="blockCount">2</span></div>
-                    <div style="display: flex; justify-content: space-between; margin: 10px 0;"><span>Transactions:</span><span style="color: var(--positive); font-weight: 600;" id="txCount">1</span></div>
-                    <div style="display: flex; justify-content: space-between; margin: 10px 0;"><span>Status:</span><span style="color: #00c087; font-weight: 600;" id="networkStatus">🟢 Running</span></div>
-                </div>
-                <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/network-status', '_blank')" style="margin-top: 15px;">
-                    <i class="fas fa-chart-line"></i> Network Details
-                </button>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-cube"></i></div>
-                <h3 class="feature-title">Latest Block</h3>
-                <div class="feature-description">
-                    <div style="margin: 10px 0;">
-                        <div style="color: var(--text-secondary);">Block #<span id="latestBlockIndex">1</span></div>
-                        <div style="font-family: monospace; font-size: 12px; word-break: break-all; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; margin-top: 5px;" id="latestBlockHash">loading...</div>
-                    </div>
-                    <div style="margin: 10px 0;">
-                        <div style="color: var(--text-secondary);">Transactions:</div>
-                        <div style="font-size: 18px; color: var(--positive);" id="latestBlockTxCount">1</div>
-                    </div>
-                </div>
-                <button class="action-btn" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/block/1', '_blank')" style="margin-top: 15px;">
-                    <i class="fas fa-search"></i> View Block
-                </button>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                <h3 class="feature-title">Donations</h3>
-                <div class="feature-description">
-                    <div style="background: rgba(212, 175, 55, 0.1); border-radius: 10px; padding: 15px; margin: 10px 0;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span style="color: var(--text-secondary);">Total Donations:</span>
-                            <span style="color: var(--talmud-gold); font-weight: 600;" id="totalDonations">1,000 ZUZ</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-secondary);">Projects:</span>
-                            <span style="color: var(--talmud-gold); font-weight: 600;" id="projectCount">1</span>
-                        </div>
-                    </div>
-                    <p style="font-size: 14px; color: var(--text-secondary);">Every transaction on DEX automatically donates 1%</p>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 15px; width: 100%;">
-                    <button class="action-btn success" style="flex: 1;" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank')">
-                        <i class="fas fa-donate"></i> Donate
-                    </button>
-                    <button class="action-btn" style="flex: 1;" onclick="window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/coin-creator', '_blank')">
-                        <i class="fas fa-plus-circle"></i> Create
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
     
@@ -434,6 +361,7 @@
             </div>
         </div>
     </div>
+    
     <div class="faq-section" id="faq">
         <div class="container">
             <h2 class="section-title">❓ Часто задаваемые вопросы</h2>
@@ -445,6 +373,7 @@
             </div>
         </div>
     </div>
+    
     <div class="footer">
         <div class="container">
             <div class="footer-content">
@@ -460,9 +389,6 @@
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
-        
-        // WalletConnect Project ID
-        const WALLETCONNECT_PROJECT_ID = 'ad01e4465a19e847abe4ac7c4097d10c';
 
         const PRESALE_ABI = [
             {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
@@ -470,16 +396,13 @@
             {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
         ];
 
-        // Глобальные переменные
         let web3Instance = null;
         let currentAccount = null;
         let presaleContract = null;
         let isProcessing = false;
         let stageStartTime = 1774775487;
         let stageEndTime = 1788307200;
-        let walletConnectProvider = null;
 
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
         function showNotification(msg, type) {
             const n = document.createElement('div');
             n.className = `notification ${type}`;
@@ -492,7 +415,6 @@
             const now = Math.floor(Date.now() / 1000);
             const timerSpan = document.getElementById('timer');
             const statusSpan = document.getElementById('saleStatus');
-
             if (now < stageStartTime) {
                 statusSpan.innerHTML = 'СКОРО';
                 statusSpan.style.background = '#ff9800';
@@ -512,92 +434,63 @@
             }
         }
 
-        function openWalletModal() {
-            document.getElementById('walletModal').style.display = 'flex';
+        // Mobile deep link detection
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        function closeWalletModal() {
-            document.getElementById('walletModal').style.display = 'none';
-        }
-
-        // ========== ПОДКЛЮЧЕНИЕ КОШЕЛЬКОВ ==========
         async function connectWallet(type) {
-            closeWalletModal();
-            
             if (type === 'metamask') {
-                if (!window.ethereum) {
+                if (window.ethereum && window.ethereum.isMetaMask) {
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        currentAccount = accounts[0];
+                        web3Instance = new Web3(window.ethereum);
+                        presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        updateWalletUI();
+                        showNotification('✅ MetaMask подключен', 'success');
+                        await loadPresaleData();
+                    } catch(e) { showNotification('Ошибка подключения', 'error'); }
+                } else if (isMobile()) {
+                    window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
+                    showNotification('Открываем MetaMask...', 'info');
+                } else {
                     showNotification('Установите MetaMask', 'error');
                     window.open('https://metamask.io/download/', '_blank');
-                    return;
                 }
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    currentAccount = accounts[0];
-                    web3Instance = new Web3(window.ethereum);
-                    presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
-                    updateWalletUI();
-                    showNotification('✅ Кошелек MetaMask подключен', 'success');
-                    await loadPresaleData();
-                    
-                    // Слушаем смену аккаунта
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) disconnectWallet();
-                        else {
-                            currentAccount = accounts[0];
-                            updateWalletUI();
-                            loadPresaleData();
-                        }
-                    });
-                } catch(e) {
-                    console.error(e);
-                    showNotification('Ошибка подключения MetaMask', 'error');
+            } else if (type === 'trustwallet') {
+                if (window.ethereum && window.ethereum.isTrust) {
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        currentAccount = accounts[0];
+                        web3Instance = new Web3(window.ethereum);
+                        presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        updateWalletUI();
+                        showNotification('✅ Trust Wallet подключен', 'success');
+                        await loadPresaleData();
+                    } catch(e) { showNotification('Ошибка подключения', 'error'); }
+                } else if (isMobile()) {
+                    window.location.href = 'https://link.trustwallet.com/open_url?coin_id=60&url=https://' + window.location.host;
+                    showNotification('Открываем Trust Wallet...', 'info');
+                } else {
+                    showNotification('Trust Wallet только для телефона', 'info');
                 }
-            } 
-            else if (type === 'walletconnect') {
-                // WalletConnect v2 с Project ID
-                showNotification('Открываем WalletConnect...', 'info');
-                try {
-                    // Импортируем динамически
-                    const { EthereumProvider } = await import('https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.min.js');
-                    
-                    const provider = await EthereumProvider.init({
-                        projectId: WALLETCONNECT_PROJECT_ID,
-                        chains: [1], // Ethereum Mainnet
-                        methods: ['eth_sendTransaction', 'eth_sign'],
-                        showQrModal: true,
-                        qrModalOptions: {
-                            themeMode: 'dark',
-                            themeVariables: {
-                                '--wcm-z-index': '10000'
-                            }
-                        }
-                    });
-                    
-                    await provider.connect();
-                    const accounts = await provider.enable();
-                    currentAccount = accounts[0];
-                    walletConnectProvider = provider;
-                    web3Instance = new Web3(provider);
-                    presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
-                    updateWalletUI();
-                    showNotification('✅ Кошелек подключен через WalletConnect', 'success');
-                    await loadPresaleData();
-                    
-                    // Слушаем отключение
-                    provider.on('disconnect', () => {
-                        disconnectWallet();
-                    });
-                } catch(e) {
-                    console.error(e);
-                    showNotification('Ошибка WalletConnect. Попробуйте другой кошелек.', 'error');
-                }
-            }
-            else if (type === 'coinbase') {
+            } else if (type === 'coinbase') {
                 if (window.ethereum && window.ethereum.isCoinbaseWallet) {
-                    await connectWallet('metamask');
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        currentAccount = accounts[0];
+                        web3Instance = new Web3(window.ethereum);
+                        presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                        updateWalletUI();
+                        showNotification('✅ Coinbase Wallet подключен', 'success');
+                        await loadPresaleData();
+                    } catch(e) { showNotification('Ошибка подключения', 'error'); }
+                } else if (isMobile()) {
+                    window.location.href = 'https://go.cb-w.com/dapp?url=https://' + window.location.host;
+                    showNotification('Открываем Coinbase Wallet...', 'info');
                 } else {
                     showNotification('Установите Coinbase Wallet', 'info');
-                    window.open('https://www.coinbase.com/wallet/downloads', '_blank');
                 }
             }
         }
@@ -622,13 +515,7 @@
             }
         }
 
-        async function disconnectWallet() {
-            if (walletConnectProvider) {
-                try {
-                    await walletConnectProvider.disconnect();
-                } catch(e) {}
-                walletConnectProvider = null;
-            }
+        function disconnectWallet() {
             currentAccount = null;
             web3Instance = null;
             presaleContract = null;
@@ -636,7 +523,11 @@
             showNotification('Кошелек отключен', 'info');
         }
 
-        // ========== ДАННЫЕ ПРЕСЕЙЛА ==========
+        function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
+        function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+        function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
+        function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
+
         async function loadPresaleData() {
             if (!presaleContract) return;
             try {
@@ -651,52 +542,27 @@
             } catch(e) { console.error(e); }
         }
 
-        // ========== ПОКУПКА ТОКЕНОВ ==========
         async function buyTokens() {
-            if (!presaleContract) {
-                showNotification('Сначала подключите кошелек', 'error');
-                openWalletModal();
-                return;
-            }
+            if (!presaleContract) { showNotification('Сначала подключите кошелек', 'error'); openWalletModal(); return; }
             const eth = parseFloat(document.getElementById('ethAmount').value || 0);
-            if (!document.getElementById('acceptTerms').checked) {
-                showNotification('Примите условия', 'error');
-                return;
-            }
-            if (eth < 0.01) {
-                showNotification('Минимум 0.01 ETH', 'error');
-                return;
-            }
+            if (!document.getElementById('acceptTerms').checked) { showNotification('Примите условия', 'error'); return; }
+            if (eth < 0.01) { showNotification('Минимум 0.01 ETH', 'error'); return; }
             if (isProcessing) return;
-
             const now = Math.floor(Date.now() / 1000);
-            if (now < stageStartTime) {
-                showNotification('Продажа еще не началась', 'info');
-                return;
-            }
-            if (now > stageEndTime) {
-                showNotification('Продажа завершена', 'error');
-                return;
-            }
-
+            if (now < stageStartTime) { showNotification('Продажа еще не началась', 'info'); return; }
+            if (now > stageEndTime) { showNotification('Продажа завершена', 'error'); return; }
             isProcessing = true;
             const btn = document.getElementById('buyBtn');
             btn.disabled = true;
             btn.textContent = '⏳ ОТПРАВКА...';
-
             try {
                 const weiAmount = web3Instance.utils.toWei(eth.toString(), 'ether');
-                const tx = await presaleContract.methods.buyTokens().send({
-                    from: currentAccount,
-                    value: weiAmount,
-                    gas: 300000
-                });
+                await presaleContract.methods.buyTokens().send({ from: currentAccount, value: weiAmount, gas: 300000 });
                 showNotification(`✅ Куплено ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
                 document.getElementById('ethAmount').value = '';
                 document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
                 await loadPresaleData();
             } catch(e) {
-                console.error(e);
                 let msg = e.message || 'Ошибка';
                 if (msg.includes('user rejected')) msg = 'Вы отменили транзакцию';
                 else if (msg.includes('insufficient funds')) msg = 'Недостаточно ETH';
@@ -709,49 +575,6 @@
             }
         }
 
-        // ========== PROOFCHAIN STATS ==========
-        const PROOFCHAIN_API = 'https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev';
-        
-        async function loadProofChainStats() {
-            try {
-                const statusResponse = await fetch(`${PROOFCHAIN_API}/proofchain/network-status`);
-                const statusData = await statusResponse.json();
-                document.getElementById('chainId').textContent = statusData.chainId || '7777';
-                document.getElementById('blockCount').textContent = statusData.blocks || '2';
-                document.getElementById('txCount').textContent = statusData.totalTransactions || '1';
-                
-                const blocksResponse = await fetch(`${PROOFCHAIN_API}/proofchain/blocks?count=1`);
-                const blocksData = await blocksResponse.json();
-                if (blocksData && blocksData.length > 0) {
-                    const latestBlock = blocksData[0];
-                    document.getElementById('latestBlockIndex').textContent = latestBlock.index || '1';
-                    document.getElementById('latestBlockHash').textContent = (latestBlock.hash || '').substring(0, 32) + '...';
-                    document.getElementById('latestBlockTxCount').textContent = latestBlock.transactions?.length || '1';
-                    if (latestBlock.transactions && latestBlock.transactions[0]) {
-                        const tx = latestBlock.transactions[0];
-                        document.getElementById('totalDonations').textContent = (tx.amount || '1000') + ' ZUZ';
-                        document.getElementById('projectCount').textContent = '1';
-                    }
-                }
-                console.log('✅ ProofChain stats updated');
-            } catch (error) {
-                console.error('❌ Failed to load ProofChain stats:', error);
-                document.getElementById('networkStatus').innerHTML = '🔴 Connection Error';
-            }
-        }
-
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
-        function browseCommunityTokens() { alert("Coming soon!"); }
-        function notarizeDocument() { alert("Coming soon!"); }
-        function verifyDocument() { alert("Coming soon!"); }
-        function viewDonations() { 
-            window.open('https://088f2e1f-a53e-4b4d-bb2e-be52a4b104ab-00-1z4a6czhlvsin.spock.replit.dev/proofchain/wallet', '_blank');
-        }
-        function voteForCharity() { 
-            alert('Voting system coming soon!');
-        }
-
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         function createParticles() {
             const container = document.getElementById('goldParticles');
             if (!container) return;
@@ -769,29 +592,23 @@
             }
         }
 
-        // Закрытие модалки по клику вне
-        document.getElementById('walletModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('walletModal')) closeWalletModal();
-        });
-
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
         });
-        document.getElementById('connectWalletBtn').onclick = () => {
-            if (currentAccount) disconnectWallet();
-            else openWalletModal();
-        };
+        document.getElementById('connectWalletBtn').onclick = () => { if (currentAccount) disconnectWallet(); else openWalletModal(); };
         document.getElementById('buyBtn').onclick = buyTokens;
         document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
+        document.getElementById('logoBtn').onclick = openIdeologyModal;
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
+        document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
+        document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
         
         createParticles();
         updateTimer();
         setInterval(updateTimer, 1000);
-        setTimeout(loadProofChainStats, 1500);
         
         if (window.ethereum && window.ethereum.selectedAddress) {
             setTimeout(() => connectWallet('metamask'), 500);
