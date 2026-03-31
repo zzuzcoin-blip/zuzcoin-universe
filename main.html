@@ -544,7 +544,7 @@
                         return;
                     }
                 } else if (type === 'walletconnect') {
-                    // --- ДЛЯ TRUST WALLET И ДРУГИХ (Через WalletConnect 2.0) ---
+                    // --- УЛУЧШЕННАЯ ЛОГИКА ДЛЯ TRUST WALLET ---
                     if (typeof window.EthereumProvider === 'undefined') {
                         showNotification("Загрузка WalletConnect...", "info");
                         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -554,17 +554,28 @@
                     
                     provider = await EthereumProvider.init({
                         projectId: WC_PROJECT_ID,
+                        // Для Trust Wallet важно явно указать опциональные цепочки
                         chains: [1],
+                        optionalChains: [1, 56, 137], // Ethereum, BSC, Polygon
                         showQrModal: true,
-                        methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
+                        // Trust Wallet требует расширенный список методов
+                        methods: ["eth_sendTransaction", "eth_signTransaction", "personal_sign", "eth_sign", "eth_accounts"],
                         events: ["chainChanged", "accountsChanged"],
+                        rpcMap: {
+                            1: "https://eth.llamarpc.com"
+                        },
                         metadata: {
                             name: "ZUZ Universe",
-                            description: "7 Мудрецов — Пресейл",
+                            description: "7 Мудрецов — Экосистема ZUZ",
                             url: window.location.origin,
                             icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon.png"]
                         }
                     });
+                    
+                    // Перед вызовом connect проверим, нет ли активной старой сессии
+                    if (provider.session) {
+                        await provider.disconnect();
+                    }
                     
                     await provider.connect();
                     accounts = provider.accounts;
