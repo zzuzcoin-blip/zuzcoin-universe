@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
     <style>
         :root {
             --bg-primary: #0A0A0A;
@@ -239,20 +238,15 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             <div class="wallet-options">
-                <div class="wallet-option-item" onclick="handleWalletChoice('injected')">
+                <div class="wallet-option-item" onclick="connectMetaMask()">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
                     <span>MetaMask</span>
                     <div class="wallet-badge">Популярно</div>
                 </div>
-                <div class="wallet-option-item" onclick="handleWalletChoice('trust')">
+                <div class="wallet-option-item" onclick="openTrustWallet()">
                     <img src="https://trustwallet.com/assets/images/favicon.png" alt="Trust Wallet">
                     <span>Trust Wallet</span>
-                    <div class="wallet-subtext">Прямое подключение для мобильных</div>
-                </div>
-                <div class="wallet-option-item" onclick="handleWalletChoice('walletconnect')">
-                    <img src="https://avatars.githubusercontent.com/u/37784886?s=200&v=4" alt="WalletConnect">
-                    <span>WalletConnect</span>
-                    <div class="wallet-subtext">Другие кошельки (QR-код)</div>
+                    <div class="wallet-subtext">Открыть в приложении</div>
                 </div>
             </div>
             <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 20px;">
@@ -441,7 +435,6 @@
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
-        const WC_PROJECT_ID = 'c77ee52ed95eeec4596ca359f4cdb63d';
         
         const PRESALE_ABI = [
             {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
@@ -460,7 +453,6 @@
         let isProcessing = false;
         let stageStartTime = 1774775487;
         let stageEndTime = 1788307200;
-        let walletConnectProvider = null;
         
         // ========== УРОВНИ МУДРЕЦОВ ==========
         const sageLevels = [
@@ -506,35 +498,143 @@
             }
         }
         
-        // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА (РАБОТАЕТ БЕЗ КОШЕЛЬКА) ==========
+        // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
-    try {
-        // Используем простой публичный RPC
-        const web3 = new Web3('https://cloudflare-eth.com');
+            try {
+                const web3 = new Web3('https://cloudflare-eth.com');
+                const contract = new web3.eth.Contract([
+                    {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
+                    {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
+                ], PRESALE_ADDRESS);
+                
+                const sold = await contract.methods.tokensSold().call();
+                const max = await contract.methods.maxTokensToSell().call();
+                
+                const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
+                const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
+                const percent = (raisedETH / maxETH) * 100;
+                
+                document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
+                document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            } catch(e) {
+                console.error('Ошибка загрузки данных пресейла:', e);
+                document.getElementById('raisedAmount').innerHTML = '-- ETH';
+            }
+        }
         
-        const presaleABI = [
-            {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-        ];
+        // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
+        async function connectMetaMask() {
+            closeWalletModal();
+            
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // Принудительный выбор аккаунта
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_requestPermissions',
+                            params: [{ eth_accounts: {} }]
+                        });
+                    } catch (permError) {
+                        if (permError.code === 4001) {
+                            showNotification("Выбор аккаунта отменен", "info");
+                            return;
+                        }
+                    }
+                    
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    currentAccount = accounts[0];
+                    const web3 = new Web3(window.ethereum);
+                    
+                    presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+                    tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+                    
+                    updateUI(currentAccount);
+                    showNotification(`✅ Кошелек подключен: ${currentAccount.substring(0,6)}...`, 'success');
+                    
+                    await loadPresaleData();
+                    await loadTokenBalance(web3, currentAccount);
+                    
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) disconnectWallet();
+                        else window.location.reload();
+                    });
+                    
+                } catch(e) {
+                    console.error(e);
+                    showNotification("Ошибка подключения", "error");
+                }
+            } else {
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    const dappUrl = window.location.href.replace(/https?:\/\//, "");
+                    window.open(`https://metamask.app.link/dapp/${dappUrl}`, '_blank');
+                } else {
+                    alert("Установите MetaMask!");
+                    window.open('https://metamask.io/download/', '_blank');
+                }
+            }
+        }
         
-        const contract = new web3.eth.Contract(presaleABI, PRESALE_ADDRESS);
+        // ========== TRUST WALLET DEEP LINK ==========
+        function openTrustWallet() {
+            closeWalletModal();
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                const dappUrl = window.location.href.replace(/https?:\/\//, "");
+                window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${dappUrl}`;
+            } else {
+                showNotification("Trust Wallet доступен только на телефоне", "info");
+            }
+        }
         
-        const sold = await contract.methods.tokensSold().call();
-        const max = await contract.methods.maxTokensToSell().call();
+        function updateUI(address) {
+            const connectBtn = document.getElementById('connectBtn');
+            if (connectBtn) {
+                const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                connectBtn.innerHTML = `<i class="fas fa-wallet"></i> ${shortAddress}`;
+                connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
+                connectBtn.style.color = "black";
+                
+                if (!document.querySelector('.disconnect-btn')) {
+                    const dbtn = document.createElement('button');
+                    dbtn.className = 'disconnect-btn';
+                    dbtn.innerHTML = 'ОТКЛЮЧИТЬ';
+                    dbtn.onclick = disconnectWallet;
+                    connectBtn.parentNode.appendChild(dbtn);
+                }
+            }
+        }
         
-        const raisedETH = (Number(sold) * TOKEN_PRICE_ETH) / 1e18;
-        const maxETH = (Number(max) * TOKEN_PRICE_ETH) / 1e18;
-        const percent = (raisedETH / maxETH) * 100;
+        function disconnectWallet() {
+            currentAccount = null;
+            presaleContract = null;
+            tokenContract = null;
+            
+            const connectBtn = document.getElementById('connectBtn');
+            connectBtn.innerHTML = '<i class="fas fa-wallet"></i> ПОДКЛЮЧИТЬ КОШЕЛЕК';
+            connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
+            connectBtn.style.color = "black";
+            
+            const dbtn = document.querySelector('.disconnect-btn');
+            if (dbtn) dbtn.remove();
+            
+            document.getElementById('sagePreview').style.display = 'none';
+            document.getElementById('raisedAmount').innerHTML = '-- ETH';
+            document.getElementById('progressFill').style.width = '0%';
+            
+            showNotification('Кошелек отключен', 'info');
+        }
         
-        document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
-        document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-        
-        console.log('✅ Баланс загружен:', raisedETH, 'ETH');
-    } catch(e) {
-        console.error('Ошибка загрузки баланса:', e);
-        document.getElementById('raisedAmount').innerHTML = '-- ETH';
-    }
-}
+        async function loadTokenBalance(web3, address) {
+            if (!tokenContract) return;
+            try {
+                const balanceWei = await tokenContract.methods.balanceOf(address).call();
+                const balance = Number(balanceWei) / 1e18;
+                updateSageLevel(balance);
+            } catch(e) {
+                console.error('Ошибка загрузки баланса:', e);
+            }
+        }
         
         function updateSageLevel(balance) {
             let level = sageLevels[0];
@@ -563,166 +663,30 @@
             }
         }
         
-        // ========== ОСНОВНАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ ==========
-        async function handleWalletChoice(type) {
-            closeWalletModal();
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const dappUrl = window.location.href.replace(/https?:\/\//, "");
-            
-            try {
-                // ========== TRUST WALLET (ПРЯМАЯ ГЛУБОКАЯ ССЫЛКА) ==========
-                if (type === 'trust') {
-                    if (isMobile) {
-                        // Прямой вход для Trust Wallet на мобильном
-                        window.location.href = `https://link.trustwallet.com/open_url?coin_id=60&url=https://${dappUrl}`;
-                        showNotification("Открываем Trust Wallet...", "info");
-                        return;
-                    } else {
-                        // На ПК Trust Wallet работает через расширение (как injected)
-                        type = 'injected';
-                    }
-                }
-                
-                // ========== METAMASK / INJECTED ==========
-                if (type === 'injected') {
-                    if (typeof window.ethereum !== 'undefined') {
-                        // Принудительный выбор аккаунта (решает проблему 2-х кошельков)
-                        try {
-                            await window.ethereum.request({
-                                method: 'wallet_requestPermissions',
-                                params: [{ eth_accounts: {} }]
-                            });
-                        } catch (permError) {
-                            if (permError.code === 4001) {
-                                showNotification("Выбор аккаунта отменен", "info");
-                                return;
-                            }
-                        }
-                        
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        await initWeb3(window.ethereum, accounts);
-                        
-                        // Слушатели для авто-обновления
-                        window.ethereum.on('accountsChanged', (newAccounts) => {
-                            if (newAccounts.length === 0) disconnectWallet();
-                            else window.location.reload();
-                        });
-                        window.ethereum.on('chainChanged', () => window.location.reload());
-                        
-                    } else if (isMobile) {
-                        // Если нет кошелька на мобильном - редирект в App Store
-                        window.open(`https://metamask.app.link/dapp/${dappUrl}`, '_blank');
-                        showNotification("Открываем MetaMask...", "info");
-                    } else {
-                        alert("Установите MetaMask!");
-                        window.open('https://metamask.io/download/', '_blank');
-                    }
-                    return;
-                }
-                
-                // ========== WALLETCONNECT (ЗАПАСНОЙ ВАРИАНТ) ==========
-                if (type === 'walletconnect') {
-                    if (typeof window.EthereumProvider === 'undefined') {
-                        showNotification("Загрузка WalletConnect...", "info");
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
-                    
-                    const EthereumProvider = window.EthereumProvider;
-                    const provider = await EthereumProvider.init({
-                        projectId: WC_PROJECT_ID,
-                        chains: [1],
-                        optionalChains: [1],
-                        showQrModal: true,
-                        optionalMethods: ["eth_sendTransaction", "personal_sign", "eth_accounts", "eth_requestAccounts"],
-                        optionalEvents: ["chainChanged", "accountsChanged"],
-                        metadata: {
-                            name: "ZUZ Universe",
-                            description: "7 Мудрецов — Экосистема ZUZ",
-                            url: window.location.origin,
-                            icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon.png"]
-                        }
-                    });
-                    
-                    if (provider.session) {
-                        await provider.disconnect().catch(() => {});
-                    }
-                    
-                    await provider.connect();
-                    await initWeb3(provider, provider.accounts);
-                    
-                    provider.on("accountsChanged", (newAccounts) => {
-                        if (newAccounts.length === 0) disconnectWallet();
-                        else window.location.reload();
-                    });
-                    provider.on("chainChanged", () => window.location.reload());
-                    
-                    walletConnectProvider = provider;
-                    return;
-                }
-                
-            } catch (e) {
-                console.error("Ошибка подключения:", e);
-                if (e.message && e.message.includes("User rejected")) {
-                    showNotification("Подключение отклонено", "info");
-                } else if (e.message && e.message.includes("closed")) {
-                    showNotification("Подключение отменено", "info");
-                } else {
-                    showNotification("Ошибка: проверьте настройки кошелька", "error");
-                }
-            }
-        }
-        
-        async function connectWallet() {
-            if (currentAccount) {
-                disconnectWallet();
+        async function addTokenToWallet() {
+            if (!window.ethereum) {
+                showNotification('Подключите кошелек', 'error');
                 return;
             }
-            openWalletModal();
-        }
-        
-        function updateUI(address) {
-            const connectBtn = document.getElementById('connectBtn');
-            if (connectBtn) {
-                const shortAddress = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-                connectBtn.innerHTML = `<i class="fas fa-wallet"></i> ${shortAddress}`;
-                connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
-                connectBtn.style.color = "black";
-                
-                if (!document.querySelector('.disconnect-btn')) {
-                    const dbtn = document.createElement('button');
-                    dbtn.className = 'disconnect-btn';
-                    dbtn.innerHTML = 'ОТКЛЮЧИТЬ';
-                    dbtn.onclick = disconnectWallet;
-                    connectBtn.parentNode.appendChild(dbtn);
-                }
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: TOKEN_ADDRESS,
+                            symbol: 'ZUZ',
+                            decimals: 18,
+                            image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E'
+                        }
+                    }
+                });
+                showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success');
+            } catch(e) {
+                showNotification('Ошибка добавления токена', 'error');
             }
         }
         
-        function disconnectWallet() {
-            if (walletConnectProvider && walletConnectProvider.disconnect) {
-                walletConnectProvider.disconnect();
-            }
-            currentAccount = null;
-            presaleContract = null;
-            tokenContract = null;
-            walletConnectProvider = null;
-            
-            const connectBtn = document.getElementById('connectBtn');
-            connectBtn.innerHTML = '<i class="fas fa-wallet"></i> ПОДКЛЮЧИТЬ КОШЕЛЕК';
-            connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
-            connectBtn.style.color = "black";
-            
-            const dbtn = document.querySelector('.disconnect-btn');
-            if (dbtn) dbtn.remove();
-            
-            document.getElementById('sagePreview').style.display = 'none';
-            document.getElementById('raisedAmount').innerHTML = '-- ETH';
-            document.getElementById('progressFill').style.width = '0%';
-            
-            showNotification('Кошелек отключен', 'info');
-        }
-        
-        // ========== ПОКУПКА ТОКЕНОВ ==========
         async function buyTokens() {
             if (!presaleContract) {
                 showNotification('Сначала подключите кошелек', 'error');
@@ -757,8 +721,7 @@
             btn.textContent = '⏳ ОТПРАВКА...';
             
             try {
-                const provider = walletConnectProvider || window.ethereum;
-                const web3 = new Web3(provider);
+                const web3 = new Web3(window.ethereum);
                 const weiAmount = web3.utils.toWei(ethAmount.toString(), 'ether');
                 const accounts = await web3.eth.getAccounts();
                 
@@ -772,7 +735,7 @@
                 document.getElementById('ethAmount').value = '';
                 document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
                 
-                await loadPresaleData(web3);
+                await loadPresaleData();
                 await loadTokenBalance(web3, accounts[0]);
                 
             } catch(e) {
@@ -786,32 +749,6 @@
                 isProcessing = false;
                 btn.disabled = false;
                 btn.textContent = 'КУПИТЬ ZUZ';
-            }
-        }
-        
-        // ========== ДОБАВЛЕНИЕ ТОКЕНА ==========
-        async function addTokenToWallet() {
-            const provider = walletConnectProvider || window.ethereum;
-            if (!provider) {
-                showNotification('Подключите кошелек', 'error');
-                return;
-            }
-            try {
-                await provider.request({
-                    method: 'wallet_watchAsset',
-                    params: {
-                        type: 'ERC20',
-                        options: {
-                            address: TOKEN_ADDRESS,
-                            symbol: 'ZUZ',
-                            decimals: 18,
-                            image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E'
-                        }
-                    }
-                });
-                showNotification('✅ Токен ZUZ добавлен в кошелек!', 'success');
-            } catch(e) {
-                showNotification('Ошибка добавления токена', 'error');
             }
         }
         
@@ -868,7 +805,11 @@
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
         });
         
-        document.getElementById('connectBtn').onclick = connectWallet;
+        document.getElementById('connectBtn').onclick = () => {
+            if (currentAccount) disconnectWallet();
+            else openWalletModal();
+        };
+        
         document.getElementById('buyBtn').onclick = buyTokens;
         document.getElementById('stakeBtn').onclick = () => showNotification('Стейкинг будет доступен после пресейла', 'info');
         document.getElementById('logoBtn').onclick = openIdeologyModal;
@@ -900,12 +841,10 @@
         setInterval(updateTimer, 1000);
         setSocialLinks();
         
-        // Загружаем данные пресейла БЕЗ подключения кошелька
         loadPresaleData();
         
-        // Автоподключение, если кошелек уже был разрешён
         if (window.ethereum && window.ethereum.selectedAddress) {
-            setTimeout(() => handleWalletChoice('injected'), 500);
+            setTimeout(() => connectMetaMask(), 500);
         }
     </script>
 </body>
