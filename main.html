@@ -619,20 +619,19 @@
         // ========== ЗАГРУЗКА ДАННЫХ ПРЕСЕЙЛА ==========
         async function loadPresaleData() {
     const rpcList = [
-        'https://rpc.ankr.com/eth',
         'https://ethereum.publicnode.com',
+        'https://cloudflare-eth.com',
         'https://eth.drpc.org',
-        'https://cloudflare-eth.com'
+        'https://eth.llamarpc.com'
     ];
     
-    // Сигнатуры функций
-    const tokensSoldSig = '0x240a3cb4';  // tokensSold()
-    const maxTokensToSellSig = '0xa9c55b38';  // maxTokensToSell()
+    const tokensSoldSig = '0x240a3cb4';
+    const maxTokensToSellSig = '0xa9c55b38';
     
     for (const rpc of rpcList) {
         try {
             // Запрос tokensSold
-            const soldResponse = await fetch(rpc, {
+            const soldRes = await fetch(rpc, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -642,12 +641,12 @@
                     id: 1
                 })
             });
-            const soldData = await soldResponse.json();
+            const soldData = await soldRes.json();
             if (soldData.error) throw new Error(soldData.error.message);
             const sold = parseInt(soldData.result, 16);
             
             // Запрос maxTokensToSell
-            const maxResponse = await fetch(rpc, {
+            const maxRes = await fetch(rpc, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -657,7 +656,7 @@
                     id: 2
                 })
             });
-            const maxData = await maxResponse.json();
+            const maxData = await maxRes.json();
             if (maxData.error) throw new Error(maxData.error.message);
             const max = parseInt(maxData.result, 16);
             
@@ -667,7 +666,7 @@
             
             document.getElementById('raisedAmount').innerHTML = `${raisedETH.toFixed(4)} ETH`;
             document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-            console.log(`✅ Баланс загружен через ${rpc}: ${raisedETH} ETH`);
+            console.log(`✅ Баланс загружен: ${raisedETH} ETH`);
             return;
         } catch(e) {
             console.warn(`RPC ${rpc} не работает:`, e.message);
