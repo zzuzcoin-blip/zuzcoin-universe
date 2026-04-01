@@ -15,48 +15,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js">// ========== РЕФЕРАЛЬНАЯ СИСТЕМА ==========
-function copyRefLink() {
-    const linkInput = document.getElementById('refLink');
-    if (!linkInput) {
-        console.error('Элемент refLink не найден');
-        return;
-    }
-    
-    linkInput.select();
-    linkInput.setSelectionRange(0, 99999);
-    
-    try {
-        document.execCommand('copy');
-        showNotification("✅ Ссылка скопирована! Поделитесь с учениками.", "success");
-        
-        if (typeof spawnMagic === 'function') {
-            spawnMagic({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-        }
-    } catch (err) {
-        console.error('Ошибка копирования:', err);
-        showNotification("❌ Не удалось скопировать ссылку", "error");
-    }
-}
-
-function generateRefLink(address) {
-    const baseUrl = window.location.origin + window.location.pathname;
-    const refLink = `${baseUrl}?ref=${address}`;
-    const inputField = document.getElementById('refLink');
-    if (inputField) {
-        inputField.value = refLink;
-    }
-}
-
-function updateReferralLink() {
-    if (currentAccount) {
-        generateRefLink(currentAccount);
-        const section = document.getElementById('referralSection');
-        if (section) section.style.display = 'block';
-    }
-}
-
-window.copyRefLink = copyRefLink;</script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -749,7 +708,7 @@ window.copyRefLink = copyRefLink;</script>
         .notification.info { background: #2196f3; color: white; }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
-        /* Запрещаем горизонтальный скролл на всех элементам */
+        /* Запрещаем горизонтальный скролл на всех элементах */
         img, video, iframe, .map-wrapper img {
             max-width: 100%;
             height: auto;
@@ -760,57 +719,23 @@ window.copyRefLink = copyRefLink;</script>
             overflow: hidden;
         }
         
-        /* ========== АДАПТАЦИЯ ПРИ ПОВОРОТЕ (ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ) ========== */
+        /* ========== АДАПТАЦИЯ ПРИ ПОВОРОТЕ ========== */
         @media (orientation: landscape) {
             .hero .container {
                 grid-template-columns: 1fr 1fr;
                 gap: 30px;
             }
-            
-            .hero-title {
-                font-size: 36px;
-            }
-            
-            .presale-card {
-                padding: 20px;
-            }
-            
-            .presale-details {
-                gap: 10px;
-                padding: 12px;
-            }
-            
-            .detail-value {
-                font-size: 12px;
-            }
-            
-            .video-sidebar-large {
-                max-height: 300px;
-                overflow: hidden;
-            }
-            
-            .presale-video-large {
-                height: auto;
-                max-height: 280px;
-                object-fit: cover;
-            }
-            
-            .live-activity-container {
-                width: 240px;
-                right: 10px;
-                bottom: 10px;
-            }
-            
-            .map-wrapper img {
-                width: 100%;
-                height: auto;
-            }
+            .hero-title { font-size: 36px; }
+            .presale-card { padding: 20px; }
+            .presale-details { gap: 10px; padding: 12px; }
+            .detail-value { font-size: 12px; }
+            .video-sidebar-large { max-height: 300px; overflow: hidden; }
+            .presale-video-large { max-height: 280px; object-fit: cover; }
+            .live-activity-container { width: 240px; right: 10px; bottom: 10px; }
         }
         
         @media (orientation: portrait) {
-            .hero .container {
-                grid-template-columns: 1fr;
-            }
+            .hero .container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -895,6 +820,20 @@ window.copyRefLink = copyRefLink;</script>
                     </div>
                     <div style="background: rgba(0,209,140,0.1); padding: 10px; border-radius: 10px; border-left: 3px solid var(--accent-green);">
                         <p style="font-size: 12px; margin: 0;"><i class="fas fa-bolt"></i> Staking bonus: <strong id="currentBonus">+0%</strong></p>
+                    </div>
+                </div>
+                
+                <!-- РЕФЕРАЛЬНАЯ ПРОГРАММА -->
+                <div id="referralSection" class="sage-level-card" style="border: 1px dashed var(--accent-gold); background: rgba(212,175,55,0.05); margin-top: 20px; padding: 20px; border-radius: 20px;">
+                    <h4 style="color: var(--accent-gold); margin-bottom: 10px;"><i class="fas fa-users"></i> Mentor's Path Program</h4>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="refLink" readonly value="Connect wallet..." style="flex: 1; background: #000; border: 1px solid #333; border-radius: 8px; padding: 10px; color: white;">
+                        <button id="copyRefBtn" style="background: var(--accent-gold); color: black; border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; font-weight: bold;">COPY</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; font-size: 12px;">
+                        <span>Disciples: <strong id="refCount">0</strong></span>
+                        <span>Earned: <strong id="refEarned">0 ZUZ</strong></span>
                     </div>
                 </div>
             </div>
@@ -1022,7 +961,12 @@ window.copyRefLink = copyRefLink;</script>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo"><div class="coin-icon small" style="width: 32px; height: 32px; font-size: 18px;">ZUZ</div><span>ZUZ Universe</span></div>
-                <div class="footer-social"><a href="#" id="twitterLink"><i class="fab fa-twitter"></i></a><a href="#" id="telegramLink"><i class="fab fa-telegram"></i></a><a href="#" id="discordLink"><i class="fab fa-discord"></i></a><a href="#" id="youtubeLink"><i class="fab fa-youtube"></i></a></div>
+                <div class="footer-social">
+                    <a href="https://twitter.com/ZuzimUniverse" id="twitterLink" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://t.me/zuzimuniverse" id="telegramLink" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="#" id="discordLink" target="_blank"><i class="fab fa-discord"></i></a>
+                    <a href="#" id="youtubeLink" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
             </div>
             <div class="footer-bottom">© 2026 ZUZ Universe. 7 sages lead to truth. Cryptocurrency is a high-risk asset. Invest wisely.</div>
         </div>
@@ -1060,163 +1004,35 @@ window.copyRefLink = copyRefLink;</script>
             { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
         ];
         
-        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА ==========
+        // ========== СЛОВАРИ ПЕРЕВОДОВ (сокращённо) ==========
         const translations = {
             ru: {
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
                 "BUY ZUZ": "КУПИТЬ ZUZ",
-                "ZUZ STAKING": "СТЕЙКИНГ ZUZ",
-                "START STAKING": "НАЧАТЬ СТЕЙКИНГ",
-                "ZUZ MANIFESTO": "МАНИФЕСТ ZUZ",
-                "ACCEPT THE CALL": "ПРИНЯТЬ ПРИЗЫВ",
-                "SEAL OF TRUST": "ПЕЧАТЬ ДОВЕРИЯ",
-                "Code Purity": "Чистота кода",
-                "Liquidity Lock": "Блокировка ликвидности",
-                "Renounced Ownership": "Отказ от владения",
-                "Your assets are protected by the highest logic of the blockchain": "Ваши активы защищены высшей логикой блокчейна",
-                "YOUR SAGE RANK": "ВАШ РАНГ",
-                "To \"Wisdom\": 1,000 ZUZ": "До \"Мудрости\": 1,000 ZUZ",
-                "Staking bonus:": "Бонус к стейкингу:",
-                "Add ZUZ to wallet": "Добавить ZUZ в кошелек",
-                "I agree to the terms": "Я согласен с условиями",
-                "You get:": "Вы получите:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "МИН. ПОКУПКА",
-                "TIME LEFT": "ОСТАЛОСЬ",
-                "ACTIVE": "АКТИВЕН",
-                "SOON": "СКОРО",
-                "ENDED": "ЗАВЕРШЕН",
-                "Connect Wallet": "Подключить кошелек",
-                "Popular": "Популярно",
-                "Trust Wallet": "Trust Wallet",
-                "Open in app": "Открыть в приложении",
-                "No wallet?": "Нет кошелька?",
-                "Install MetaMask": "Установить MetaMask",
-                "Novice": "Новичок",
-                "Wisdom": "Мудрость",
-                "Prosperity": "Процветание",
-                "Protection": "Защита",
-                "Innovation": "Инновации",
-                "Harmony": "Гармония",
-                "Power": "Сила",
-                "Immortality": "Бессмертие"
+                "Mentor's Path Program": "Программа «Путь Наставника»",
+                "Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.": "Приглашайте учеников и получайте 5% от их покупок + ускоренный переход к следующему Мудрецу.",
+                "COPY": "КОПИРОВАТЬ",
+                "Disciples:": "Учеников:",
+                "Earned:": "Заработано:",
+                "Connect wallet...": "Подключите кошелек..."
             },
             de: {
-                "CONNECT WALLET": "WALLET VERBINDEN",
-                "BUY ZUZ": "ZUZ KAUFEN",
-                "ZUZ STAKING": "ZUZ STAKING",
-                "START STAKING": "STAKING STARTEN",
-                "ZUZ MANIFESTO": "ZUZ MANIFEST",
-                "ACCEPT THE CALL": "RUF ANNEHMEN",
-                "SEAL OF TRUST": "SIEGEL DES VERTRAUENS",
-                "Code Purity": "CODE-REINHEIT",
-                "Liquidity Lock": "LIQUIDITÄTSSPERRE",
-                "Renounced Ownership": "VERZICHT AUF KONTROLLE",
-                "Your assets are protected by the highest logic of the blockchain": "Ihre Vermögenswerte sind durch die höchste Logik der Blockchain geschützt",
-                "YOUR SAGE RANK": "IHR WEISER-RANG",
-                "To \"Wisdom\": 1,000 ZUZ": "Bis \"Weisheit\": 1.000 ZUZ",
-                "Staking bonus:": "Staking-Bonus:",
-                "Add ZUZ to wallet": "ZUZ zur Wallet hinzufügen",
-                "I agree to the terms": "Ich stimme den Bedingungen zu",
-                "You get:": "Sie erhalten:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "MIN. KAUF",
-                "TIME LEFT": "ZEIT ÜBRIG",
-                "ACTIVE": "AKTIV",
-                "SOON": "BALD",
-                "ENDED": "BEENDET",
-                "Connect Wallet": "Wallet verbinden",
-                "Popular": "Beliebt",
-                "Trust Wallet": "Trust Wallet",
-                "Open in app": "In App öffnen",
-                "No wallet?": "Keine Wallet?",
-                "Install MetaMask": "MetaMask installieren",
-                "Novice": "Novize",
-                "Wisdom": "Weisheit",
-                "Prosperity": "Wohlstand",
-                "Protection": "Schutz",
-                "Innovation": "Innovation",
-                "Harmony": "Harmonie",
-                "Power": "Kraft",
-                "Immortality": "Unsterblichkeit"
+                "Mentor's Path Program": "Mentor-Pfad-Programm",
+                "Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.": "Lade Jünger ein und erhalte 5% ihrer Käufe + beschleunigten Aufstieg zum nächsten Weisen.",
+                "COPY": "KOPIEREN",
+                "Connect wallet...": "Wallet verbinden..."
             },
             fr: {
-                "CONNECT WALLET": "CONNECTER LE PORTEFEUILLE",
-                "BUY ZUZ": "ACHETER ZUZ",
-                "ZUZ STAKING": "STAKING ZUZ",
-                "START STAKING": "COMMENCER LE STAKING",
-                "ZUZ MANIFESTO": "MANIFESTE ZUZ",
-                "ACCEPT THE CALL": "ACCEPTER L'APPEL",
-                "SEAL OF TRUST": "SCEAU DE CONFIANCE",
-                "Code Purity": "PURETÉ DU CODE",
-                "Liquidity Lock": "VERROUILLAGE DE LIQUIDITÉ",
-                "Renounced Ownership": "ABANDON DE PROPRIÉTÉ",
-                "Your assets are protected by the highest logic of the blockchain": "Vos actifs sont protégés par la logique suprême de la blockchain",
-                "YOUR SAGE RANK": "VOTRE RANG DE SAGE",
-                "To \"Wisdom\": 1,000 ZUZ": "Jusqu'à \"Sagesse\" : 1 000 ZUZ",
-                "Staking bonus:": "Bonus de staking :",
-                "Add ZUZ to wallet": "Ajouter ZUZ au portefeuille",
-                "I agree to the terms": "J'accepte les conditions",
-                "You get:": "Vous obtenez :",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "ACHAT MIN.",
-                "TIME LEFT": "TEMPS RESTANT",
-                "ACTIVE": "ACTIF",
-                "SOON": "BIENTÔT",
-                "ENDED": "TERMINÉ",
-                "Connect Wallet": "Connecter le portefeuille",
-                "Popular": "Populaire",
-                "Trust Wallet": "Trust Wallet",
-                "Open in app": "Ouvrir dans l'application",
-                "No wallet?": "Pas de portefeuille ?",
-                "Install MetaMask": "Installer MetaMask",
-                "Novice": "Novice",
-                "Wisdom": "Sagesse",
-                "Prosperity": "Prospérité",
-                "Protection": "Protection",
-                "Innovation": "Innovation",
-                "Harmony": "Harmonie",
-                "Power": "Puissance",
-                "Immortality": "Immortalité"
+                "Mentor's Path Program": "Programme du Chemin du Mentor",
+                "Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.": "Invitez des disciples et obtenez 5% de leurs achats + progression accélérée vers le prochain Sage.",
+                "COPY": "COPIER",
+                "Connect wallet...": "Connecter le portefeuille..."
             },
             he: {
-                "CONNECT WALLET": "חבר ארנק",
-                "BUY ZUZ": "קנה ZUZ",
-                "ZUZ STAKING": "סטייקינג ZUZ",
-                "START STAKING": "התחל סטייקינג",
-                "ZUZ MANIFESTO": "מניפסט ZUZ",
-                "ACCEPT THE CALL": "קבל את הקריאה",
-                "SEAL OF TRUST": "חותם האמון",
-                "Code Purity": "ניקיון קוד",
-                "Liquidity Lock": "נעילת נזילות",
-                "Renounced Ownership": "ויתור על שליטה",
-                "Your assets are protected by the highest logic of the blockchain": "הנכסים שלך מוגנים על ידי ההיגיון הגבוה ביותר של הבלוקצ'יין",
-                "YOUR SAGE RANK": "הדרגה שלך",
-                "To \"Wisdom\": 1,000 ZUZ": "עד \"חוכמה\": 1,000 ZUZ",
-                "Staking bonus:": "בונוס סטייקינג:",
-                "Add ZUZ to wallet": "הוסף ZUZ לארנק",
-                "I agree to the terms": "אני מסכים לתנאים",
-                "You get:": "אתה מקבל:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "רכישה מינימלית",
-                "TIME LEFT": "זמן שנותר",
-                "ACTIVE": "פעיל",
-                "SOON": "בקרוב",
-                "ENDED": "הסתיים",
-                "Connect Wallet": "חבר ארנק",
-                "Popular": "פופולרי",
-                "Trust Wallet": "Trust Wallet",
-                "Open in app": "פתח באפליקציה",
-                "No wallet?": "אין ארנק?",
-                "Install MetaMask": "התקן MetaMask",
-                "Novice": "מתחיל",
-                "Wisdom": "חוכמה",
-                "Prosperity": "שגשוג",
-                "Protection": "הגנה",
-                "Innovation": "חדשנות",
-                "Harmony": "הרמוניה",
-                "Power": "כוח",
-                "Immortality": "אלמוות"
+                "Mentor's Path Program": "תוכנית נתיב המנטור",
+                "Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.": "הזמן תלמידים וקבל 5% מרכישותיהם + התקדמות מואצת לחכם הבא.",
+                "COPY": "העתק",
+                "Connect wallet...": "חבר ארנק..."
             }
         };
         
@@ -1234,7 +1050,7 @@ window.copyRefLink = copyRefLink;</script>
         
         function translatePage(lang) {
             if (lang === 'en') {
-                // Не перезагружаем, просто показываем английский
+                const ruDict = translations.ru;
                 const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
                 let node;
                 const textNodes = [];
@@ -1244,7 +1060,7 @@ window.copyRefLink = copyRefLink;</script>
                 }
                 textNodes.forEach(node => {
                     let text = node.nodeValue;
-                    for (const [eng, trans] of Object.entries(translations.ru)) {
+                    for (const [eng, trans] of Object.entries(ruDict)) {
                         if (text.includes(trans)) {
                             text = text.replace(new RegExp(trans.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), eng);
                             node.nodeValue = text;
@@ -1280,7 +1096,6 @@ window.copyRefLink = copyRefLink;</script>
                 if (el.placeholder && dict[el.placeholder]) el.placeholder = dict[el.placeholder];
                 if (el.value && dict[el.value] && el.tagName !== 'SELECT') el.value = dict[el.value];
             });
-            console.log(`✅ Переведено на ${lang}`);
         }
         
         (async function initLanguage() {
@@ -1397,12 +1212,14 @@ window.copyRefLink = copyRefLink;</script>
                     updateUI(currentAccount);
                     showNotification(`✅ Wallet connected: ${currentAccount.substring(0,6)}...`, 'success');
                     await updateSageDashboard();
+                    updateReferralLink();
                     window.ethereum.on('accountsChanged', (acc) => { 
                         if (acc.length === 0) disconnectWallet(); 
                         else {
                             currentAccount = acc[0];
                             updateUI(currentAccount);
                             updateSageDashboard();
+                            updateReferralLink();
                         }
                     });
                 } catch(e) { showNotification("Connection error", "error"); }
@@ -1443,6 +1260,8 @@ window.copyRefLink = copyRefLink;</script>
             const dbtn = document.querySelector('.disconnect-btn');
             if (dbtn) dbtn.remove();
             document.getElementById('sageDashboard').style.display = 'none';
+            document.getElementById('referralSection').style.display = 'block';
+            document.getElementById('refLink').value = 'Connect wallet...';
             showNotification('Wallet disconnected', 'info');
         }
         
@@ -1472,6 +1291,46 @@ window.copyRefLink = copyRefLink;</script>
                 }
             } catch(e) { console.error(e); }
         }
+        
+        // ========== РЕФЕРАЛЬНАЯ СИСТЕМА ==========
+        function copyRefLink() {
+            const linkInput = document.getElementById('refLink');
+            if (!linkInput) return;
+            if (linkInput.value === 'Connect wallet...' || linkInput.value === 'Подключите кошелек...') {
+                showNotification("Connect wallet first", "info");
+                return;
+            }
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showNotification("✅ Link copied! Share with your disciples.", "success");
+            if (typeof spawnMagic === 'function') {
+                spawnMagic({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+            }
+        }
+        
+        function generateRefLink(address) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            return `${baseUrl}?ref=${address}`;
+        }
+        
+        function updateReferralLink() {
+            if (currentAccount) {
+                const refLink = generateRefLink(currentAccount);
+                const refInput = document.getElementById('refLink');
+                if (refInput) refInput.value = refLink;
+            }
+        }
+        
+        // Привязываем кнопку копирования
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyBtn = document.getElementById('copyRefBtn');
+            if (copyBtn) copyBtn.onclick = copyRefLink;
+        });
+        
+        window.copyRefLink = copyRefLink;
+        window.generateRefLink = generateRefLink;
+        window.updateReferralLink = updateReferralLink;
         
         async function buyTokens() {
             if (!presaleContract) { showNotification('Connect wallet first', 'error'); openWalletModal(); return; }
@@ -1609,10 +1468,7 @@ window.copyRefLink = copyRefLink;</script>
         }
         
         function setSocialLinks() {
-            document.getElementById('twitterLink').href = 'https://twitter.com/';
-            document.getElementById('telegramLink').href = 'https://t.me/';
-            document.getElementById('discordLink').href = 'https://discord.gg/';
-            document.getElementById('youtubeLink').href = 'https://youtube.com/';
+            // Ссылки уже прописаны в HTML
         }
         
         document.getElementById('ethAmount').addEventListener('input', () => {
