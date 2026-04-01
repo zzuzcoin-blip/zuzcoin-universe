@@ -400,6 +400,43 @@
             .lang-selector select { padding: 6px 28px 6px 10px; font-size: 12px; }
         }
     </style>
+    <!-- Google Translate Widget -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'ru',
+        includedLanguages: 'en,ru,de,fr,he,zh-CN,ar',
+        autoDisplay: true,
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<style>
+/* Стилизация Google Translate */
+.goog-te-gadget-simple {
+    background: transparent !important;
+    border: 1px solid var(--accent-gold) !important;
+    border-radius: 40px !important;
+    padding: 6px 12px !important;
+    font-family: inherit !important;
+}
+.goog-te-gadget-simple .goog-te-menu-value {
+    color: var(--accent-gold) !important;
+}
+.goog-te-gadget-simple .goog-te-menu-value span {
+    color: var(--accent-gold) !important;
+}
+.goog-te-gadget-simple .goog-te-menu-value .goog-te-menu-value-arrow {
+    border-top-color: var(--accent-gold) !important;
+}
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+body {
+    top: 0px !important;
+}
+</style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
@@ -460,28 +497,24 @@
     </div>
     
     <div class="navbar">
-        <div class="container">
-            <div class="logo" id="logoBtn"><div class="coin-icon">ZUZ</div><div class="logo-text"><div class="logo-main">ZUZ UNIVERSE</div><div class="logo-sub" data-i18n="subtitle">7 мудрецов • 7 цивилизаций</div></div></div>
-            <div class="nav-links">
-                <a href="#features" data-i18n="nav_about">О проекте</a>
-                <a href="#tokenomics" data-i18n="nav_tokenomics">Токеномика</a>
-                <a href="#roadmap" data-i18n="nav_roadmap">Roadmap</a>
-                <a href="#faq" data-i18n="nav_faq">FAQ</a>
+    <div class="container">
+        <div class="logo" id="logoBtn">
+            <div class="coin-icon">ZUZ</div>
+            <div class="logo-text">
+                <div class="logo-main">ZUZ UNIVERSE</div>
+                <div class="logo-sub" data-i18n="subtitle">7 мудрецов • 7 цивилизаций</div>
             </div>
-            <div class="lang-selector">
-                <select id="langSelect" onchange="changeLanguage(this.value)">
-                    <option value="en">🌍 English</option>
-                    <option value="ru">🇷🇺 Русский</option>
-                    <option value="de">🇩🇪 Deutsch</option>
-                    <option value="fr">🇫🇷 Français</option>
-                    <option value="he">🇮🇱 עברית</option>
-                    <option value="zh">🇨🇳 中文</option>
-                    <option value="ar">🇦🇪 العربية</option>
-                </select>
-            </div>
-            <button class="btn-connect" id="connectBtn"><i class="fas fa-wallet"></i> <span id="walletStatus" data-i18n="connect_btn">ПОДКЛЮЧИТЬ КОШЕЛЕК</span></button>
         </div>
+        <div class="nav-links">
+            <a href="#features" data-i18n="nav_about">О проекте</a>
+            <a href="#tokenomics" data-i18n="nav_tokenomics">Токеномика</a>
+            <a href="#roadmap" data-i18n="nav_roadmap">Roadmap</a>
+            <a href="#faq" data-i18n="nav_faq">FAQ</a>
+        </div>
+        <div id="google_translate_element" style="margin-left: auto; margin-right: 15px;"></div>
+        <button class="btn-connect" id="connectBtn"><i class="fas fa-wallet"></i> <span data-i18n="connect_btn">ПОДКЛЮЧИТЬ КОШЕЛЕК</span></button>
     </div>
+</div>
     
     <div class="hero">
         <div class="container">
