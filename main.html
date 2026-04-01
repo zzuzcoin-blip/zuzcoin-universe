@@ -708,7 +708,7 @@
         .notification.info { background: #2196f3; color: white; }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
-        /* Запрещаем горизонтальный скролл на всех элементах */
+        /* Запрещаем горизонтальный скролл на всех элементам */
         img, video, iframe, .map-wrapper img {
             max-width: 100%;
             height: auto;
@@ -717,6 +717,59 @@
         .map-wrapper {
             width: 100%;
             overflow: hidden;
+        }
+        
+        /* ========== АДАПТАЦИЯ ПРИ ПОВОРОТЕ (ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ) ========== */
+        @media (orientation: landscape) {
+            .hero .container {
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .presale-card {
+                padding: 20px;
+            }
+            
+            .presale-details {
+                gap: 10px;
+                padding: 12px;
+            }
+            
+            .detail-value {
+                font-size: 12px;
+            }
+            
+            .video-sidebar-large {
+                max-height: 300px;
+                overflow: hidden;
+            }
+            
+            .presale-video-large {
+                height: auto;
+                max-height: 280px;
+                object-fit: cover;
+            }
+            
+            .live-activity-container {
+                width: 240px;
+                right: 10px;
+                bottom: 10px;
+            }
+            
+            .map-wrapper img {
+                width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (orientation: portrait) {
+            .hero .container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -966,7 +1019,7 @@
             { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
         ];
         
-        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА (сокращённо, но все ключевые фразы) ==========
+        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА ==========
         const translations = {
             ru: {
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
