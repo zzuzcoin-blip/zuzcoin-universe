@@ -1392,7 +1392,7 @@
             try {
                 await window.ethereum.request({
                     method: 'wallet_watchAsset',
-                    params: { type: 'ERC20', options: { address: TOKEN_ADDRESS, symbol: 'ZUZ', decimals: 18, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000"%3EZ%3C/text%3E%3C/svg%3E' } }
+                    params: { type: 'ERC20', options: { address: TOKEN_ADDRESS, symbol: 'ZUZ', decimals: 18, image: 'data:image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23000"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23D4AF37"%3EZ%3C/text%3E%3C/svg%3E' } }
                 });
                 showNotification('✅ ZUZ added to wallet!', 'success');
             } catch(e) { showNotification('Error adding token', 'error'); }
