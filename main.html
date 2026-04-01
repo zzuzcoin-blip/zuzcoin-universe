@@ -15,6 +15,20 @@
             -webkit-tap-highlight-color: transparent;
         }
         
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
         :root {
             --bg-primary: #0A0A0A;
             --bg-secondary: #111111;
@@ -24,15 +38,6 @@
             --accent-gold: #D4AF37;
             --accent-green: #00D18C;
             --border-color: #333333;
-        }
-        
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
         }
         
         body::before {
@@ -471,7 +476,7 @@
         .activity-item:last-child { border-bottom: none; }
         
         /* Карта мира */
-        .map-wrapper { position: relative; max-width: 1000px; margin: 0 auto; }
+        .map-wrapper { position: relative; max-width: 1000px; margin: 0 auto; width: 100%; }
         .map-pulse {
             position: absolute;
             width: 10px;
@@ -506,6 +511,7 @@
             font-size: 12px;
             border-radius: 40px;
             margin-bottom: 20px;
+            width: 100%;
         }
         
         .roadmap-timeline {
@@ -692,6 +698,17 @@
         .notification.error { background: #f44336; color: white; }
         .notification.info { background: #2196f3; color: white; }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        /* Запрещаем горизонтальный скролл на всех элементах */
+        img, video, iframe, .map-wrapper img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .map-wrapper {
+            width: 100%;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -913,7 +930,6 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <!-- Модалки -->
     <div id="walletModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">Connect Wallet</h2><button class="close-modal" onclick="closeWalletModal()">&times;</button></div><div class="wallet-options"><div class="wallet-option-item" onclick="connectMetaMask()"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"><span>MetaMask</span><div class="wallet-badge">Popular</div></div><div class="wallet-option-item" onclick="openTrustWallet()"><img src="https://trustwallet.com/assets/images/favicon.png"><span>Trust Wallet</span><div class="wallet-subtext" style="font-size: 10px;">Open in app</div></div></div><p style="font-size: 12px; text-align: center; margin-top: 15px;">No wallet? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Install MetaMask</a></p></div></div>
     <div id="ideologyModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">✡️ ZUZ Ideology</div><button class="close-modal" onclick="closeIdeologyModal()">&times;</button></div><div style="text-align:center;"><div class="coin-icon" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 15px;">Z</div></div><div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);"><p><strong>📜 From the Talmud (Sukkah 52a):</strong></p><p>The Sages speak of <strong>Yetzer ha-Ra</strong> — the inner fiery force, the driving power of the world. It is not evil, but the energy of creation, passion, aspiration.</p><p>Once a man captured Yetzer ha-Ra, locked it in a vessel and wanted to tame it. But in the morning he opened it — and inside were <strong>two coins (zuzim)</strong>.</p><p>The Sages said: <em>"Here it is — Yetzer ha-Ra, now its power is contained in money."</em></p><p><strong>💎 Meaning:</strong> Money is not evil. It is a <strong>tamed, civilized form</strong> of that same life force. Sin is to be obsessed. Holiness is to direct energy toward creation, family, charity, community.</p><p>🌍 <strong>ZUZ today:</strong> We are entering the digital age. States are creating CBDCs — money under control. We need <strong>an honest, decentralized digital vessel</strong> for our creative energy.</p><p>✨ <strong>ZUZ on the blockchain</strong> — is the modern "zuz". It is freedom, transparency, and the ability to do good without borders.</p><p style="margin-top: 12px; text-align:center;"><strong>"Blind the destructive — and direct the fire toward creation"</strong></p></div></div></div>
     <div id="sagesModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">🏛️ 7 ZUZ Sages</div><button class="close-modal" onclick="closeSagesModal()">&times;</button></div><div id="sagesContent"></div></div></div>
@@ -941,44 +957,20 @@
             { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
         ];
         
-        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА ==========
+        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА (сокращённо, но все ключевые фразы) ==========
         const translations = {
             ru: {
-                "ZUZ UNIVERSE": "ZUZ ВСЕЛЕННАЯ",
-                "7 Sages • 7 Civilizations": "7 Мудрецов • 7 Цивилизаций",
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
                 "BUY ZUZ": "КУПИТЬ ZUZ",
-                "Why": "Почему",
-                "ZUZ": "ZUZ",
-                "7 Sages": "7 Мудрецов",
-                "The power of 7 great civilizations. The more ZUZ you have, the higher your level.": "Сила 7 великих цивилизаций. Чем больше ZUZ, тем выше ваш уровень.",
-                "Staking 25% APY": "Стейкинг 25% APY",
-                "Passive income. Bonuses grow with your sage level up to +30%.": "Пассивный доход. Бонусы растут с уровнем мудреца до +30%.",
-                "Audit + Security": "Аудит + Безопасность",
-                "Verified smart contract. Team in vesting.": "Проверенный смарт-контракт. Команда в вестинге.",
-                "Tokenomics": "Токеномика",
-                "Presale": "Пресейл",
-                "Staking & Rewards": "Стейкинг и Награды",
-                "Marketing": "Маркетинг",
-                "Team (12m vesting)": "Команда (вестинг 12м)",
-                "Liquidity (locked)": "Ликвидность (заблокирована)",
                 "ZUZ STAKING": "СТЕЙКИНГ ZUZ",
-                "Stake your ZUZ and earn passive income. Bonuses up to +30% based on your Sage level.": "Застейкайте ZUZ и получайте пассивный доход. Бонусы до +30% в зависимости от уровня Мудреца.",
                 "START STAKING": "НАЧАТЬ СТЕЙКИНГ",
                 "ZUZ MANIFESTO": "МАНИФЕСТ ZUZ",
                 "ACCEPT THE CALL": "ПРИНЯТЬ ПРИЗЫВ",
                 "SEAL OF TRUST": "ПЕЧАТЬ ДОВЕРИЯ",
-                "Your assets are protected by the highest logic of the blockchain": "Ваши активы защищены высшей логикой блокчейна",
                 "Code Purity": "Чистота кода",
                 "Liquidity Lock": "Блокировка ликвидности",
                 "Renounced Ownership": "Отказ от владения",
-                "AWAKENING OF THE UNIVERSE": "ПРОБУЖДЕНИЕ ВСЕЛЕННОЙ",
-                "Watch as the Wisdom of ZUZ covers the planet in real time": "Смотрите, как Мудрость ZUZ покрывает планету в реальном времени",
-                "PATH OF THE SEVEN SAGES": "ПУТЬ СЕМИ МУДРЕЦОВ",
-                "Sacred Scripture (FAQ)": "Священное Писание (FAQ)",
-                "About": "О проекте",
-                "Roadmap": "Дорожная карта",
-                "FAQ": "Вопросы",
+                "Your assets are protected by the highest logic of the blockchain": "Ваши активы защищены высшей логикой блокчейна",
                 "YOUR SAGE RANK": "ВАШ РАНГ",
                 "To \"Wisdom\": 1,000 ZUZ": "До \"Мудрости\": 1,000 ZUZ",
                 "Staking bonus:": "Бонус к стейкингу:",
@@ -991,17 +983,12 @@
                 "ACTIVE": "АКТИВЕН",
                 "SOON": "СКОРО",
                 "ENDED": "ЗАВЕРШЕН",
-                "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
-                "BUY ZUZ": "КУПИТЬ ZUZ",
-                "ONLY": "ОСТАЛОСЬ",
-                "SPOTS LEFT FOR \"GUARDIAN\" STATUS": "МЕСТ ДО СТАТУСА «ЗАЩИТНИК»",
-                "Live activity will appear here": "Здесь будет появляться активность",
                 "Connect Wallet": "Подключить кошелек",
+                "Popular": "Популярно",
                 "Trust Wallet": "Trust Wallet",
                 "Open in app": "Открыть в приложении",
                 "No wallet?": "Нет кошелька?",
                 "Install MetaMask": "Установить MetaMask",
-                "Popular": "Популярно",
                 "Novice": "Новичок",
                 "Wisdom": "Мудрость",
                 "Prosperity": "Процветание",
@@ -1014,24 +1001,16 @@
             de: {
                 "CONNECT WALLET": "WALLET VERBINDEN",
                 "BUY ZUZ": "ZUZ KAUFEN",
-                "Your assets are protected by the highest logic of the blockchain": "Ihre Vermögenswerte werden durch die höchste Logik der Blockchain geschützt",
-                "SEAL OF TRUST": "SIEGEL DES VERTRAUENS",
+                "ZUZ STAKING": "ZUZ STAKING",
+                "START STAKING": "STAKING STARTEN",
                 "ZUZ MANIFESTO": "ZUZ MANIFEST",
                 "ACCEPT THE CALL": "RUF ANNEHMEN",
-                "START STAKING": "STAKING STARTEN",
-                "STAKING": "STAKING",
-                "Why": "Warum",
-                "7 Sages": "7 Weise",
-                "Staking 25% APY": "Staking 25% APY",
-                "Audit + Security": "Audit + Sicherheit",
-                "Tokenomics": "Tokenomics",
-                "Presale": "Vorverkauf",
-                "Staking & Rewards": "Staking & Belohnungen",
-                "Marketing": "Marketing",
-                "Team (12m vesting)": "Team (12m Vesting)",
-                "Liquidity (locked)": "Liquidität (gesperrt)",
-                "ZUZ STAKING": "ZUZ STAKING",
-                "YOUR SAGE RANK": "IHR WEISER RANG",
+                "SEAL OF TRUST": "SIEGEL DES VERTRAUENS",
+                "Code Purity": "CODE-REINHEIT",
+                "Liquidity Lock": "LIQUIDITÄTSSPERRE",
+                "Renounced Ownership": "VERZICHT AUF KONTROLLE",
+                "Your assets are protected by the highest logic of the blockchain": "Ihre Vermögenswerte sind durch die höchste Logik der Blockchain geschützt",
+                "YOUR SAGE RANK": "IHR WEISER-RANG",
                 "To \"Wisdom\": 1,000 ZUZ": "Bis \"Weisheit\": 1.000 ZUZ",
                 "Staking bonus:": "Staking-Bonus:",
                 "Add ZUZ to wallet": "ZUZ zur Wallet hinzufügen",
@@ -1042,26 +1021,34 @@
                 "TIME LEFT": "ZEIT ÜBRIG",
                 "ACTIVE": "AKTIV",
                 "SOON": "BALD",
-                "ENDED": "BEENDET"
+                "ENDED": "BEENDET",
+                "Connect Wallet": "Wallet verbinden",
+                "Popular": "Beliebt",
+                "Trust Wallet": "Trust Wallet",
+                "Open in app": "In App öffnen",
+                "No wallet?": "Keine Wallet?",
+                "Install MetaMask": "MetaMask installieren",
+                "Novice": "Novize",
+                "Wisdom": "Weisheit",
+                "Prosperity": "Wohlstand",
+                "Protection": "Schutz",
+                "Innovation": "Innovation",
+                "Harmony": "Harmonie",
+                "Power": "Kraft",
+                "Immortality": "Unsterblichkeit"
             },
             fr: {
                 "CONNECT WALLET": "CONNECTER LE PORTEFEUILLE",
                 "BUY ZUZ": "ACHETER ZUZ",
-                "Your assets are protected by the highest logic of the blockchain": "Vos actifs sont protégés par la logique suprême de la blockchain",
-                "SEAL OF TRUST": "SCEAU DE CONFIANCE",
+                "ZUZ STAKING": "STAKING ZUZ",
+                "START STAKING": "COMMENCER LE STAKING",
                 "ZUZ MANIFESTO": "MANIFESTE ZUZ",
                 "ACCEPT THE CALL": "ACCEPTER L'APPEL",
-                "START STAKING": "COMMENCER LE STAKING",
-                "Why": "Pourquoi",
-                "7 Sages": "7 Sages",
-                "Staking 25% APY": "Staking 25% TAEG",
-                "Audit + Security": "Audit + Sécurité",
-                "Presale": "Prévente",
-                "Staking & Rewards": "Staking & Récompenses",
-                "Marketing": "Marketing",
-                "Team (12m vesting)": "Équipe (acquisition 12m)",
-                "Liquidity (locked)": "Liquidité (verrouillée)",
-                "ZUZ STAKING": "STAKING ZUZ",
+                "SEAL OF TRUST": "SCEAU DE CONFIANCE",
+                "Code Purity": "PURETÉ DU CODE",
+                "Liquidity Lock": "VERROUILLAGE DE LIQUIDITÉ",
+                "Renounced Ownership": "ABANDON DE PROPRIÉTÉ",
+                "Your assets are protected by the highest logic of the blockchain": "Vos actifs sont protégés par la logique suprême de la blockchain",
                 "YOUR SAGE RANK": "VOTRE RANG DE SAGE",
                 "To \"Wisdom\": 1,000 ZUZ": "Jusqu'à \"Sagesse\" : 1 000 ZUZ",
                 "Staking bonus:": "Bonus de staking :",
@@ -1073,26 +1060,34 @@
                 "TIME LEFT": "TEMPS RESTANT",
                 "ACTIVE": "ACTIF",
                 "SOON": "BIENTÔT",
-                "ENDED": "TERMINÉ"
+                "ENDED": "TERMINÉ",
+                "Connect Wallet": "Connecter le portefeuille",
+                "Popular": "Populaire",
+                "Trust Wallet": "Trust Wallet",
+                "Open in app": "Ouvrir dans l'application",
+                "No wallet?": "Pas de portefeuille ?",
+                "Install MetaMask": "Installer MetaMask",
+                "Novice": "Novice",
+                "Wisdom": "Sagesse",
+                "Prosperity": "Prospérité",
+                "Protection": "Protection",
+                "Innovation": "Innovation",
+                "Harmony": "Harmonie",
+                "Power": "Puissance",
+                "Immortality": "Immortalité"
             },
             he: {
                 "CONNECT WALLET": "חבר ארנק",
                 "BUY ZUZ": "קנה ZUZ",
-                "Your assets are protected by the highest logic of the blockchain": "הנכסים שלך מוגנים על ידי ההיגיון הגבוה ביותר של הבלוקצ'יין",
-                "SEAL OF TRUST": "חותם האמון",
+                "ZUZ STAKING": "סטייקינג ZUZ",
+                "START STAKING": "התחל סטייקינג",
                 "ZUZ MANIFESTO": "מניפסט ZUZ",
                 "ACCEPT THE CALL": "קבל את הקריאה",
-                "START STAKING": "התחל סטייקינג",
-                "Why": "למה",
-                "7 Sages": "7 חכמים",
-                "Staking 25% APY": "סטייקינג 25% APY",
-                "Audit + Security": "ביקורת + אבטחה",
-                "Presale": "מכירה מוקדמת",
-                "Staking & Rewards": "סטייקינג ותגמולים",
-                "Marketing": "שיווק",
-                "Team (12m vesting)": "צוות (הבשלה 12 חודשים)",
-                "Liquidity (locked)": "נזילות (נעולה)",
-                "ZUZ STAKING": "סטייקינג ZUZ",
+                "SEAL OF TRUST": "חותם האמון",
+                "Code Purity": "ניקיון קוד",
+                "Liquidity Lock": "נעילת נזילות",
+                "Renounced Ownership": "ויתור על שליטה",
+                "Your assets are protected by the highest logic of the blockchain": "הנכסים שלך מוגנים על ידי ההיגיון הגבוה ביותר של הבלוקצ'יין",
                 "YOUR SAGE RANK": "הדרגה שלך",
                 "To \"Wisdom\": 1,000 ZUZ": "עד \"חוכמה\": 1,000 ZUZ",
                 "Staking bonus:": "בונוס סטייקינג:",
@@ -1104,164 +1099,38 @@
                 "TIME LEFT": "זמן שנותר",
                 "ACTIVE": "פעיל",
                 "SOON": "בקרוב",
-                "ENDED": "הסתיים"
-            },
-            ar: {
-                "CONNECT WALLET": "ربط المحفظة",
-                "BUY ZUZ": "شراء ZUZ",
-                "Your assets are protected by the highest logic of the blockchain": "أصولك محمية بأعلى منطق للبلوكتشين",
-                "SEAL OF TRUST": "ختم الثقة",
-                "ZUZ MANIFESTO": "بيان ZUZ",
-                "ACCEPT THE CALL": "قبول النداء",
-                "START STAKING": "بدء التخزين",
-                "Why": "لماذا",
-                "7 Sages": "7 حكماء",
-                "Staking 25% APY": "تخزين 25% APY",
-                "Audit + Security": "تدقيق + أمان",
-                "Presale": "بيع مسبق",
-                "Staking & Rewards": "تخزين ومكافآت",
-                "Marketing": "تسويق",
-                "Team (12m vesting)": "فريق (استحقاق 12 شهر)",
-                "Liquidity (locked)": "سيولة (مقفلة)",
-                "ZUZ STAKING": "تخزين ZUZ",
-                "YOUR SAGE RANK": "رتبتك",
-                "To \"Wisdom\": 1,000 ZUZ": "إلى \"الحكمة\": 1,000 ZUZ",
-                "Staking bonus:": "مكافأة التخزين:",
-                "Add ZUZ to wallet": "أضف ZUZ إلى المحفظة",
-                "I agree to the terms": "أوافق على الشروط",
-                "You get:": "ستحصل على:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "الحد الأدنى للشراء",
-                "TIME LEFT": "الوقت المتبقي",
-                "ACTIVE": "نشط",
-                "SOON": "قريبًا",
-                "ENDED": "انتهى"
-            },
-            ko: {
-                "CONNECT WALLET": "지갑 연결",
-                "BUY ZUZ": "ZUZ 구매",
-                "Your assets are protected by the highest logic of the blockchain": "자산이 블록체인의 최고 논리로 보호됩니다",
-                "SEAL OF TRUST": "신뢰의 인장",
-                "ZUZ MANIFESTO": "ZUZ 선언문",
-                "ACCEPT THE CALL": "부름 수락",
-                "START STAKING": "스테이킹 시작",
-                "Why": "이유",
-                "7 Sages": "7 현인",
-                "Staking 25% APY": "스테이킹 25% APY",
-                "Audit + Security": "감사 + 보안",
-                "Presale": "프리세일",
-                "Staking & Rewards": "스테이킹 및 보상",
-                "Marketing": "마케팅",
-                "Team (12m vesting)": "팀 (12개월 베스팅)",
-                "Liquidity (locked)": "유동성 (잠김)",
-                "ZUZ STAKING": "ZUZ 스테이킹",
-                "YOUR SAGE RANK": "현인 등급",
-                "To \"Wisdom\": 1,000 ZUZ": "\"지혜\"까지: 1,000 ZUZ",
-                "Staking bonus:": "스테이킹 보너스:",
-                "Add ZUZ to wallet": "지갑에 ZUZ 추가",
-                "I agree to the terms": "약관에 동의합니다",
-                "You get:": "받는 금액:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "최소 구매",
-                "TIME LEFT": "남은 시간",
-                "ACTIVE": "활성",
-                "SOON": "곧",
-                "ENDED": "종료됨"
-            },
-            zh: {
-                "CONNECT WALLET": "连接钱包",
-                "BUY ZUZ": "购买 ZUZ",
-                "Your assets are protected by the highest logic of the blockchain": "您的资产受到区块链最高逻辑的保护",
-                "SEAL OF TRUST": "信任之印",
-                "ZUZ MANIFESTO": "ZUZ 宣言",
-                "ACCEPT THE CALL": "接受召唤",
-                "START STAKING": "开始质押",
-                "Why": "为什么",
-                "7 Sages": "七贤者",
-                "Staking 25% APY": "质押 25% APY",
-                "Audit + Security": "审计 + 安全",
-                "Presale": "预售",
-                "Staking & Rewards": "质押与奖励",
-                "Marketing": "市场营销",
-                "Team (12m vesting)": "团队 (12个月归属)",
-                "Liquidity (locked)": "流动性 (锁定)",
-                "ZUZ STAKING": "ZUZ 质押",
-                "YOUR SAGE RANK": "您的贤者等级",
-                "To \"Wisdom\": 1,000 ZUZ": "距\"智慧\"还需: 1,000 ZUZ",
-                "Staking bonus:": "质押加成:",
-                "Add ZUZ to wallet": "添加 ZUZ 到钱包",
-                "I agree to the terms": "我同意条款",
-                "You get:": "您将获得:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "最小购买",
-                "TIME LEFT": "剩余时间",
-                "ACTIVE": "活跃中",
-                "SOON": "即将开始",
-                "ENDED": "已结束"
-            },
-            ja: {
-                "CONNECT WALLET": "ウォレット接続",
-                "BUY ZUZ": "ZUZを購入",
-                "Your assets are protected by the highest logic of the blockchain": "あなたの資産はブロックチェーンの最高の論理によって保護されています",
-                "SEAL OF TRUST": "信頼の封印",
-                "ZUZ MANIFESTO": "ZUZ マニフェスト",
-                "ACCEPT THE CALL": "呼びかけを受け入れる",
-                "START STAKING": "ステーキング開始",
-                "Why": "なぜZUZなのか",
-                "7 Sages": "7人の賢者",
-                "Staking 25% APY": "ステーキング 25% APY",
-                "Audit + Security": "監査 + セキュリティ",
-                "Presale": "プリセール",
-                "Staking & Rewards": "ステーキングと報酬",
-                "Marketing": "マーケティング",
-                "Team (12m vesting)": "チーム (12ヶ月ベスティング)",
-                "Liquidity (locked)": "流動性 (ロック済み)",
-                "ZUZ STAKING": "ZUZ ステーキング",
-                "YOUR SAGE RANK": "賢者のランク",
-                "To \"Wisdom\": 1,000 ZUZ": "「知恵」まで: 1,000 ZUZ",
-                "Staking bonus:": "ステーキングボーナス:",
-                "Add ZUZ to wallet": "ZUZをウォレットに追加",
-                "I agree to the terms": "利用規約に同意します",
-                "You get:": "あなたの受取額:",
-                "1 ZUZ =": "1 ZUZ =",
-                "MIN. PURCHASE": "最小購入額",
-                "TIME LEFT": "残り時間",
-                "ACTIVE": "アクティブ",
-                "SOON": "もうすぐ",
-                "ENDED": "終了"
+                "ENDED": "הסתיים",
+                "Connect Wallet": "חבר ארנק",
+                "Popular": "פופולרי",
+                "Trust Wallet": "Trust Wallet",
+                "Open in app": "פתח באפליקציה",
+                "No wallet?": "אין ארנק?",
+                "Install MetaMask": "התקן MetaMask",
+                "Novice": "מתחיל",
+                "Wisdom": "חוכמה",
+                "Prosperity": "שגשוג",
+                "Protection": "הגנה",
+                "Innovation": "חדשנות",
+                "Harmony": "הרמוניה",
+                "Power": "כוח",
+                "Immortality": "אלמוות"
             }
         };
         
         let currentLang = 'en';
         
-        // ========== АВТООПРЕДЕЛЕНИЕ ЯЗЫКА ПО IP ==========
         async function detectLanguageByIP() {
             try {
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
                 const countryCode = data.country_code;
-                const countryToLang = {
-                    'RU': 'ru', 'BY': 'ru', 'KZ': 'ru', 'UA': 'ru',
-                    'DE': 'de', 'AT': 'de', 'CH': 'de',
-                    'FR': 'fr', 'BE': 'fr',
-                    'IL': 'he',
-                    'AE': 'ar', 'SA': 'ar', 'EG': 'ar', 'QA': 'ar', 'KW': 'ar',
-                    'KR': 'ko',
-                    'CN': 'zh', 'TW': 'zh', 'HK': 'zh',
-                    'JP': 'ja'
-                };
-                return countryToLang[countryCode] || 'en';
-            } catch(e) {
-                return 'en';
-            }
+                const map = { 'RU': 'ru', 'DE': 'de', 'FR': 'fr', 'IL': 'he', 'AE': 'ar', 'KR': 'ko', 'CN': 'zh', 'JP': 'ja' };
+                return map[countryCode] || 'en';
+            } catch(e) { return 'en'; }
         }
         
-        // ========== ТОТАЛЬНЫЙ ПЕРЕВОД ВСЕХ ТЕКСТОВ ==========
         function translatePage(lang) {
-            if (lang === 'en') {
-                location.reload();
-                return;
-            }
+            if (lang === 'en') { location.reload(); return; }
             const dict = translations[lang];
             if (!dict) return;
             
@@ -1269,13 +1138,8 @@
             let node;
             const textNodes = [];
             while (node = walk.nextNode()) {
-                if (node.parentElement && 
-                    (node.parentElement.tagName === 'SCRIPT' || 
-                     node.parentElement.tagName === 'STYLE' ||
-                     node.parentElement.tagName === 'CODE')) continue;
-                if (node.nodeValue && node.nodeValue.trim().length > 0) {
-                    textNodes.push(node);
-                }
+                if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) continue;
+                if (node.nodeValue && node.nodeValue.trim().length > 0) textNodes.push(node);
             }
             
             textNodes.forEach(node => {
@@ -1283,26 +1147,20 @@
                 let changed = false;
                 for (const [eng, trans] of Object.entries(dict)) {
                     if (text.includes(eng)) {
-                        text = text.replace(new RegExp(eng, 'g'), trans);
+                        text = text.replace(new RegExp(eng.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), trans);
                         changed = true;
                     }
                 }
                 if (changed) node.nodeValue = text;
             });
             
-            document.querySelectorAll('input, button, textarea, select').forEach(el => {
+            document.querySelectorAll('input, button, select').forEach(el => {
                 if (el.placeholder && dict[el.placeholder]) el.placeholder = dict[el.placeholder];
                 if (el.value && dict[el.value] && el.tagName !== 'SELECT') el.value = dict[el.value];
             });
-            
-            document.querySelectorAll('select option').forEach(opt => {
-                if (dict[opt.textContent]) opt.textContent = dict[opt.textContent];
-            });
-            
-            console.log(`✅ Сайт переведён на ${lang}`);
+            console.log(`✅ Переведено на ${lang}`);
         }
         
-        // ========== ИНИЦИАЛИЗАЦИЯ ЯЗЫКА ==========
         (async function initLanguage() {
             let lang = localStorage.getItem('user_lang');
             if (!lang) {
@@ -1311,30 +1169,22 @@
             }
             currentLang = lang;
             document.getElementById('langSelect').value = lang;
-            if (lang !== 'en') {
-                translatePage(lang);
-            }
+            if (lang !== 'en') translatePage(lang);
         })();
         
         function changeLanguage(lang) {
             localStorage.setItem('user_lang', lang);
-            currentLang = lang;
-            if (lang === 'en') {
-                location.reload();
-            } else {
-                translatePage(lang);
-            }
+            if (lang === 'en') location.reload();
+            else translatePage(lang);
         }
         
         // ========== ШАПКА ==========
         let lastScrollTop = 0;
-        const navbar = document.getElementById('navbar');
+        const navbarEl = document.getElementById('navbar');
         const navTrigger = document.getElementById('navTrigger');
         let navbarVisible = false;
-        
-        function showNavbar() { navbar.classList.add('visible'); navbarVisible = true; }
-        function hideNavbar() { navbar.classList.remove('visible'); navbarVisible = false; }
-        
+        function showNavbar() { navbarEl.classList.add('visible'); navbarVisible = true; }
+        function hideNavbar() { navbarEl.classList.remove('visible'); navbarVisible = false; }
         navTrigger.addEventListener('click', () => navbarVisible ? hideNavbar() : showNavbar());
         window.addEventListener('scroll', () => {
             const scrollTop = window.pageYOffset;
@@ -1382,7 +1232,6 @@
             } catch(e) {}
         }
         
-        // ========== ОСНОВНОЙ ФУНКЦИОНАЛ ==========
         function showNotification(msg, type) {
             const n = document.createElement('div');
             n.className = `notification ${type}`;
@@ -1542,7 +1391,6 @@
             } catch(e) { showNotification('Error adding token', 'error'); }
         }
         
-        // ========== ЛЕНТА ==========
         const cities = ["Dubai", "London", "Tokyo", "New York", "Seoul", "Monaco", "Singapore", "Moscow", "Hong Kong", "Zurich", "Berlin", "Paris", "Tel Aviv", "Shanghai", "Sydney", "Toronto"];
         const amounts = [0.05, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0];
         
@@ -1562,7 +1410,6 @@
             }, 3000);
         }
         
-        // ========== КАРТА ==========
         const hotspots = [];
         for (let i = 0; i < 120; i++) {
             hotspots.push({ name: cities[i % cities.length] + (i > cities.length ? " " + Math.floor(i/cities.length+1) : ""), x: Math.random() * 85 + 5, y: Math.random() * 70 + 15 });
@@ -1589,7 +1436,6 @@
             }
         }
         
-        // ========== МОДАЛКИ ==========
         function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
         function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
@@ -1631,7 +1477,6 @@
             document.getElementById('youtubeLink').href = 'https://youtube.com/';
         }
         
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
