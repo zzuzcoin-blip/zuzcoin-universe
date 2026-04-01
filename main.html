@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>ZUZ Universe — 7 Sages</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         :root {
             --bg-primary: #0A0A0A;
             --bg-secondary: #111111;
@@ -18,8 +25,16 @@
             --accent-green: #00D18C;
             --border-color: #333333;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; position: relative; overflow-x: hidden; padding-top: 0; }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+        
         body::before {
             content: '';
             position: fixed;
@@ -32,7 +47,7 @@
             z-index: 0;
         }
         
-        /* Магические эффекты */
+        /* ========== АНИМАЦИИ ========== */
         .magic-dot {
             position: fixed;
             pointer-events: none;
@@ -66,296 +81,397 @@
         }
         @keyframes mistMove { 0% { opacity: 0.1; } 50% { opacity: 0.3; } 100% { opacity: 0.1; } }
         
-        .feature-card:hover, .token-item:hover {
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.2);
-            border-color: var(--accent-gold);
-            background: radial-gradient(circle at center, rgba(212,175,55,0.1) 0%, var(--bg-card) 70%);
-            transform: translateY(-4px);
+        .gold-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .gold-particle {
+            position: absolute;
+            background: radial-gradient(circle, #ffd966, #b8860b);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 10s infinite ease-in-out;
+        }
+        @keyframes floatParticle {
+            0%,100% { transform: translateY(0) translateX(0); opacity: 0.1; }
+            50% { transform: translateY(-50px) translateX(30px); opacity: 0.4; }
         }
         
-        .gold-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-        .gold-particle { position: absolute; background: radial-gradient(circle, #ffd966, #b8860b); border-radius: 50%; opacity: 0.3; animation: floatParticle 10s infinite ease-in-out; }
-        @keyframes floatParticle { 0%,100% { transform: translateY(0) translateX(0); opacity: 0.1; } 50% { transform: translateY(-50px) translateX(30px); opacity: 0.4; } }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
         
-        .container, .hero, .features, .tokenomics, .roadmap, .footer { position: relative; z-index: 1; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        
-        /* ========== ШАПКА С ПРОКРУТКОЙ ========== */
+        /* ========== ШАПКА ========== */
         .navbar {
             position: fixed;
             top: -100px;
             left: 0;
             width: 100%;
-            background: rgba(10,10,10,0.95);
+            background: rgba(10,10,10,0.98);
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            padding: 12px 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
             transition: top 0.3s ease-in-out;
         }
-        .navbar.visible {
-            top: 0;
-        }
+        .navbar.visible { top: 0; }
         .navbar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 12px;
         }
-        .logo { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .coin-icon { width: 50px; height: 50px; background: #000; border: 2px solid var(--accent-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent-gold); font-size: 28px; font-weight: 900; transition: all 0.3s; }
-        .coin-icon:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212,175,55,0.5); }
-        .coin-icon.small { width: 30px; height: 30px; font-size: 16px; }
-        .logo-text { display: flex; flex-direction: column; }
-        .logo-main { font-size: 22px; font-weight: 800; font-family: 'Poppins', sans-serif; color: white; }
-        .logo-sub { font-size: 12px; color: var(--text-secondary); }
-        .nav-links { display: flex; gap: 30px; flex-wrap: wrap; }
-        .nav-links a { color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
+        
+        .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; flex-shrink: 0; }
+        .coin-icon {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            font-size: 22px;
+            font-weight: 900;
+        }
+        .logo-text .logo-main { font-size: 18px; font-weight: 800; font-family: 'Poppins', sans-serif; }
+        .logo-text .logo-sub { font-size: 10px; color: var(--text-secondary); }
+        
+        .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s; }
         .nav-links a:hover { color: var(--accent-gold); }
-        .btn-connect { background: linear-gradient(135deg, var(--accent-gold), #FFD700); border: none; color: black; font-weight: 600; padding: 12px 24px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+        
+        .lang-selector select {
+            background: transparent;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 6px 28px 6px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        .lang-selector select option { background: var(--bg-primary); }
+        
+        .btn-connect {
+            background: linear-gradient(135deg, var(--accent-gold), #FFD700);
+            border: none;
+            color: black;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
         .btn-connect:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
         
-        /* Кнопка вызова шапки */
         .nav-trigger {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 101;
+            top: 16px;
+            right: 16px;
+            z-index: 1001;
             background: rgba(212,175,55,0.2);
             border: 1px solid var(--accent-gold);
             border-radius: 40px;
-            padding: 8px 16px;
+            padding: 8px 14px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--accent-gold);
             backdrop-filter: blur(5px);
             transition: all 0.3s;
         }
-        .nav-trigger:hover {
-            background: rgba(212,175,55,0.4);
-            transform: scale(1.05);
+        .nav-trigger:hover { background: rgba(212,175,55,0.4); transform: scale(1.05); }
+        
+        .disconnect-btn {
+            background: rgba(255,100,100,0.2);
+            border: 1px solid #ff6464;
+            border-radius: 40px;
+            padding: 6px 14px;
+            color: #ff6464;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: 10px;
+            transition: all 0.3s;
         }
+        .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
         
-        .hero { padding: 60px 0 80px; margin-top: 0; }
-        .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-        @media (max-width: 768px) { .hero .container { grid-template-columns: 1fr; } }
-        .hero-title { font-size: 48px; line-height: 1.2; margin-bottom: 20px; font-family: 'Poppins', sans-serif; font-weight: 800; }
+        /* ========== ГЛАВНЫЙ БЛОК ========== */
+        .hero { padding: 80px 0 60px; }
+        .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        @media (max-width: 768px) { .hero .container { grid-template-columns: 1fr; gap: 30px; } }
+        
+        .hero-title { font-size: 42px; line-height: 1.2; margin-bottom: 20px; font-family: 'Poppins', sans-serif; font-weight: 800; }
+        @media (max-width: 768px) { .hero-title { font-size: 32px; } }
         .gradient-text { background: linear-gradient(135deg, var(--accent-gold), #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-subtitle { color: var(--text-secondary); margin-bottom: 30px; font-size: 18px; }
+        .hero-subtitle { color: var(--text-secondary); margin-bottom: 30px; font-size: 16px; line-height: 1.5; }
         
-        .presale-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; margin-top: 20px; }
-        .presale-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .presale-title { font-size: 20px; font-weight: 700; }
-        .presale-badge { background: var(--accent-green); color: black; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
-        .presale-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: #222; padding: 15px; border-radius: 12px; margin: 20px 0; }
+        .presale-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        .presale-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .presale-title { font-size: 18px; font-weight: 700; }
+        .presale-badge { background: var(--accent-green); color: black; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+        
+        .presale-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: #222;
+            padding: 15px;
+            border-radius: 16px;
+            margin: 20px 0;
+        }
         .detail { text-align: center; }
-        .detail-label { color: var(--text-secondary); font-size: 11px; display: block; margin-bottom: 5px; }
-        .detail-value { font-weight: 700; color: var(--accent-gold); font-size: 14px; }
-        .buy-form { margin: 20px 0; }
-        .input-group { display: flex; background: #222; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
-        .input-group input { flex: 1; background: transparent; border: none; padding: 15px; color: white; font-size: 16px; outline: none; }
+        .detail-label { color: var(--text-secondary); font-size: 10px; display: block; margin-bottom: 5px; }
+        .detail-value { font-weight: 700; color: var(--accent-gold); font-size: 13px; }
+        
+        .input-group {
+            display: flex;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 14px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
         .input-suffix { padding: 0 15px; color: var(--text-secondary); display: flex; align-items: center; }
-        .you-get { display: flex; justify-content: space-between; padding: 15px; background: #222; border-radius: 8px; margin-bottom: 20px; }
-        .btn-buy { width: 100%; background: linear-gradient(135deg, var(--accent-gold), #FFD700); border: none; padding: 18px; border-radius: 8px; font-weight: 700; font-size: 18px; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; }
+        
+        .you-get {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: #222;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .btn-buy {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-gold), #FFD700);
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
         .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
         .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .accept-terms { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 14px; cursor: pointer; }
-        .hero-video { display: flex; justify-content: center; align-items: center; }
-        .video-sidebar-large { width: 100%; padding: 15px; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); background: linear-gradient(145deg, #0f212e, #1a2f3f); }
-        .presale-video-large { width: 100%; border-radius: 20px; display: block; }
-        .features { padding: 80px 0; background: var(--bg-secondary); }
-        .section-title { font-size: 36px; text-align: center; margin-bottom: 50px; font-family: 'Poppins', sans-serif; }
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
-        .feature-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.4s; cursor: pointer; }
-        .feature-icon { font-size: 48px; margin-bottom: 20px; }
-        .feature-card h3 { margin-bottom: 15px; font-size: 20px; }
-        .feature-card p { color: var(--text-secondary); font-size: 14px; }
-        .tokenomics { padding: 80px 0; }
-        .tokenomics-content { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        
+        .accept-terms { display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 12px; cursor: pointer; }
+        .add-token-btn {
+            background: rgba(212,175,55,0.2);
+            border: 1px solid var(--accent-gold);
+            border-radius: 40px;
+            padding: 6px 14px;
+            color: var(--accent-gold);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+        .add-token-btn:hover { background: rgba(212,175,55,0.4); transform: translateY(-1px); }
+        
+        .hero-video { display: flex; justify-content: center; }
+        .video-sidebar-large {
+            width: 100%;
+            padding: 12px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, #0f212e, #1a2f3f);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .presale-video-large { width: 100%; border-radius: 16px; display: block; }
+        
+        /* ========== СЕКЦИИ ========== */
+        .features, .tokenomics, .roadmap, .faq-section, .security-section {
+            padding: 60px 0;
+        }
+        .section-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            font-family: 'Poppins', sans-serif;
+        }
+        @media (max-width: 768px) { .section-title { font-size: 26px; } }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px 20px;
+            text-align: center;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        .feature-icon { font-size: 48px; margin-bottom: 15px; }
+        .feature-card h3 { margin-bottom: 12px; font-size: 20px; }
+        .feature-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+        
+        .tokenomics-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
         @media (max-width: 768px) { .tokenomics-content { grid-template-columns: 1fr; } }
-        .pie-chart { width: 300px; height: 300px; border-radius: 50%; background: conic-gradient(#4CAF50 0% 40%, #2196F3 40% 70%, #FF9800 70% 85%, #9C27B0 85% 95%, #f44336 95% 100%); margin: 0 auto; }
-        .tokenomics-list { display: flex; flex-direction: column; gap: 15px; }
-        .token-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg-card); border-radius: 8px; transition: all 0.3s; cursor: pointer; }
-        .color-dot { width: 16px; height: 16px; border-radius: 4px; }
+        .pie-chart {
+            width: 260px;
+            height: 260px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 0% 40%, #2196F3 40% 70%, #FF9800 70% 85%, #9C27B0 85% 95%, #f44336 95% 100%);
+        }
+        .tokenomics-list { display: flex; flex-direction: column; gap: 12px; }
+        .token-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .color-dot { width: 14px; height: 14px; border-radius: 4px; }
         .color-dot.presale { background: #4CAF50; }
         .color-dot.staking { background: #2196F3; }
         .color-dot.marketing { background: #FF9800; }
         .color-dot.dev { background: #9C27B0; }
         .color-dot.liquidity { background: #f44336; }
-        .token-label { flex: 1; }
+        .token-label { flex: 1; font-size: 14px; }
         .token-percent { font-weight: 700; color: var(--accent-gold); }
-        .token-amount { color: var(--text-secondary); font-size: 14px; }
-        .staking-card { background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.4)); border: 1px solid rgba(212,175,55,0.3); border-radius: 24px; padding: 50px 40px; text-align: center; margin: 60px 0; backdrop-filter: blur(10px); }
-        .staking-title { font-size: 28px; margin-bottom: 20px; }
-        .apy-badge { font-size: 56px; font-weight: 800; color: var(--accent-gold); margin: 20px 0; text-shadow: 0 0 20px rgba(212,175,55,0.5); }
-        .staking-btn { background: linear-gradient(135deg, var(--accent-gold), #FFD700); border: none; padding: 14px 40px; border-radius: 40px; font-weight: 700; font-size: 18px; cursor: pointer; transition: all 0.3s; }
-        .staking-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(212,175,55,0.5); }
-        .trusted-section { padding: 60px 0; text-align: center; background: linear-gradient(180deg, transparent, rgba(212,175,55,0.05), transparent); }
-        .trusted-title { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 30px; }
-        .trusted-logos { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-        .trusted-logo { background: rgba(255,255,255,0.03); padding: 12px 28px; border-radius: 40px; font-weight: 600; color: var(--accent-gold); border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s; cursor: pointer; }
-        .trusted-logo:hover { border-color: var(--accent-gold); transform: translateY(-3px); background: rgba(212,175,55,0.1); }
-        .roadmap { padding: 80px 0; background: var(--bg-secondary); }
-        .roadmap-timeline { position: relative; max-width: 900px; margin: 0 auto; }
-        .roadmap-timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 2px; height: 100%; background: linear-gradient(to bottom, var(--accent-gold), transparent); }
-        @media (max-width: 768px) { .roadmap-timeline::before { left: 30px; } }
-        .roadmap-phase { display: flex; justify-content: flex-end; padding: 20px 0; position: relative; width: 50%; }
-        .roadmap-phase:nth-child(even) { margin-left: 50%; justify-content: flex-start; }
-        @media (max-width: 768px) { .roadmap-phase { width: 100%; margin-left: 50px !important; justify-content: flex-start; } }
-        .phase-marker { width: 20px; height: 20px; background: var(--accent-gold); border: 4px solid var(--bg-primary); border-radius: 50%; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); z-index: 2; }
-        .roadmap-phase:nth-child(even) .phase-marker { left: -10px; right: auto; }
-        @media (max-width: 768px) { .phase-marker { left: -30px !important; right: auto !important; } }
-        .roadmap-phase.completed .phase-marker { background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
-        .roadmap-phase.active .phase-marker { animation: pulse-glow 2s infinite; background: var(--accent-gold); }
-        @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 5px var(--accent-gold); } 50% { box-shadow: 0 0 20px var(--accent-gold); } }
-        .phase-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; width: 90%; transition: all 0.3s; }
-        .phase-content:hover { border-color: var(--accent-gold); transform: translateY(-3px); }
-        .phase-content h4 { color: var(--accent-gold); margin-bottom: 10px; }
-        .phase-content p { color: var(--text-secondary); font-size: 14px; }
-        .faq-section { padding: 80px 0; }
-        .faq-grid { max-width: 800px; margin: 0 auto; }
-        .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s; }
-        .faq-item:hover { border-color: var(--accent-gold); }
-        .faq-question { padding: 20px 24px; font-weight: 600; font-size: 18px; display: flex; justify-content: space-between; align-items: center; }
-        .faq-question span { color: var(--accent-gold); font-size: 24px; transition: transform 0.3s; }
-        .faq-item.active .faq-question span { transform: rotate(45deg); }
-        .faq-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: all 0.3s ease; color: var(--text-secondary); line-height: 1.6; }
-        .faq-item.active .faq-answer { padding: 0 24px 20px 24px; max-height: 300px; }
-        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 40px 0; }
-        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
-        .footer-logo { display: flex; align-items: center; gap: 10px; }
-        .footer-social { display: flex; gap: 20px; }
-        .footer-social a { color: var(--text-secondary); font-size: 24px; transition: color 0.3s; text-decoration: none; }
-        .footer-social a:hover { color: var(--accent-gold); }
-        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 14px; }
+        .token-amount { color: var(--text-secondary); font-size: 12px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; display: none; justify-content: center; align-items: center; }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--accent-gold); border-radius: 24px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 24px; font-weight: 700; color: var(--accent-gold); }
-        .close-modal { background: none; border: none; color: var(--text-secondary); font-size: 32px; cursor: pointer; }
-        .close-modal:hover { color: var(--accent-gold); }
-        .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 8px; padding: 8px 16px; color: #ff6464; cursor: pointer; font-size: 12px; margin-left: 15px; transition: all 0.3s; }
-        .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
+        .staking-card {
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.4));
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 32px;
+            padding: 40px 30px;
+            text-align: center;
+            margin: 60px 0;
+            backdrop-filter: blur(10px);
+        }
+        .apy-badge { font-size: 48px; font-weight: 800; color: var(--accent-gold); margin: 15px 0; }
+        .staking-btn {
+            background: linear-gradient(135deg, var(--accent-gold), #FFD700);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
         
+        .trusted-section { padding: 40px 0; text-align: center; }
+        .trusted-logos {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .trusted-logo {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: var(--accent-gold);
+            border: 1px solid rgba(212,175,55,0.2);
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        /* Дашборд мудреца */
         .sage-level-card {
             background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.4));
             border: 1px solid var(--accent-gold);
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 20px;
             margin-top: 20px;
             backdrop-filter: blur(5px);
-            transition: all 0.3s;
         }
-        .sage-level-card:hover {
-            box-shadow: 0 0 25px rgba(212,175,55,0.3);
-            border-color: var(--accent-gold);
+        .sage-progress {
+            background: #333;
+            height: 10px;
+            border-radius: 5px;
+            margin: 12px 0;
+            overflow: hidden;
         }
-        .sage-badge { font-size: 48px; margin-bottom: 10px; }
-        .sage-title { font-size: 24px; font-weight: 700; color: var(--accent-gold); }
-        .sage-description { font-size: 14px; color: var(--text-secondary); margin: 10px 0; }
-        .sage-progress { background: #333; height: 12px; border-radius: 6px; margin: 15px 0; overflow: hidden; }
-        .sage-progress-fill { background: linear-gradient(90deg, #D4AF37, #FFD700); height: 100%; border-radius: 6px; width: 0%; transition: width 0.3s ease; }
+        .sage-progress-fill {
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
         
-        .add-token-btn { background: rgba(212,175,55,0.2); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer; font-size: 12px; transition: all 0.3s; }
-        .add-token-btn:hover { background: rgba(212,175,55,0.4); transform: translateY(-1px); }
-        .notification { position: fixed; top: 20px; right: 20px; padding: 14px 20px; border-radius: 12px; z-index: 10001; font-size: 14px; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.3); animation: slideInRight 0.3s ease; max-width: 350px; }
-        .notification.success { background: #4caf50; color: white; }
-        .notification.error { background: #f44336; color: white; }
-        .notification.info { background: #2196f3; color: white; }
-        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        
-        .wallet-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .wallet-option-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .wallet-option-item:hover {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: var(--accent-gold);
-            transform: translateY(-2px);
-        }
-        .wallet-option-item img { width: 35px; height: 35px; object-fit: contain; }
-        .wallet-option-item span { font-size: 18px; font-weight: 600; }
-        .wallet-badge {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            background: var(--accent-gold);
-            color: black;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-        .wallet-subtext { font-size: 11px; color: var(--text-secondary); margin-top: 4px; display: block; }
-        
-        .action-btn { background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); border-radius: 8px; padding: 8px 16px; color: var(--accent-gold); cursor: pointer; transition: all 0.3s; }
-        .action-btn:hover { background: rgba(212,175,55,0.3); transform: translateY(-2px); }
-        .functional-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
-        
-        /* Живая лента */
+        /* Лента активности */
         .live-activity-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 320px;
-            background: rgba(10, 10, 10, 0.95);
+            width: 280px;
+            background: rgba(10,10,10,0.95);
             border: 1px solid var(--accent-gold);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 12px;
             z-index: 999;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-            font-family: 'Inter', sans-serif;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
-        .live-header {
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: var(--accent-gold);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .live-dot {
-            width: 8px; height: 8px;
-            background: #ff4d4d;
-            border-radius: 50%;
-            animation: blink 1s infinite;
-        }
-        .activity-feed {
-            min-height: 60px;
-        }
-        .activity-item {
-            font-size: 12px;
-            padding: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            animation: slideIn 0.3s ease-out;
-        }
-        .activity-item:last-child {
-            border-bottom: none;
-        }
+        @media (max-width: 768px) { .live-activity-container { width: 240px; right: 10px; bottom: 10px; } }
+        .live-header { font-size: 10px; color: var(--accent-gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .live-dot { width: 8px; height: 8px; background: #ff4d4d; border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .activity-item { font-size: 11px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .activity-item:last-child { border-bottom: none; }
         
         /* Карта мира */
+        .map-wrapper { position: relative; max-width: 1000px; margin: 0 auto; }
         .map-pulse {
             position: absolute;
             width: 10px;
@@ -377,8 +493,8 @@
             animation: map-ripple 2s ease-out infinite;
         }
         @keyframes map-ripple {
-            0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; }
-            100% { width: 80px; height: 80px; opacity: 0; border-width: 0.5px; }
+            0% { width: 10px; height: 10px; opacity: 1; }
+            100% { width: 60px; height: 60px; opacity: 0; }
         }
         
         .hype-banner {
@@ -387,49 +503,201 @@
             padding: 10px;
             text-align: center;
             font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 2px;
-            border-radius: 8px;
+            font-size: 12px;
+            border-radius: 40px;
             margin-bottom: 20px;
         }
         
-        .lang-selector select {
-            background: transparent;
-            color: var(--accent-gold);
-            border: 1px solid var(--accent-gold);
-            padding: 8px 32px 8px 12px;
-            border-radius: 40px;
+        .roadmap-timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-gold), transparent);
+        }
+        @media (max-width: 768px) { .roadmap-timeline::before { left: 20px; } }
+        .roadmap-phase {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px 0;
+            position: relative;
+            width: 50%;
+        }
+        .roadmap-phase:nth-child(even) { margin-left: 50%; justify-content: flex-start; }
+        @media (max-width: 768px) {
+            .roadmap-phase { width: 100%; margin-left: 40px !important; justify-content: flex-start; }
+        }
+        .phase-marker {
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gold);
+            border: 3px solid var(--bg-primary);
+            border-radius: 50%;
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .roadmap-phase:nth-child(even) .phase-marker { left: -8px; right: auto; }
+        @media (max-width: 768px) { .phase-marker { left: -28px !important; right: auto !important; } }
+        .phase-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            width: 90%;
+        }
+        .phase-content h4 { color: var(--accent-gold); margin-bottom: 8px; font-size: 16px; }
+        .phase-content p { color: var(--text-secondary); font-size: 13px; line-height: 1.4; }
+        
+        .faq-grid { max-width: 800px; margin: 0 auto; }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
             cursor: pointer;
+        }
+        .faq-question {
+            padding: 16px 20px;
             font-weight: 600;
-            font-size: 14px;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question span { color: var(--accent-gold); font-size: 22px; transition: transform 0.3s; }
+        .faq-item.active .faq-question span { transform: rotate(45deg); }
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
             transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .lang-selector select:hover {
-            border-color: #FFD700;
-            box-shadow: 0 0 8px rgba(212,175,55,0.4);
-            background-color: rgba(212,175,55,0.1);
+        .faq-item.active .faq-answer { padding: 0 20px 20px 20px; max-height: 300px; }
+        
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
         }
-        .lang-selector select option {
-            background: var(--bg-primary);
-            color: var(--text-primary);
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .footer-social { display: flex; gap: 20px; }
+        .footer-social a { color: var(--text-secondary); font-size: 22px; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent-gold); }
+        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 12px; }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-gold);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title { font-size: 22px; font-weight: 700; color: var(--accent-gold); }
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 28px;
+            cursor: pointer;
         }
         
-        @media (max-width: 768px) {
-            .live-activity-container { width: 280px; right: 10px; bottom: 10px; }
-            .hype-banner { font-size: 10px; }
-            .lang-selector select { padding: 6px 28px 6px 10px; font-size: 12px; }
+        .wallet-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
         }
+        .wallet-option-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .wallet-option-item:hover {
+            background: rgba(212,175,55,0.15);
+            border-color: var(--accent-gold);
+        }
+        .wallet-option-item img { width: 32px; height: 32px; }
+        .wallet-option-item span { font-size: 16px; font-weight: 600; }
+        .wallet-badge {
+            background: var(--accent-gold);
+            color: black;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: auto;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            z-index: 10001;
+            font-size: 13px;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease;
+            max-width: 320px;
+        }
+        .notification.success { background: #4caf50; color: white; }
+        .notification.error { background: #f44336; color: white; }
+        .notification.info { background: #2196f3; color: white; }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
     <div class="mist-container"></div>
     
-    <!-- Кнопка вызова шапки -->
     <div class="nav-trigger" id="navTrigger">
         <i class="fas fa-bars"></i>
     </div>
@@ -440,7 +708,7 @@
                 <div class="coin-icon">ZUZ</div>
                 <div class="logo-text">
                     <div class="logo-main">ZUZ UNIVERSE</div>
-                    <div class="logo-sub">7 sages • 7 civilizations</div>
+                    <div class="logo-sub">7 Sages • 7 Civilizations</div>
                 </div>
             </div>
             <div class="nav-links">
@@ -456,8 +724,10 @@
                     <option value="de">🇩🇪 Deutsch</option>
                     <option value="fr">🇫🇷 Français</option>
                     <option value="he">🇮🇱 עברית</option>
-                    <option value="zh">🇨🇳 中文</option>
                     <option value="ar">🇦🇪 العربية</option>
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="ja">🇯🇵 日本語</option>
                 </select>
             </div>
             <button class="btn-connect" id="connectBtn"><i class="fas fa-wallet"></i> CONNECT WALLET</button>
@@ -493,24 +763,22 @@
                 <div id="sageDashboard" class="sage-level-card" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <h3 style="color: var(--accent-gold); font-family: 'Poppins'; margin: 0;">YOUR SAGE RANK</h3>
-                        <span id="currentSageBadge" style="font-size: 48px;">🌱</span>
+                        <span id="currentSageBadge" style="font-size: 40px;">🌱</span>
                     </div>
-                    <div style="margin: 15px 0;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span id="currentLevelName" style="font-weight: 700; font-size: 20px;">Novice</span>
-                            <span id="currentBalance" style="color: var(--accent-gold); font-size: 14px;">0 ZUZ</span>
+                    <div style="margin: 12px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span id="currentLevelName" style="font-weight: 700; font-size: 18px;">Novice</span>
+                            <span id="currentBalance" style="color: var(--accent-gold); font-size: 13px;">0 ZUZ</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span id="nextLevelInfo" style="color: var(--text-secondary); font-size: 12px;">To "Wisdom": 1,000 ZUZ</span>
-                        </div>
+                        <div id="nextLevelInfo" style="color: var(--text-secondary); font-size: 11px; margin-bottom: 8px;">To "Wisdom": 1,000 ZUZ</div>
                         <div class="sage-progress"><div id="sageProgressFill" class="sage-progress-fill" style="width: 0%;"></div></div>
                     </div>
-                    <div style="background: rgba(0,209,140,0.1); padding: 12px; border-radius: 8px; border-left: 3px solid var(--accent-green);">
-                        <p style="font-size: 13px; margin: 0;"><i class="fas fa-bolt" style="color: var(--accent-green);"></i> Staking bonus: <strong id="currentBonus">+0%</strong></p>
+                    <div style="background: rgba(0,209,140,0.1); padding: 10px; border-radius: 10px; border-left: 3px solid var(--accent-green);">
+                        <p style="font-size: 12px; margin: 0;"><i class="fas fa-bolt"></i> Staking bonus: <strong id="currentBonus">+0%</strong></p>
                     </div>
                 </div>
             </div>
-            <div class="hero-right hero-video" style="margin-top: 10px;">
+            <div class="hero-right hero-video">
                 <div class="video-sidebar-large">
                     <video autoplay loop muted playsinline class="presale-video-large">
                         <source src="zuz.mp4" type="video/mp4">
@@ -560,62 +828,46 @@
         </div>
     </div>
     
-    <!-- Manifesto -->
-    <section id="manifesto" class="staking-card" style="margin-top: 100px; border-style: double; border-width: 4px;">
-        <h2 class="gradient-text" style="font-size: 42px; margin-bottom: 30px; text-align: center;">ZUZ MANIFESTO</h2>
-        <div class="manifesto-text" style="max-width: 800px; margin: 0 auto; line-height: 1.8; font-style: italic; color: var(--text-secondary); text-align: center;">
+    <div class="staking-card">
+        <div class="staking-title">🏆 ZUZ STAKING</div>
+        <div class="apy-badge">25% APY</div>
+        <p style="color: var(--text-secondary);">Stake your ZUZ and earn passive income. Bonuses up to +30% based on your Sage level.</p>
+        <button class="staking-btn" id="stakeBtn">📈 START STAKING</button>
+    </div>
+    
+    <section id="manifesto" class="staking-card" style="margin-top: 0; border-style: double;">
+        <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 20px;">ZUZ MANIFESTO</h2>
+        <div style="max-width: 800px; margin: 0 auto; line-height: 1.6; font-style: italic; color: var(--text-secondary);">
             <p>"The world has changed. Old systems are crumbling, and true value is hidden from those who seek only the momentary. We are those who remember: true wealth requires wisdom, and wisdom requires time."</p>
             <br>
             <p>ZUZ is not just a token. It is a digital artifact combining the philosophy of the Seven Sages with the flawless logic of the Ethereum blockchain.</p>
             <br>
             <p>Join the Council. Attain Wisdom. Become Immortal. Your ascent begins here.</p>
         </div>
-        <button class="btn-buy" style="margin-top: 30px; width: auto; padding: 15px 50px; margin-left: auto; margin-right: auto; display: block;" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">
-            ACCEPT THE CALL
-        </button>
+        <button class="btn-buy" style="margin-top: 25px; width: auto; padding: 12px 40px; display: inline-block;" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">ACCEPT THE CALL</button>
     </section>
     
-    <!-- Seal of Trust -->
-    <section id="security" class="features" style="background: linear-gradient(180deg, var(--bg-primary), #0f1115); padding: 80px 0; margin-top: 80px;">
+    <section id="security" class="features" style="background: linear-gradient(180deg, var(--bg-primary), #0f1115); padding: 60px 0;">
         <div class="container">
-            <div style="text-align: center; margin-bottom: 50px;">
-                <div style="font-size: 60px; color: var(--accent-gold); filter: drop-shadow(0 0 20px rgba(212,175,55,0.5)); margin-bottom: 20px;">
-                    <i class="fas fa-shield-halved"></i>
-                </div>
-                <h2 class="gradient-text" style="font-size: 36px;">SEAL OF THE SAGES' TRUST</h2>
+            <div style="text-align: center; margin-bottom: 40px;">
+                <div style="font-size: 50px; color: var(--accent-gold); margin-bottom: 15px;"><i class="fas fa-shield-halved"></i></div>
+                <h2 class="gradient-text" style="font-size: 32px;">SEAL OF TRUST</h2>
                 <p style="color: var(--text-secondary);">Your assets are protected by the highest logic of the blockchain</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card" style="border: 1px solid var(--accent-gold); position: relative; overflow: hidden;">
-                    <div style="position: absolute; top: 10px; right: 10px; color: var(--accent-green); font-size: 20px;"><i class="fas fa-check-circle"></i></div>
-                    <div class="feature-icon">🔍</div>
-                    <h3>Code Purity</h3>
-                    <p>Smart contract verified. Mint and Proxy functions disabled — total supply of 1 billion ZUZ is fixed forever.</p>
-                </div>
-                <div class="feature-card" style="border: 1px solid var(--accent-gold); position: relative;">
-                    <div style="position: absolute; top: 10px; right: 10px; color: var(--accent-green); font-size: 20px;"><i class="fas fa-lock"></i></div>
-                    <div class="feature-icon">🔒</div>
-                    <h3>Liquidity Lock</h3>
-                    <p>70% of raised ETH is automatically locked in the Uniswap pool for 365 days via UNCX/PinkLock.</p>
-                </div>
-                <div class="feature-card" style="border: 1px solid var(--accent-gold); position: relative;">
-                    <div style="position: absolute; top: 10px; right: 10px; color: var(--accent-green); font-size: 20px;"><i class="fas fa-user-shield"></i></div>
-                    <div class="feature-icon">🏛️</div>
-                    <h3>Renounced Ownership</h3>
-                    <p>Contract ownership will be transferred to the DAO after listing. The team cannot change the rules unilaterally.</p>
-                </div>
+                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🔍</div><h3>Code Purity</h3><p>Smart contract verified. Mint and Proxy disabled — total supply of 1B ZUZ fixed forever.</p></div>
+                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🔒</div><h3>Liquidity Lock</h3><p>70% of raised ETH locked in Uniswap pool for 365 days via UNCX/PinkLock.</p></div>
+                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🏛️</div><h3>Renounced Ownership</h3><p>Contract ownership transfers to DAO after listing. Team cannot change rules unilaterally.</p></div>
             </div>
         </div>
     </section>
     
-    <!-- World Map -->
-    <section id="worldMap" class="features" style="background: #050505; overflow: hidden; padding: 100px 0;">
+    <section id="worldMap" class="features" style="background: #050505; padding: 60px 0;">
         <div class="container" style="text-align: center;">
-            <h2 class="gradient-text" style="font-size: 36px; margin-bottom: 10px;">AWAKENING OF THE UNIVERSE</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 50px;">Watch as the Wisdom of ZUZ covers the planet in real time</p>
-            <div class="map-wrapper" style="position: relative; max-width: 1000px; margin: 0 auto;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" 
-                     style="width: 100%; opacity: 0.15; filter: invert(1) sepia(1) saturate(5) hue-rotate(10deg);" alt="World Map">
+            <h2 class="gradient-text" style="font-size: 32px;">AWAKENING OF THE UNIVERSE</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 40px;">Watch as the Wisdom of ZUZ covers the planet in real time</p>
+            <div class="map-wrapper">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" style="width: 100%; opacity: 0.15; filter: invert(1) sepia(1) saturate(5) hue-rotate(10deg);" alt="World Map">
                 <div id="mapPulseContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
             </div>
         </div>
@@ -625,10 +877,10 @@
         <div class="container">
             <h2 class="section-title">🗺️ PATH OF THE SEVEN SAGES</h2>
             <div class="roadmap-timeline">
-                <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>🌱 Phase I: Awakening (Q1 2025)</h4><p>Gathering of the Council: website and social media launch. Smart contract ritual: deployment of $ZUZ and presale. Opening of the gates for the first followers.</p></div></div>
-                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>⚔️ Phase II: Gaining Strength (Q2 2025)</h4><p>Great Baptism: listing on Uniswap, liquidity lock. Altar of Staking: platform launch with level bonuses. Listing on CMC/CG.</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>🌍 Phase III: Harmony of Worlds (Q3-Q4 2025)</h4><p>Council of Elders (DAO): voting launch. Artifacts of the Sages: NFT collection with bonuses. Bridges of Wisdom: cross-chain expansion.</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>👑 Phase IV: Immortality (2026+)</h4><p>ZUZ Ecosystem: own Launchpad. Metaverse: integration of the 7 Sages. Eternal Storage: full decentralization.</p></div></div>
+                <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>🌱 Phase I: Awakening (Q1 2025)</h4><p>Council launch, website & socials, smart contract deployment, presale start.</p></div></div>
+                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>⚔️ Phase II: Gaining Strength (Q2 2025)</h4><p>Uniswap listing, liquidity lock, staking platform launch, CMC/CG listing.</p></div></div>
+                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>🌍 Phase III: Harmony of Worlds (Q3-Q4 2025)</h4><p>DAO voting, NFT collection, cross-chain expansion.</p></div></div>
+                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>👑 Phase IV: Immortality (2026+)</h4><p>ZUZ Launchpad, Metaverse integration, full decentralization.</p></div></div>
             </div>
         </div>
     </div>
@@ -637,84 +889,34 @@
         <div class="container">
             <h2 class="section-title">❓ Sacred Scripture (FAQ)</h2>
             <div class="faq-grid">
-                <div class="faq-item"><div class="faq-question">Where does the presale money go? <span>+</span></div><div class="faq-answer">80% goes to creating liquidity on DEX (Uniswap/PancakeSwap). 15% — marketing and ecosystem development. 5% — ProofChain development. Team tokens are vested for 12 months.</div></div>
-                <div class="faq-item"><div class="faq-question">When do I receive tokens after purchase? <span>+</span></div><div class="faq-answer">Instantly! After transaction confirmation, ZUZ appears in your wallet. You can immediately stake or hold them.</div></div>
-                <div class="faq-item"><div class="faq-question">What are sage bonuses and how to get them? <span>+</span></div><div class="faq-answer">Automatically! The more ZUZ in your wallet, the higher your level: 1,000 ZUZ → +2%, 5,000 → +5%, 10,000 → +10%, 25,000 → +15%, 50,000 → +20%, 100,000 → +25%, 250,000 → +30% + NFT.</div></div>
-                <div class="faq-item"><div class="faq-question">Is the contract safe? Who audited it? <span>+</span></div><div class="faq-answer">Yes! The ZUZ contract has been audited. The code is open and verified. Team tokens are locked for 12 months, liquidity will be locked for 2 years.</div></div>
-                <div class="faq-item"><div class="faq-question">What is ProofChain and why is it needed? <span>+</span></div><div class="faq-answer">Our own L1 blockchain. It will ensure donation transparency (1% from each transaction), reduce fees, and provide full decentralization of the ZUZ ecosystem.</div></div>
+                <div class="faq-item"><div class="faq-question">Where does the presale money go? <span>+</span></div><div class="faq-answer">80% to DEX liquidity, 15% marketing & development, 5% ProofChain. Team tokens vested 12 months.</div></div>
+                <div class="faq-item"><div class="faq-question">When do I receive tokens? <span>+</span></div><div class="faq-answer">Instantly! After transaction confirmation, ZUZ appears in your wallet.</div></div>
+                <div class="faq-item"><div class="faq-question">What are sage bonuses? <span>+</span></div><div class="faq-answer">1k ZUZ → +2%, 5k → +5%, 10k → +10%, 25k → +15%, 50k → +20%, 100k → +25%, 250k → +30% + NFT.</div></div>
+                <div class="faq-item"><div class="faq-question">Is the contract safe? <span>+</span></div><div class="faq-answer">Yes! Audited, code verified, team tokens locked 12 months, liquidity locked 2 years.</div></div>
+                <div class="faq-item"><div class="faq-question">What is ProofChain? <span>+</span></div><div class="faq-answer">Our own L1 blockchain ensuring donation transparency (1% per tx), low fees, full decentralization.</div></div>
             </div>
         </div>
     </div>
     
     <div class="footer">
         <div class="container">
-            <div class="footer-content"><div class="footer-logo"><div class="coin-icon small">ZUZ</div><span>ZUZ Universe</span></div>
-            <div class="footer-social"><a href="#" id="twitterLink" target="_blank"><i class="fab fa-twitter"></i></a><a href="#" id="telegramLink" target="_blank"><i class="fab fa-telegram"></i></a><a href="#" id="discordLink" target="_blank"><i class="fab fa-discord"></i></a><a href="#" id="youtubeLink" target="_blank"><i class="fab fa-youtube"></i></a></div></div>
+            <div class="footer-content">
+                <div class="footer-logo"><div class="coin-icon small" style="width: 32px; height: 32px; font-size: 18px;">ZUZ</div><span>ZUZ Universe</span></div>
+                <div class="footer-social"><a href="#" id="twitterLink"><i class="fab fa-twitter"></i></a><a href="#" id="telegramLink"><i class="fab fa-telegram"></i></a><a href="#" id="discordLink"><i class="fab fa-discord"></i></a><a href="#" id="youtubeLink"><i class="fab fa-youtube"></i></a></div>
+            </div>
             <div class="footer-bottom">© 2026 ZUZ Universe. 7 sages lead to truth. Cryptocurrency is a high-risk asset. Invest wisely.</div>
         </div>
     </div>
     
-    <!-- Live Activity -->
     <div id="liveActivity" class="live-activity-container">
-        <div class="live-header">
-            <span class="live-dot"></span> LIVE UNIVERSE ACTIVITY
-        </div>
+        <div class="live-header"><span class="live-dot"></span> LIVE UNIVERSE ACTIVITY</div>
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <div id="walletModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Connect Wallet</h2>
-                <button class="close-modal" onclick="closeWalletModal()">&times;</button>
-            </div>
-            <div class="wallet-options">
-                <div class="wallet-option-item" onclick="connectMetaMask()">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                    <span>MetaMask</span>
-                    <div class="wallet-badge">Popular</div>
-                </div>
-                <div class="wallet-option-item" onclick="openTrustWallet()">
-                    <img src="https://trustwallet.com/assets/images/favicon.png" alt="Trust Wallet">
-                    <span>Trust Wallet</span>
-                    <div class="wallet-subtext">Open in app</div>
-                </div>
-            </div>
-            <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 20px;">
-                No wallet? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Install MetaMask</a>
-            </p>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="ideologyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">✡️ ZUZ Ideology</div>
-                <button class="close-modal" onclick="closeIdeologyModal()">&times;</button>
-            </div>
-            <div style="text-align: center; margin: 10px 0;"><div class="coin-icon" style="width: 60px; height: 60px; font-size: 30px; margin: 0 auto;">Z</div></div>
-            <div style="font-size: 14px; line-height: 1.6; color: var(--text-secondary);">
-                <p><strong>📜 From the Talmud (Sukkah 52a):</strong></p>
-                <p>The Sages speak of <strong>Yetzer ha-Ra</strong> — the inner fiery force, the driving power of the world. It is not evil, but the energy of creation, passion, aspiration.</p>
-                <p>Once a man captured Yetzer ha-Ra, locked it in a vessel and wanted to tame it. But in the morning he opened it — and inside were <strong>two coins (zuzim)</strong>.</p>
-                <p>The Sages said: <em>"Here it is — Yetzer ha-Ra, now its power is contained in money."</em></p>
-                <p><strong>💎 Meaning:</strong> Money is not evil. It is a <strong>tamed, civilized form</strong> of that same life force. Sin is to be obsessed. Holiness is to direct energy toward creation, family, charity, community.</p>
-                <p>🌍 <strong>ZUZ today:</strong> We are entering the digital age. States are creating CBDCs — money under control. We need <strong>an honest, decentralized digital vessel</strong> for our creative energy.</p>
-                <p>✨ <strong>ZUZ on the blockchain</strong> — is the modern "zuz". It is freedom, transparency, and the ability to do good without borders.</p>
-                <p style="margin-top: 15px; text-align: center;"><strong>"Blind the destructive — and direct the fire toward creation"</strong></p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="sagesModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">🏛️ 7 ZUZ Sages</div>
-                <button class="close-modal" onclick="closeSagesModal()">&times;</button>
-            </div>
-            <div id="sagesContent"></div>
-        </div>
-    </div>
+    <!-- Модалки -->
+    <div id="walletModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">Connect Wallet</h2><button class="close-modal" onclick="closeWalletModal()">&times;</button></div><div class="wallet-options"><div class="wallet-option-item" onclick="connectMetaMask()"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"><span>MetaMask</span><div class="wallet-badge">Popular</div></div><div class="wallet-option-item" onclick="openTrustWallet()"><img src="https://trustwallet.com/assets/images/favicon.png"><span>Trust Wallet</span><div class="wallet-subtext" style="font-size: 10px;">Open in app</div></div></div><p style="font-size: 12px; text-align: center; margin-top: 15px;">No wallet? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Install MetaMask</a></p></div></div>
+    <div id="ideologyModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">✡️ ZUZ Ideology</div><button class="close-modal" onclick="closeIdeologyModal()">&times;</button></div><div style="text-align:center;"><div class="coin-icon" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 15px;">Z</div></div><div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);"><p><strong>📜 From the Talmud (Sukkah 52a):</strong></p><p>The Sages speak of <strong>Yetzer ha-Ra</strong> — the inner fiery force, the driving power of the world. It is not evil, but the energy of creation, passion, aspiration.</p><p>Once a man captured Yetzer ha-Ra, locked it in a vessel and wanted to tame it. But in the morning he opened it — and inside were <strong>two coins (zuzim)</strong>.</p><p>The Sages said: <em>"Here it is — Yetzer ha-Ra, now its power is contained in money."</em></p><p><strong>💎 Meaning:</strong> Money is not evil. It is a <strong>tamed, civilized form</strong> of that same life force. Sin is to be obsessed. Holiness is to direct energy toward creation, family, charity, community.</p><p>🌍 <strong>ZUZ today:</strong> We are entering the digital age. States are creating CBDCs — money under control. We need <strong>an honest, decentralized digital vessel</strong> for our creative energy.</p><p>✨ <strong>ZUZ on the blockchain</strong> — is the modern "zuz". It is freedom, transparency, and the ability to do good without borders.</p><p style="margin-top: 12px; text-align:center;"><strong>"Blind the destructive — and direct the fire toward creation"</strong></p></div></div></div>
+    <div id="sagesModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">🏛️ 7 ZUZ Sages</div><button class="close-modal" onclick="closeSagesModal()">&times;</button></div><div id="sagesContent"></div></div></div>
     
     <script>
         // ========== КОНФИГУРАЦИЯ ==========
@@ -722,25 +924,12 @@
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
         
-        const PRESALE_ABI = [
-            {"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},
-            {"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},
-            {"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}
-        ];
+        const PRESALE_ABI = [{"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
+        const TOKEN_ABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}];
         
-        const TOKEN_ABI = [
-            {"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}
-        ];
+        let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
+        let stageStartTime = 1774775487, stageEndTime = 1788307200;
         
-        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
-        let currentAccount = null;
-        let presaleContract = null;
-        let tokenContract = null;
-        let isProcessing = false;
-        let stageStartTime = 1774775487;
-        let stageEndTime = 1788307200;
-        
-        // Уровни мудрецов
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
             { threshold: 1000, name: "Wisdom", badge: "📜", bonus: 2, next: 5000 },
@@ -752,59 +941,413 @@
             { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
         ];
         
-        // ========== АВТОПЕРЕВОД GOOGLE TRANSLATE ==========
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,ru,de,fr,he,zh-CN,ar',
-                autoDisplay: true,
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
+        // ========== ПОЛНЫЕ СЛОВАРИ ДЛЯ АВТОПЕРЕВОДА ==========
+        const translations = {
+            ru: {
+                "ZUZ UNIVERSE": "ZUZ ВСЕЛЕННАЯ",
+                "7 Sages • 7 Civilizations": "7 Мудрецов • 7 Цивилизаций",
+                "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
+                "BUY ZUZ": "КУПИТЬ ZUZ",
+                "Why": "Почему",
+                "ZUZ": "ZUZ",
+                "7 Sages": "7 Мудрецов",
+                "The power of 7 great civilizations. The more ZUZ you have, the higher your level.": "Сила 7 великих цивилизаций. Чем больше ZUZ, тем выше ваш уровень.",
+                "Staking 25% APY": "Стейкинг 25% APY",
+                "Passive income. Bonuses grow with your sage level up to +30%.": "Пассивный доход. Бонусы растут с уровнем мудреца до +30%.",
+                "Audit + Security": "Аудит + Безопасность",
+                "Verified smart contract. Team in vesting.": "Проверенный смарт-контракт. Команда в вестинге.",
+                "Tokenomics": "Токеномика",
+                "Presale": "Пресейл",
+                "Staking & Rewards": "Стейкинг и Награды",
+                "Marketing": "Маркетинг",
+                "Team (12m vesting)": "Команда (вестинг 12м)",
+                "Liquidity (locked)": "Ликвидность (заблокирована)",
+                "ZUZ STAKING": "СТЕЙКИНГ ZUZ",
+                "Stake your ZUZ and earn passive income. Bonuses up to +30% based on your Sage level.": "Застейкайте ZUZ и получайте пассивный доход. Бонусы до +30% в зависимости от уровня Мудреца.",
+                "START STAKING": "НАЧАТЬ СТЕЙКИНГ",
+                "ZUZ MANIFESTO": "МАНИФЕСТ ZUZ",
+                "ACCEPT THE CALL": "ПРИНЯТЬ ПРИЗЫВ",
+                "SEAL OF TRUST": "ПЕЧАТЬ ДОВЕРИЯ",
+                "Your assets are protected by the highest logic of the blockchain": "Ваши активы защищены высшей логикой блокчейна",
+                "Code Purity": "Чистота кода",
+                "Liquidity Lock": "Блокировка ликвидности",
+                "Renounced Ownership": "Отказ от владения",
+                "AWAKENING OF THE UNIVERSE": "ПРОБУЖДЕНИЕ ВСЕЛЕННОЙ",
+                "Watch as the Wisdom of ZUZ covers the planet in real time": "Смотрите, как Мудрость ZUZ покрывает планету в реальном времени",
+                "PATH OF THE SEVEN SAGES": "ПУТЬ СЕМИ МУДРЕЦОВ",
+                "Sacred Scripture (FAQ)": "Священное Писание (FAQ)",
+                "About": "О проекте",
+                "Roadmap": "Дорожная карта",
+                "FAQ": "Вопросы",
+                "YOUR SAGE RANK": "ВАШ РАНГ",
+                "To \"Wisdom\": 1,000 ZUZ": "До \"Мудрости\": 1,000 ZUZ",
+                "Staking bonus:": "Бонус к стейкингу:",
+                "Add ZUZ to wallet": "Добавить ZUZ в кошелек",
+                "I agree to the terms": "Я согласен с условиями",
+                "You get:": "Вы получите:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "МИН. ПОКУПКА",
+                "TIME LEFT": "ОСТАЛОСЬ",
+                "ACTIVE": "АКТИВЕН",
+                "SOON": "СКОРО",
+                "ENDED": "ЗАВЕРШЕН",
+                "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
+                "BUY ZUZ": "КУПИТЬ ZUZ",
+                "ONLY": "ОСТАЛОСЬ",
+                "SPOTS LEFT FOR \"GUARDIAN\" STATUS": "МЕСТ ДО СТАТУСА «ЗАЩИТНИК»",
+                "Live activity will appear here": "Здесь будет появляться активность",
+                "Connect Wallet": "Подключить кошелек",
+                "Trust Wallet": "Trust Wallet",
+                "Open in app": "Открыть в приложении",
+                "No wallet?": "Нет кошелька?",
+                "Install MetaMask": "Установить MetaMask",
+                "Popular": "Популярно",
+                "Novice": "Новичок",
+                "Wisdom": "Мудрость",
+                "Prosperity": "Процветание",
+                "Protection": "Защита",
+                "Innovation": "Инновации",
+                "Harmony": "Гармония",
+                "Power": "Сила",
+                "Immortality": "Бессмертие"
+            },
+            de: {
+                "CONNECT WALLET": "WALLET VERBINDEN",
+                "BUY ZUZ": "ZUZ KAUFEN",
+                "Your assets are protected by the highest logic of the blockchain": "Ihre Vermögenswerte werden durch die höchste Logik der Blockchain geschützt",
+                "SEAL OF TRUST": "SIEGEL DES VERTRAUENS",
+                "ZUZ MANIFESTO": "ZUZ MANIFEST",
+                "ACCEPT THE CALL": "RUF ANNEHMEN",
+                "START STAKING": "STAKING STARTEN",
+                "STAKING": "STAKING",
+                "Why": "Warum",
+                "7 Sages": "7 Weise",
+                "Staking 25% APY": "Staking 25% APY",
+                "Audit + Security": "Audit + Sicherheit",
+                "Tokenomics": "Tokenomics",
+                "Presale": "Vorverkauf",
+                "Staking & Rewards": "Staking & Belohnungen",
+                "Marketing": "Marketing",
+                "Team (12m vesting)": "Team (12m Vesting)",
+                "Liquidity (locked)": "Liquidität (gesperrt)",
+                "ZUZ STAKING": "ZUZ STAKING",
+                "YOUR SAGE RANK": "IHR WEISER RANG",
+                "To \"Wisdom\": 1,000 ZUZ": "Bis \"Weisheit\": 1.000 ZUZ",
+                "Staking bonus:": "Staking-Bonus:",
+                "Add ZUZ to wallet": "ZUZ zur Wallet hinzufügen",
+                "I agree to the terms": "Ich stimme den Bedingungen zu",
+                "You get:": "Sie erhalten:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "MIN. KAUF",
+                "TIME LEFT": "ZEIT ÜBRIG",
+                "ACTIVE": "AKTIV",
+                "SOON": "BALD",
+                "ENDED": "BEENDET"
+            },
+            fr: {
+                "CONNECT WALLET": "CONNECTER LE PORTEFEUILLE",
+                "BUY ZUZ": "ACHETER ZUZ",
+                "Your assets are protected by the highest logic of the blockchain": "Vos actifs sont protégés par la logique suprême de la blockchain",
+                "SEAL OF TRUST": "SCEAU DE CONFIANCE",
+                "ZUZ MANIFESTO": "MANIFESTE ZUZ",
+                "ACCEPT THE CALL": "ACCEPTER L'APPEL",
+                "START STAKING": "COMMENCER LE STAKING",
+                "Why": "Pourquoi",
+                "7 Sages": "7 Sages",
+                "Staking 25% APY": "Staking 25% TAEG",
+                "Audit + Security": "Audit + Sécurité",
+                "Presale": "Prévente",
+                "Staking & Rewards": "Staking & Récompenses",
+                "Marketing": "Marketing",
+                "Team (12m vesting)": "Équipe (acquisition 12m)",
+                "Liquidity (locked)": "Liquidité (verrouillée)",
+                "ZUZ STAKING": "STAKING ZUZ",
+                "YOUR SAGE RANK": "VOTRE RANG DE SAGE",
+                "To \"Wisdom\": 1,000 ZUZ": "Jusqu'à \"Sagesse\" : 1 000 ZUZ",
+                "Staking bonus:": "Bonus de staking :",
+                "Add ZUZ to wallet": "Ajouter ZUZ au portefeuille",
+                "I agree to the terms": "J'accepte les conditions",
+                "You get:": "Vous obtenez :",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "ACHAT MIN.",
+                "TIME LEFT": "TEMPS RESTANT",
+                "ACTIVE": "ACTIF",
+                "SOON": "BIENTÔT",
+                "ENDED": "TERMINÉ"
+            },
+            he: {
+                "CONNECT WALLET": "חבר ארנק",
+                "BUY ZUZ": "קנה ZUZ",
+                "Your assets are protected by the highest logic of the blockchain": "הנכסים שלך מוגנים על ידי ההיגיון הגבוה ביותר של הבלוקצ'יין",
+                "SEAL OF TRUST": "חותם האמון",
+                "ZUZ MANIFESTO": "מניפסט ZUZ",
+                "ACCEPT THE CALL": "קבל את הקריאה",
+                "START STAKING": "התחל סטייקינג",
+                "Why": "למה",
+                "7 Sages": "7 חכמים",
+                "Staking 25% APY": "סטייקינג 25% APY",
+                "Audit + Security": "ביקורת + אבטחה",
+                "Presale": "מכירה מוקדמת",
+                "Staking & Rewards": "סטייקינג ותגמולים",
+                "Marketing": "שיווק",
+                "Team (12m vesting)": "צוות (הבשלה 12 חודשים)",
+                "Liquidity (locked)": "נזילות (נעולה)",
+                "ZUZ STAKING": "סטייקינג ZUZ",
+                "YOUR SAGE RANK": "הדרגה שלך",
+                "To \"Wisdom\": 1,000 ZUZ": "עד \"חוכמה\": 1,000 ZUZ",
+                "Staking bonus:": "בונוס סטייקינג:",
+                "Add ZUZ to wallet": "הוסף ZUZ לארנק",
+                "I agree to the terms": "אני מסכים לתנאים",
+                "You get:": "אתה מקבל:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "רכישה מינימלית",
+                "TIME LEFT": "זמן שנותר",
+                "ACTIVE": "פעיל",
+                "SOON": "בקרוב",
+                "ENDED": "הסתיים"
+            },
+            ar: {
+                "CONNECT WALLET": "ربط المحفظة",
+                "BUY ZUZ": "شراء ZUZ",
+                "Your assets are protected by the highest logic of the blockchain": "أصولك محمية بأعلى منطق للبلوكتشين",
+                "SEAL OF TRUST": "ختم الثقة",
+                "ZUZ MANIFESTO": "بيان ZUZ",
+                "ACCEPT THE CALL": "قبول النداء",
+                "START STAKING": "بدء التخزين",
+                "Why": "لماذا",
+                "7 Sages": "7 حكماء",
+                "Staking 25% APY": "تخزين 25% APY",
+                "Audit + Security": "تدقيق + أمان",
+                "Presale": "بيع مسبق",
+                "Staking & Rewards": "تخزين ومكافآت",
+                "Marketing": "تسويق",
+                "Team (12m vesting)": "فريق (استحقاق 12 شهر)",
+                "Liquidity (locked)": "سيولة (مقفلة)",
+                "ZUZ STAKING": "تخزين ZUZ",
+                "YOUR SAGE RANK": "رتبتك",
+                "To \"Wisdom\": 1,000 ZUZ": "إلى \"الحكمة\": 1,000 ZUZ",
+                "Staking bonus:": "مكافأة التخزين:",
+                "Add ZUZ to wallet": "أضف ZUZ إلى المحفظة",
+                "I agree to the terms": "أوافق على الشروط",
+                "You get:": "ستحصل على:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "الحد الأدنى للشراء",
+                "TIME LEFT": "الوقت المتبقي",
+                "ACTIVE": "نشط",
+                "SOON": "قريبًا",
+                "ENDED": "انتهى"
+            },
+            ko: {
+                "CONNECT WALLET": "지갑 연결",
+                "BUY ZUZ": "ZUZ 구매",
+                "Your assets are protected by the highest logic of the blockchain": "자산이 블록체인의 최고 논리로 보호됩니다",
+                "SEAL OF TRUST": "신뢰의 인장",
+                "ZUZ MANIFESTO": "ZUZ 선언문",
+                "ACCEPT THE CALL": "부름 수락",
+                "START STAKING": "스테이킹 시작",
+                "Why": "이유",
+                "7 Sages": "7 현인",
+                "Staking 25% APY": "스테이킹 25% APY",
+                "Audit + Security": "감사 + 보안",
+                "Presale": "프리세일",
+                "Staking & Rewards": "스테이킹 및 보상",
+                "Marketing": "마케팅",
+                "Team (12m vesting)": "팀 (12개월 베스팅)",
+                "Liquidity (locked)": "유동성 (잠김)",
+                "ZUZ STAKING": "ZUZ 스테이킹",
+                "YOUR SAGE RANK": "현인 등급",
+                "To \"Wisdom\": 1,000 ZUZ": "\"지혜\"까지: 1,000 ZUZ",
+                "Staking bonus:": "스테이킹 보너스:",
+                "Add ZUZ to wallet": "지갑에 ZUZ 추가",
+                "I agree to the terms": "약관에 동의합니다",
+                "You get:": "받는 금액:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "최소 구매",
+                "TIME LEFT": "남은 시간",
+                "ACTIVE": "활성",
+                "SOON": "곧",
+                "ENDED": "종료됨"
+            },
+            zh: {
+                "CONNECT WALLET": "连接钱包",
+                "BUY ZUZ": "购买 ZUZ",
+                "Your assets are protected by the highest logic of the blockchain": "您的资产受到区块链最高逻辑的保护",
+                "SEAL OF TRUST": "信任之印",
+                "ZUZ MANIFESTO": "ZUZ 宣言",
+                "ACCEPT THE CALL": "接受召唤",
+                "START STAKING": "开始质押",
+                "Why": "为什么",
+                "7 Sages": "七贤者",
+                "Staking 25% APY": "质押 25% APY",
+                "Audit + Security": "审计 + 安全",
+                "Presale": "预售",
+                "Staking & Rewards": "质押与奖励",
+                "Marketing": "市场营销",
+                "Team (12m vesting)": "团队 (12个月归属)",
+                "Liquidity (locked)": "流动性 (锁定)",
+                "ZUZ STAKING": "ZUZ 质押",
+                "YOUR SAGE RANK": "您的贤者等级",
+                "To \"Wisdom\": 1,000 ZUZ": "距\"智慧\"还需: 1,000 ZUZ",
+                "Staking bonus:": "质押加成:",
+                "Add ZUZ to wallet": "添加 ZUZ 到钱包",
+                "I agree to the terms": "我同意条款",
+                "You get:": "您将获得:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "最小购买",
+                "TIME LEFT": "剩余时间",
+                "ACTIVE": "活跃中",
+                "SOON": "即将开始",
+                "ENDED": "已结束"
+            },
+            ja: {
+                "CONNECT WALLET": "ウォレット接続",
+                "BUY ZUZ": "ZUZを購入",
+                "Your assets are protected by the highest logic of the blockchain": "あなたの資産はブロックチェーンの最高の論理によって保護されています",
+                "SEAL OF TRUST": "信頼の封印",
+                "ZUZ MANIFESTO": "ZUZ マニフェスト",
+                "ACCEPT THE CALL": "呼びかけを受け入れる",
+                "START STAKING": "ステーキング開始",
+                "Why": "なぜZUZなのか",
+                "7 Sages": "7人の賢者",
+                "Staking 25% APY": "ステーキング 25% APY",
+                "Audit + Security": "監査 + セキュリティ",
+                "Presale": "プリセール",
+                "Staking & Rewards": "ステーキングと報酬",
+                "Marketing": "マーケティング",
+                "Team (12m vesting)": "チーム (12ヶ月ベスティング)",
+                "Liquidity (locked)": "流動性 (ロック済み)",
+                "ZUZ STAKING": "ZUZ ステーキング",
+                "YOUR SAGE RANK": "賢者のランク",
+                "To \"Wisdom\": 1,000 ZUZ": "「知恵」まで: 1,000 ZUZ",
+                "Staking bonus:": "ステーキングボーナス:",
+                "Add ZUZ to wallet": "ZUZをウォレットに追加",
+                "I agree to the terms": "利用規約に同意します",
+                "You get:": "あなたの受取額:",
+                "1 ZUZ =": "1 ZUZ =",
+                "MIN. PURCHASE": "最小購入額",
+                "TIME LEFT": "残り時間",
+                "ACTIVE": "アクティブ",
+                "SOON": "もうすぐ",
+                "ENDED": "終了"
+            }
+        };
+        
+        let currentLang = 'en';
+        
+        // ========== АВТООПРЕДЕЛЕНИЕ ЯЗЫКА ПО IP ==========
+        async function detectLanguageByIP() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const countryCode = data.country_code;
+                const countryToLang = {
+                    'RU': 'ru', 'BY': 'ru', 'KZ': 'ru', 'UA': 'ru',
+                    'DE': 'de', 'AT': 'de', 'CH': 'de',
+                    'FR': 'fr', 'BE': 'fr',
+                    'IL': 'he',
+                    'AE': 'ar', 'SA': 'ar', 'EG': 'ar', 'QA': 'ar', 'KW': 'ar',
+                    'KR': 'ko',
+                    'CN': 'zh', 'TW': 'zh', 'HK': 'zh',
+                    'JP': 'ja'
+                };
+                return countryToLang[countryCode] || 'en';
+            } catch(e) {
+                return 'en';
+            }
         }
         
-        // ========== ШАПКА С ПРОКРУТКОЙ ==========
+        // ========== ТОТАЛЬНЫЙ ПЕРЕВОД ВСЕХ ТЕКСТОВ ==========
+        function translatePage(lang) {
+            if (lang === 'en') {
+                location.reload();
+                return;
+            }
+            const dict = translations[lang];
+            if (!dict) return;
+            
+            const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            const textNodes = [];
+            while (node = walk.nextNode()) {
+                if (node.parentElement && 
+                    (node.parentElement.tagName === 'SCRIPT' || 
+                     node.parentElement.tagName === 'STYLE' ||
+                     node.parentElement.tagName === 'CODE')) continue;
+                if (node.nodeValue && node.nodeValue.trim().length > 0) {
+                    textNodes.push(node);
+                }
+            }
+            
+            textNodes.forEach(node => {
+                let text = node.nodeValue;
+                let changed = false;
+                for (const [eng, trans] of Object.entries(dict)) {
+                    if (text.includes(eng)) {
+                        text = text.replace(new RegExp(eng, 'g'), trans);
+                        changed = true;
+                    }
+                }
+                if (changed) node.nodeValue = text;
+            });
+            
+            document.querySelectorAll('input, button, textarea, select').forEach(el => {
+                if (el.placeholder && dict[el.placeholder]) el.placeholder = dict[el.placeholder];
+                if (el.value && dict[el.value] && el.tagName !== 'SELECT') el.value = dict[el.value];
+            });
+            
+            document.querySelectorAll('select option').forEach(opt => {
+                if (dict[opt.textContent]) opt.textContent = dict[opt.textContent];
+            });
+            
+            console.log(`✅ Сайт переведён на ${lang}`);
+        }
+        
+        // ========== ИНИЦИАЛИЗАЦИЯ ЯЗЫКА ==========
+        (async function initLanguage() {
+            let lang = localStorage.getItem('user_lang');
+            if (!lang) {
+                lang = await detectLanguageByIP();
+                localStorage.setItem('user_lang', lang);
+            }
+            currentLang = lang;
+            document.getElementById('langSelect').value = lang;
+            if (lang !== 'en') {
+                translatePage(lang);
+            }
+        })();
+        
+        function changeLanguage(lang) {
+            localStorage.setItem('user_lang', lang);
+            currentLang = lang;
+            if (lang === 'en') {
+                location.reload();
+            } else {
+                translatePage(lang);
+            }
+        }
+        
+        // ========== ШАПКА ==========
         let lastScrollTop = 0;
         const navbar = document.getElementById('navbar');
         const navTrigger = document.getElementById('navTrigger');
         let navbarVisible = false;
         
-        function showNavbar() {
-            navbar.classList.add('visible');
-            navbarVisible = true;
-        }
+        function showNavbar() { navbar.classList.add('visible'); navbarVisible = true; }
+        function hideNavbar() { navbar.classList.remove('visible'); navbarVisible = false; }
         
-        function hideNavbar() {
-            navbar.classList.remove('visible');
-            navbarVisible = false;
-        }
-        
-        navTrigger.addEventListener('click', () => {
-            if (navbarVisible) {
-                hideNavbar();
-            } else {
-                showNavbar();
-            }
-        });
-        
+        navTrigger.addEventListener('click', () => navbarVisible ? hideNavbar() : showNavbar());
         window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop < 100) {
-                showNavbar();
-            } else {
-                if (scrollTop < lastScrollTop) {
-                    showNavbar();
-                } else {
-                    hideNavbar();
-                }
-            }
+            const scrollTop = window.pageYOffset;
+            if (scrollTop < 100) showNavbar();
+            else if (scrollTop < lastScrollTop) showNavbar();
+            else hideNavbar();
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         });
         
-        // ========== МАГИЧЕСКИЕ ЭФФЕКТЫ ==========
+        // ========== МАГИЯ ==========
         function spawnMagic(e) {
-            const amount = 12;
             const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#FF4500'];
-            for (let i = 0; i < amount; i++) {
+            for (let i = 0; i < 12; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'magic-dot';
                 dot.style.background = colors[Math.floor(Math.random() * colors.length)];
@@ -825,32 +1368,21 @@
         function playMagicSound() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.5);
-            } catch(e) { console.log('Audio not supported'); }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e) {}
         }
         
-        function triggerLevelUp() {
-            playMagicSound();
-            const flash = document.createElement('div');
-            flash.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:white; opacity:0.3; z-index:10000; pointer-events:none;";
-            document.body.appendChild(flash);
-            setTimeout(() => flash.remove(), 200);
-            for(let i=0; i<3; i++) {
-                setTimeout(() => spawnMagic({clientX: window.innerWidth/2, clientY: window.innerHeight/2}), i*100);
-            }
-        }
-        
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        // ========== ОСНОВНОЙ ФУНКЦИОНАЛ ==========
         function showNotification(msg, type) {
             const n = document.createElement('div');
             n.className = `notification ${type}`;
@@ -866,14 +1398,12 @@
             if (now < stageStartTime) {
                 statusSpan.innerHTML = 'SOON';
                 statusSpan.style.background = '#ff9800';
-                const diff = stageStartTime - now;
-                const days = Math.floor(diff / 86400);
+                const days = Math.floor((stageStartTime - now) / 86400);
                 timerSpan.innerText = `${days}d`;
             } else if (now >= stageStartTime && now <= stageEndTime) {
                 statusSpan.innerHTML = 'ACTIVE';
                 statusSpan.style.background = '#00D18C';
-                const diff = stageEndTime - now;
-                const days = Math.floor(diff / 86400);
+                const days = Math.floor((stageEndTime - now) / 86400);
                 timerSpan.innerText = `${days}d`;
             } else {
                 statusSpan.innerHTML = 'ENDED';
@@ -882,14 +1412,11 @@
             }
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
         async function connectMetaMask() {
             closeWalletModal();
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    try {
-                        await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-                    } catch(e) { if (e.code === 4001) { showNotification("Account selection canceled", "info"); return; } }
+                    await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     currentAccount = accounts[0];
                     const web3 = new Web3(window.ethereum);
@@ -898,7 +1425,7 @@
                     updateUI(currentAccount);
                     showNotification(`✅ Wallet connected: ${currentAccount.substring(0,6)}...`, 'success');
                     await updateSageDashboard();
-                    window.ethereum.on('accountsChanged', (accounts) => { if (accounts.length === 0) disconnectWallet(); else window.location.reload(); });
+                    window.ethereum.on('accountsChanged', (acc) => { if (acc.length === 0) disconnectWallet(); else window.location.reload(); });
                 } catch(e) { showNotification("Connection error", "error"); }
             } else {
                 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -915,16 +1442,15 @@
         }
         
         function updateUI(address) {
-            const connectBtn = document.getElementById('connectBtn');
-            if (connectBtn) {
-                connectBtn.innerHTML = `<i class="fas fa-wallet"></i> ${address.substring(0,6)}...${address.substring(38)}`;
-                connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
+            const btn = document.getElementById('connectBtn');
+            if (btn) {
+                btn.innerHTML = `<i class="fas fa-wallet"></i> ${address.substring(0,6)}...${address.substring(38)}`;
                 if (!document.querySelector('.disconnect-btn')) {
                     const dbtn = document.createElement('button');
                     dbtn.className = 'disconnect-btn';
-                    dbtn.innerHTML = 'DISCONNECT';
+                    dbtn.innerHTML = translations[currentLang]?.DISCONNECT || 'DISCONNECT';
                     dbtn.onclick = disconnectWallet;
-                    connectBtn.parentNode.appendChild(dbtn);
+                    btn.parentNode.appendChild(dbtn);
                 }
             }
         }
@@ -933,16 +1459,14 @@
             currentAccount = null;
             presaleContract = null;
             tokenContract = null;
-            const connectBtn = document.getElementById('connectBtn');
-            connectBtn.innerHTML = '<i class="fas fa-wallet"></i> CONNECT WALLET';
-            connectBtn.style.background = "linear-gradient(135deg, #D4AF37, #FFD700)";
+            const btn = document.getElementById('connectBtn');
+            btn.innerHTML = '<i class="fas fa-wallet"></i> CONNECT WALLET';
             const dbtn = document.querySelector('.disconnect-btn');
             if (dbtn) dbtn.remove();
             document.getElementById('sageDashboard').style.display = 'none';
             showNotification('Wallet disconnected', 'info');
         }
         
-        // ========== DASHBOARD МУДРЕЦА (с балансом) ==========
         async function updateSageDashboard() {
             if (!currentAccount || !tokenContract) return;
             try {
@@ -952,8 +1476,7 @@
                 for (let i = sageLevels.length - 1; i >= 0; i--) {
                     if (balance >= sageLevels[i].threshold) { level = sageLevels[i]; break; }
                 }
-                const dashboard = document.getElementById('sageDashboard');
-                dashboard.style.display = 'block';
+                document.getElementById('sageDashboard').style.display = 'block';
                 document.getElementById('currentSageBadge').innerHTML = level.badge;
                 document.getElementById('currentLevelName').innerHTML = level.name;
                 document.getElementById('currentBalance').innerHTML = `${balance.toFixed(0)} ZUZ`;
@@ -971,15 +1494,14 @@
             } catch(e) { console.error(e); }
         }
         
-        // ========== ПОКУПКА ТОКЕНОВ ==========
         async function buyTokens() {
             if (!presaleContract) { showNotification('Connect wallet first', 'error'); openWalletModal(); return; }
-            const ethAmount = parseFloat(document.getElementById('ethAmount').value || 0);
+            const eth = parseFloat(document.getElementById('ethAmount').value || 0);
             if (!document.getElementById('acceptTerms').checked) { showNotification('Accept terms', 'error'); return; }
-            if (ethAmount < 0.01) { showNotification('Minimum 0.01 ETH', 'error'); return; }
+            if (eth < 0.01) { showNotification('Minimum 0.01 ETH', 'error'); return; }
             if (isProcessing) return;
             const now = Math.floor(Date.now() / 1000);
-            if (now < stageStartTime) { showNotification('Sale not started yet', 'info'); return; }
+            if (now < stageStartTime) { showNotification('Sale not started', 'info'); return; }
             if (now > stageEndTime) { showNotification('Sale ended', 'error'); return; }
             isProcessing = true;
             const btn = document.getElementById('buyBtn');
@@ -987,26 +1509,25 @@
             btn.textContent = '⏳ SENDING...';
             try {
                 const web3 = new Web3(window.ethereum);
-                const weiAmount = web3.utils.toWei(ethAmount.toString(), 'ether');
+                const wei = web3.utils.toWei(eth.toString(), 'ether');
                 const accounts = await web3.eth.getAccounts();
-                await presaleContract.methods.buyTokens().send({ from: accounts[0], value: weiAmount, gas: 300000 });
-                showNotification(`✅ Bought ${(ethAmount / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
+                await presaleContract.methods.buyTokens().send({ from: accounts[0], value: wei, gas: 300000 });
+                showNotification(`✅ Bought ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
                 playMagicSound();
-                triggerLevelUp();
                 document.getElementById('ethAmount').value = '';
                 document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
                 await updateSageDashboard();
-                addActivity(currentAccount.substring(0,6)+'...', ethAmount, cities[Math.floor(Math.random() * cities.length)]);
+                addActivity(currentAccount.substring(0,6)+'...', eth, cities[Math.floor(Math.random() * cities.length)]);
             } catch(e) {
                 let msg = e.message || 'Error';
-                if (msg.includes('user rejected')) msg = 'You canceled the transaction';
+                if (msg.includes('user rejected')) msg = 'You canceled';
                 else if (msg.includes('insufficient funds')) msg = 'Insufficient ETH';
                 else if (msg.includes('execution reverted')) msg = 'Contract error';
                 showNotification(msg, 'error');
             } finally {
                 isProcessing = false;
                 btn.disabled = false;
-                btn.textContent = 'BUY ZUZ';
+                btn.textContent = translations[currentLang]?.["BUY ZUZ"] || 'BUY ZUZ';
             }
         }
         
@@ -1015,32 +1536,20 @@
             try {
                 await window.ethereum.request({
                     method: 'wallet_watchAsset',
-                    params: {
-                        type: 'ERC20',
-                        options: {
-                            address: TOKEN_ADDRESS,
-                            symbol: 'ZUZ',
-                            decimals: 18,
-                            image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37" stroke="%23000" stroke-width="2"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000" font-weight="bold"%3EZ%3C/text%3E%3C/svg%3E'
-                        }
-                    }
+                    params: { type: 'ERC20', options: { address: TOKEN_ADDRESS, symbol: 'ZUZ', decimals: 18, image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23D4AF37"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23000"%3EZ%3C/text%3E%3C/svg%3E' } }
                 });
-                showNotification('✅ ZUZ token added to wallet!', 'success');
+                showNotification('✅ ZUZ added to wallet!', 'success');
             } catch(e) { showNotification('Error adding token', 'error'); }
         }
         
-        // ========== ЖИВАЯ ЛЕНТА (одна запись, часто) ==========
-        const cities = ["Dubai", "London", "Tokyo", "New York", "Seoul", "Monaco", "Singapore", "Moscow", "Hong Kong", "Zurich", "Berlin", "Paris", "Tel Aviv", "Shanghai", "Sydney", "Toronto", "Mumbai", "Sao Paulo"];
-        const amounts = [0.05, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0, 5.0];
+        // ========== ЛЕНТА ==========
+        const cities = ["Dubai", "London", "Tokyo", "New York", "Seoul", "Monaco", "Singapore", "Moscow", "Hong Kong", "Zurich", "Berlin", "Paris", "Tel Aviv", "Shanghai", "Sydney", "Toronto"];
+        const amounts = [0.05, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0];
         
         function addActivity(address, amount, city) {
             const feed = document.getElementById('activityFeed');
-            const item = document.createElement('div');
-            item.className = 'activity-item';
             const tokenAmount = (amount / TOKEN_PRICE_ETH).toFixed(0);
-            item.innerHTML = `<span style="color: var(--accent-gold)">${address}</span> from ${city}<br>bought <span style="color: var(--accent-green)">${tokenAmount} ZUZ</span>`;
-            feed.innerHTML = '';
-            feed.appendChild(item);
+            feed.innerHTML = `<div class="activity-item"><span style="color: var(--accent-gold)">${address}</span> from ${city}<br>bought <span style="color: var(--accent-green)">${tokenAmount} ZUZ</span></div>`;
         }
         
         function startSimulator() {
@@ -1053,35 +1562,30 @@
             }, 3000);
         }
         
-        // ========== КАРТА МИРА (100+ точек, несколько вспышек одновременно) ==========
-        const globalHotspots = [];
+        // ========== КАРТА ==========
+        const hotspots = [];
         for (let i = 0; i < 120; i++) {
-            globalHotspots.push({
-                name: cities[i % cities.length] + (i > cities.length ? " " + (Math.floor(i / cities.length) + 1) : ""),
-                x: Math.random() * 85 + 5,
-                y: Math.random() * 70 + 15
-            });
+            hotspots.push({ name: cities[i % cities.length] + (i > cities.length ? " " + Math.floor(i/cities.length+1) : ""), x: Math.random() * 85 + 5, y: Math.random() * 70 + 15 });
         }
-        
         let activePulses = 0;
         function triggerMapPulse() {
             const container = document.getElementById('mapPulseContainer');
             if (!container) return;
-            const pulsesCount = Math.floor(Math.random() * 3) + 1;
-            for (let p = 0; p < pulsesCount; p++) {
+            const count = Math.floor(Math.random() * 3) + 1;
+            for (let p = 0; p < count; p++) {
                 if (activePulses > 8) break;
-                const spot = globalHotspots[Math.floor(Math.random() * globalHotspots.length)];
+                const spot = hotspots[Math.floor(Math.random() * hotspots.length)];
                 const pulse = document.createElement('div');
                 pulse.className = 'map-pulse';
                 pulse.style.left = spot.x + '%';
                 pulse.style.top = spot.y + '%';
                 const label = document.createElement('div');
-                label.style = "position:absolute; bottom:15px; left:50%; transform:translateX(-50%); color:#fff; font-size:9px; white-space:nowrap; text-shadow:0 0 5px #000;";
+                label.style = "position:absolute; bottom:15px; left:50%; transform:translateX(-50%); color:#fff; font-size:8px; white-space:nowrap; text-shadow:0 0 3px #000;";
                 label.innerText = spot.name + " +ZUZ";
                 pulse.appendChild(label);
                 container.appendChild(pulse);
                 activePulses++;
-                setTimeout(() => { pulse.remove(); activePulses--; }, 5000);
+                setTimeout(() => { pulse.remove(); activePulses--; }, 4000);
             }
         }
         
@@ -1090,12 +1594,12 @@
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
         function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
         function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
-        function openSagesModal() { 
+        function openSagesModal() {
             let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
             sageLevels.forEach(level => {
                 html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
                             <div style="font-size: 28px;">${level.badge}</div>
-                            <div style="flex: 1;"><div style="font-weight: 600;">${level.name}</div><div style="font-size: 12px; color: var(--text-secondary);">from ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}% staking bonus</div></div>
+                            <div style="flex:1;"><div style="font-weight: 600;">${level.name}</div><div style="font-size: 11px;">from ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}%</div></div>
                         </div>`;
             });
             html += '</div>';
@@ -1106,7 +1610,6 @@
         
         function createParticles() {
             const container = document.getElementById('goldParticles');
-            if (!container) return;
             for (let i = 0; i < 40; i++) {
                 let p = document.createElement('div');
                 p.classList.add('gold-particle');
@@ -1131,28 +1634,24 @@
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
-            const tokens = val / TOKEN_PRICE_ETH;
-            document.getElementById('tokenAmountDisplay').textContent = `${tokens.toLocaleString()} ZUZ`;
+            document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
         });
-        
         document.getElementById('connectBtn').onclick = () => { if (currentAccount) disconnectWallet(); else openWalletModal(); };
         document.getElementById('buyBtn').onclick = buyTokens;
+        document.getElementById('stakeBtn').onclick = () => showNotification('Staking coming after presale', 'info');
         document.getElementById('logoBtn').onclick = openIdeologyModal;
         document.getElementById('addTokenBtn').onclick = addTokenToWallet;
+        document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
-        
         document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
         document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
         document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
         
         document.querySelectorAll('.feature-card').forEach(card => {
-            if (card.innerText.includes('7 Sages')) {
-                card.style.cursor = 'pointer';
-                card.onclick = openSagesModal;
-            }
+            if (card.innerText.includes('7 Sages')) card.onclick = openSagesModal;
         });
         
         createParticles();
@@ -1161,23 +1660,14 @@
         setSocialLinks();
         startSimulator();
         
-        if (window.ethereum && window.ethereum.selectedAddress) {
-            setTimeout(() => connectMetaMask(), 500);
-        }
-        
+        if (window.ethereum && window.ethereum.selectedAddress) setTimeout(() => connectMetaMask(), 500);
         document.querySelectorAll('button').forEach(btn => btn.classList.add('lightning-effect'));
-        
         document.addEventListener('mousedown', (e) => {
             if (e.target.closest('button') || e.target.closest('.feature-card') || e.target.closest('.token-item')) {
                 spawnMagic(e);
                 if (navigator.vibrate) navigator.vibrate(10);
             }
         });
-        
-        // Автоопределение языка по IP через Google Translate (определяет по браузеру)
-        const script = document.createElement('script');
-        script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        document.head.appendChild(script);
         
         window.openWalletModal = openWalletModal;
         window.closeWalletModal = closeWalletModal;
