@@ -15,7 +15,48 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js">// ========== РЕФЕРАЛЬНАЯ СИСТЕМА ==========
+function copyRefLink() {
+    const linkInput = document.getElementById('refLink');
+    if (!linkInput) {
+        console.error('Элемент refLink не найден');
+        return;
+    }
+    
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999);
+    
+    try {
+        document.execCommand('copy');
+        showNotification("✅ Ссылка скопирована! Поделитесь с учениками.", "success");
+        
+        if (typeof spawnMagic === 'function') {
+            spawnMagic({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+        }
+    } catch (err) {
+        console.error('Ошибка копирования:', err);
+        showNotification("❌ Не удалось скопировать ссылку", "error");
+    }
+}
+
+function generateRefLink(address) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const refLink = `${baseUrl}?ref=${address}`;
+    const inputField = document.getElementById('refLink');
+    if (inputField) {
+        inputField.value = refLink;
+    }
+}
+
+function updateReferralLink() {
+    if (currentAccount) {
+        generateRefLink(currentAccount);
+        const section = document.getElementById('referralSection');
+        if (section) section.style.display = 'block';
+    }
+}
+
+window.copyRefLink = copyRefLink;</script>
     <style>
         * {
             margin: 0;
