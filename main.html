@@ -1192,7 +1192,26 @@
         }
         
         function translatePage(lang) {
-            if (lang === 'en') { location.reload(); return; }
+            if (lang === 'en') {
+                // Не перезагружаем, просто показываем английский
+                const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                let node;
+                const textNodes = [];
+                while (node = walk.nextNode()) {
+                    if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) continue;
+                    if (node.nodeValue && node.nodeValue.trim().length > 0) textNodes.push(node);
+                }
+                textNodes.forEach(node => {
+                    let text = node.nodeValue;
+                    for (const [eng, trans] of Object.entries(translations.ru)) {
+                        if (text.includes(trans)) {
+                            text = text.replace(new RegExp(trans.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), eng);
+                            node.nodeValue = text;
+                        }
+                    }
+                });
+                return;
+            }
             const dict = translations[lang];
             if (!dict) return;
             
@@ -1236,7 +1255,8 @@
         
         function changeLanguage(lang) {
             localStorage.setItem('user_lang', lang);
-            if (lang === 'en') location.reload();
+            currentLang = lang;
+            if (lang === 'en') translatePage('en');
             else translatePage(lang);
         }
         
@@ -1336,7 +1356,14 @@
                     updateUI(currentAccount);
                     showNotification(`✅ Wallet connected: ${currentAccount.substring(0,6)}...`, 'success');
                     await updateSageDashboard();
-                    window.ethereum.on('accountsChanged', (acc) => { if (acc.length === 0) disconnectWallet(); else window.location.reload(); });
+                    window.ethereum.on('accountsChanged', (acc) => { 
+                        if (acc.length === 0) disconnectWallet(); 
+                        else {
+                            currentAccount = acc[0];
+                            updateUI(currentAccount);
+                            updateSageDashboard();
+                        }
+                    });
                 } catch(e) { showNotification("Connection error", "error"); }
             } else {
                 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
