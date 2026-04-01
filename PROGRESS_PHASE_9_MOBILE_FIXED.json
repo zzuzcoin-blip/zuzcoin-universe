@@ -1,5 +1,5 @@
 {
-  "project": "ZUZCOIN Universe",
+  "project": "ZUZCOIN-Universe",
   "phase": "9.1 MOBILE ADAPTATION COMPLETE",
   "phase_name": "mobile_responsive_without_simplification",
   "completion_date": "'$(date -Iseconds)'",
