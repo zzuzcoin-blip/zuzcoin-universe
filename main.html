@@ -400,6 +400,53 @@
         .token-percent { font-weight: 700; color: var(--accent-gold); }
         .token-amount { color: var(--text-secondary); font-size: 12px; }
         
+        /* ========== СЕКЦИЯ ДОКАЗАТЕЛЬСТВА ЧЕСТНОСТИ ========== */
+        .security-proof {
+            background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.3));
+            border: 2px solid var(--accent-gold);
+            border-radius: 32px;
+            padding: 32px 24px;
+            margin: 40px 0;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+        .security-proof h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: var(--accent-gold);
+        }
+        .security-proof p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .btn-ether {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-gold), #FFD700);
+            color: #000;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+        .btn-ether:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px rgba(212,175,55,0.5);
+        }
+        .trust-badge {
+            background: rgba(212,175,55,0.15);
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 12px;
+            color: var(--accent-gold);
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
         .staking-card {
             background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(0,0,0,0.4));
             border: 1px solid rgba(212,175,55,0.3);
@@ -847,6 +894,17 @@
         </div>
     </div>
     
+    <!-- ========== НОВАЯ СЕКЦИЯ: ДОКАЗАТЕЛЬСТВО ЧЕСТНОСТИ ========== -->
+    <div class="container">
+        <div class="security-proof">
+            <h2>🔒 Токены команды заморожены на 12 месяцев</h2>
+            <p>50 000 000 ZUZ (5% от общего предложения) <strong>нельзя продать или перевести</strong> до <strong>4 апреля 2027</strong>.</p>
+            <p>Ни один участник команды не может выйти раньше. Это не обещание — это <strong>смарт-контракт на Etherscan</strong>.</p>
+            <a href="https://etherscan.io/address/0x87D336511760583B11B87866654c6f7253c1cB0D#readContract" target="_blank" class="btn-ether">📜 Проверить самому</a>
+            <div class="trust-badge">✅ Верифицирован | ✅ Нет права владельца | ✅ Только хардкоп</div>
+        </div>
+    </div>
+    
     <div class="features" id="features">
         <div class="container">
             <h2 class="section-title">Why <span class="gradient-text">ZUZ</span>?</h2>
@@ -1004,7 +1062,7 @@
             { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
         ];
         
-        // ========== СЛОВАРИ ПЕРЕВОДОВ (сокращённо) ==========
+        // ========== СЛОВАРИ ПЕРЕВОДОВ ==========
         const translations = {
             ru: {
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
@@ -1322,7 +1380,6 @@
             }
         }
         
-        // Привязываем кнопку копирования
         document.addEventListener('DOMContentLoaded', function() {
             const copyBtn = document.getElementById('copyRefBtn');
             if (copyBtn) copyBtn.onclick = copyRefLink;
