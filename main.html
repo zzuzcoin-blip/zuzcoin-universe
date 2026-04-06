@@ -16,6 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <!-- WalletConnect Ethereum Provider v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -708,7 +710,6 @@
         .notification.info { background: #2196f3; color: white; }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
-        /* Запрещаем горизонтальный скролл на всех элементах */
         img, video, iframe, .map-wrapper img {
             max-width: 100%;
             height: auto;
@@ -719,7 +720,6 @@
             overflow: hidden;
         }
         
-        /* ========== АДАПТАЦИЯ ПРИ ПОВОРОТЕ ========== */
         @media (orientation: landscape) {
             .hero .container {
                 grid-template-columns: 1fr 1fr;
@@ -823,7 +823,6 @@
                     </div>
                 </div>
                 
-                <!-- РЕФЕРАЛЬНАЯ ПРОГРАММА -->
                 <div id="referralSection" class="sage-level-card" style="border: 1px dashed var(--accent-gold); background: rgba(212,175,55,0.05); margin-top: 20px; padding: 20px; border-radius: 20px;">
                     <h4 style="color: var(--accent-gold); margin-bottom: 10px;"><i class="fas fa-users"></i> Mentor's Path Program</h4>
                     <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.</p>
@@ -977,7 +976,31 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <div id="walletModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2 class="modal-title">Connect Wallet</h2><button class="close-modal" onclick="closeWalletModal()">&times;</button></div><div class="wallet-options"><div class="wallet-option-item" onclick="connectWalletDirect()"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"><span>MetaMask / Trust Wallet / Coinbase</span><div class="wallet-badge">Popular</div></div><div class="wallet-option-item" onclick="connectWalletConnect()"><i class="fas fa-qrcode" style="font-size: 28px; color: var(--accent-gold);"></i><span>WalletConnect</span><div class="wallet-subtext">200+ wallets (Rainbow, SafePal, etc.)</div></div></div><p style="font-size: 12px; text-align: center; margin-top: 15px;">No wallet? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Install MetaMask</a></p></div></div>
+    <div id="walletModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Connect Wallet</h2>
+                <button class="close-modal" onclick="closeWalletModal()">&times;</button>
+            </div>
+            <div class="wallet-options">
+                <div class="wallet-option-item" onclick="connectMetaMaskWC()">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
+                    <span>MetaMask</span>
+                    <div class="wallet-badge">Popular</div>
+                </div>
+                <div class="wallet-option-item" onclick="connectTrustWalletWC()">
+                    <img src="https://trustwallet.com/assets/images/favicon.png" alt="Trust Wallet">
+                    <span>Trust Wallet</span>
+                </div>
+                <div class="wallet-option-item" onclick="connectCoinbase()">
+                    <i class="fab fa-bitcoin" style="font-size: 28px; color: #0052FF;"></i>
+                    <span>Coinbase Wallet</span>
+                </div>
+            </div>
+            <p style="font-size: 12px; text-align: center; margin-top: 15px;">No wallet? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Install MetaMask</a></p>
+        </div>
+    </div>
+    
     <div id="ideologyModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">✡️ ZUZ Ideology</div><button class="close-modal" onclick="closeIdeologyModal()">&times;</button></div><div style="text-align:center;"><div class="coin-icon" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 15px;">Z</div></div><div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);"><p><strong>📜 From the Talmud (Sukkah 52a):</strong></p><p>The Sages speak of <strong>Yetzer ha-Ra</strong> — the inner fiery force, the driving power of the world. It is not evil, but the energy of creation, passion, aspiration.</p><p>Once a man captured Yetzer ha-Ra, locked it in a vessel and wanted to tame it. But in the morning he opened it — and inside were <strong>two coins (zuzim)</strong>.</p><p>The Sages said: <em>"Here it is — Yetzer ha-Ra, now its power is contained in money."</em></p><p><strong>💎 Meaning:</strong> Money is not evil. It is a <strong>tamed, civilized form</strong> of that same life force. Sin is to be obsessed. Holiness is to direct energy toward creation, family, charity, community.</p><p>🌍 <strong>ZUZ today:</strong> We are entering the digital age. States are creating CBDCs — money under control. We need <strong>an honest, decentralized digital vessel</strong> for our creative energy.</p><p>✨ <strong>ZUZ on the blockchain</strong> — is the modern "zuz". It is freedom, transparency, and the ability to do good without borders.</p><p style="margin-top: 12px; text-align:center;"><strong>"Blind the destructive — and direct the fire toward creation"</strong></p></div></div></div>
     <div id="sagesModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">🏛️ 7 ZUZ Sages</div><button class="close-modal" onclick="closeSagesModal()">&times;</button></div><div id="sagesContent"></div></div></div>
     
@@ -986,12 +1009,16 @@
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
+        const WC_PROJECT_ID = 'c77ee52ed95eeec4596ca359f4cdb63d';
         
         const PRESALE_ABI = [{"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
         const TOKEN_ABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}];
         
         let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
+        let walletConnectProvider = null;
+        let currentWalletType = null;
+        let web3Instance = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1202,103 +1229,172 @@
             }
         }
         
-        // ========== АВТОМАТИЧЕСКОЕ ПОДКЛЮЧЕНИЕ ПОСЛЕ ВОЗВРАТА ==========
-        async function checkAndConnectOnReturn() {
-            if (!window.ethereum || currentAccount) return;
+        // ========== WALLETCONNECT ПРОВАЙДЕР (УНИКАЛЬНЫЕ DEEP LINKS) ==========
+        async function initWalletConnectProvider(walletType) {
+            // Очищаем старую сессию
+            if (walletConnectProvider) {
+                try { 
+                    await walletConnectProvider.disconnect(); 
+                } catch(e) {}
+                walletConnectProvider = null;
+            }
+            
+            currentWalletType = walletType;
+            
+            walletConnectProvider = await window.EthereumProvider.init({
+                projectId: WC_PROJECT_ID,
+                chains: [1],
+                optionalChains: [1],
+                showQrModal: false,
+                methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
+                events: ["chainChanged", "accountsChanged"],
+                metadata: {
+                    name: "ZUZ Universe",
+                    description: "7 Sages — ZUZ Ecosystem",
+                    url: window.location.origin,
+                    icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
+                }
+            });
+            
+            // Слушаем событие display_uri — когда URI готов, открываем кошелёк
+            walletConnectProvider.on("display_uri", (uri) => {
+                console.log("WalletConnect URI:", uri);
+                
+                // Небольшая задержка для гарантии
+                setTimeout(() => {
+                    if (currentWalletType === 'metamask') {
+                        window.location.href = `metamask://wc?uri=${encodeURIComponent(uri)}`;
+                    } else if (currentWalletType === 'trust') {
+                        window.location.href = `trust://wc?uri=${encodeURIComponent(uri)}`;
+                    }
+                }, 100);
+            });
+            
+            walletConnectProvider.on("connect", () => {
+                console.log("WalletConnect connected");
+            });
+            
+            walletConnectProvider.on("accountsChanged", (accounts) => {
+                if (accounts.length === 0) disconnectWallet();
+                else {
+                    currentAccount = accounts[0];
+                    updateUI(currentAccount);
+                    updateSageDashboard();
+                    updateReferralLink();
+                }
+            });
+            
+            return walletConnectProvider;
+        }
+        
+        // ========== ПОДКЛЮЧЕНИЕ METAMASK ЧЕРЕЗ WALLETCONNECT ==========
+        async function connectMetaMaskWC() {
+            closeWalletModal();
+            showNotification("Opening MetaMask...", "info");
             
             try {
-                // Сначала проверяем уже разрешённые аккаунты (без всплывающего окна)
-                let accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                const provider = await initWalletConnectProvider('metamask');
+                await provider.connect();
                 
-                if (accounts && accounts.length > 0) {
-                    console.log('🔄 Обнаружен разрешённый аккаунт, подключаем автоматически');
-                    await connectWithAccounts(accounts);
-                } else if (!currentAccount) {
-                    // Нет разрешённых аккаунтов — пробуем запросить (для первого подключения)
-                    console.log('🔄 Нет разрешённых аккаунтов, запрашиваем подключение');
+                // После возврата из кошелька — проверяем подключение
+                setTimeout(async () => {
                     try {
-                        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const accounts = await provider.request({ method: 'eth_accounts' });
                         if (accounts && accounts.length > 0) {
-                            await connectWithAccounts(accounts);
+                            await connectWithAccounts(accounts, provider);
                         }
                     } catch(e) {
-                        console.log('Пользователь отклонил запрос или ошибка:', e);
+                        console.log("Waiting for connection...");
                     }
-                }
+                }, 1500);
             } catch(e) {
-                console.log('Ошибка автоматического подключения:', e);
+                console.error(e);
+                showNotification("Connection error. Please try again.", "error");
             }
         }
         
-        async function connectWithAccounts(accounts) {
+        // ========== ПОДКЛЮЧЕНИЕ TRUST WALLET ЧЕРЕЗ WALLETCONNECT ==========
+        async function connectTrustWalletWC() {
+            closeWalletModal();
+            showNotification("Opening Trust Wallet...", "info");
+            
+            try {
+                const provider = await initWalletConnectProvider('trust');
+                await provider.connect();
+                
+                // После возврата из кошелька — проверяем подключение
+                setTimeout(async () => {
+                    try {
+                        const accounts = await provider.request({ method: 'eth_accounts' });
+                        if (accounts && accounts.length > 0) {
+                            await connectWithAccounts(accounts, provider);
+                        }
+                    } catch(e) {
+                        console.log("Waiting for connection...");
+                    }
+                }, 1500);
+            } catch(e) {
+                console.error(e);
+                showNotification("Connection error. Please try again.", "error");
+            }
+        }
+        
+        // ========== COINBASE WALLET ==========
+        async function connectCoinbase() {
+            closeWalletModal();
+            showNotification("Opening Coinbase Wallet...", "info");
+            // Coinbase Wallet использует стандартный EIP-1193
+            if (!window.ethereum) {
+                window.location.href = 'https://go.cb-w.com/dapp?url=' + encodeURIComponent(window.location.href);
+                return;
+            }
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await connectWithAccounts(accounts, window.ethereum);
+            } catch(e) {
+                showNotification("Connection error", "error");
+            }
+        }
+        
+        // ========== ОБЩАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ ==========
+        async function connectWithAccounts(accounts, provider) {
             if (!accounts || accounts.length === 0) return;
             
-            const web3 = new Web3(window.ethereum);
             currentAccount = accounts[0];
-            presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
-            tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+            web3Instance = new Web3(provider);
+            presaleContract = new web3Instance.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+            tokenContract = new web3Instance.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
             updateUI(currentAccount);
             showNotification(`✅ Wallet connected: ${currentAccount.substring(0,6)}...`, 'success');
             await updateSageDashboard();
             updateReferralLink();
         }
         
-        // Слушаем возврат на страницу (когда пользователь возвращается из кошелька)
+        // ========== АВТОМАТИЧЕСКОЕ ПОДКЛЮЧЕНИЕ ==========
+        async function checkAndConnectOnReturn() {
+            if (!walletConnectProvider || currentAccount) return;
+            
+            try {
+                const accounts = await walletConnectProvider.request({ method: 'eth_accounts' });
+                if (accounts && accounts.length > 0) {
+                    await connectWithAccounts(accounts, walletConnectProvider);
+                }
+            } catch(e) {
+                console.log('No accounts yet');
+            }
+        }
+        
         window.addEventListener('pageshow', function(event) {
             if (event.persisted || performance.getEntriesByType('navigation')[0].type === 'back_forward') {
-                console.log('🔄 Пользователь вернулся из кошелька, проверяем подключение');
                 setTimeout(checkAndConnectOnReturn, 500);
             }
         });
         
-        // Слушаем фокус на окне (для мобильных)
         window.addEventListener('focus', function() {
-            if (!currentAccount && window.ethereum) {
-                console.log('🔄 Окно в фокусе, проверяем подключение');
+            if (!currentAccount && walletConnectProvider) {
                 setTimeout(checkAndConnectOnReturn, 300);
             }
         });
-        
-        // ========== ПРЯМОЕ ПОДКЛЮЧЕНИЕ (ОДНА КНОПКА ДЛЯ ВСЕХ) ==========
-        async function connectWalletDirect() {
-            closeWalletModal();
-            
-            if (!window.ethereum) {
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile) {
-                    window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
-                } else {
-                    alert("Install MetaMask or Trust Wallet!");
-                    window.open('https://metamask.io/download/', '_blank');
-                }
-                return;
-            }
-            
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await connectWithAccounts(accounts);
-                
-                // Слушаем смену аккаунта
-                window.ethereum.on('accountsChanged', (acc) => {
-                    if (acc.length === 0) disconnectWallet();
-                    else {
-                        currentAccount = acc[0];
-                        updateUI(currentAccount);
-                        updateSageDashboard();
-                        updateReferralLink();
-                    }
-                });
-            } catch(e) {
-                console.error(e);
-                showNotification("Connection error", "error");
-            }
-        }
-        
-        // WalletConnect для других кошельков
-        async function connectWalletConnect() {
-            closeWalletModal();
-            showNotification("WalletConnect coming soon. Please use MetaMask/Trust Wallet for now.", "info");
-        }
         
         function updateUI(address) {
             const btn = document.getElementById('connectBtn');
@@ -1307,7 +1403,7 @@
                 if (!document.querySelector('.disconnect-btn')) {
                     const dbtn = document.createElement('button');
                     dbtn.className = 'disconnect-btn';
-                    dbtn.innerHTML = translations[currentLang]?.DISCONNECT || 'DISCONNECT';
+                    dbtn.innerHTML = 'DISCONNECT';
                     dbtn.onclick = disconnectWallet;
                     btn.parentNode.appendChild(dbtn);
                 }
@@ -1315,15 +1411,19 @@
         }
         
         function disconnectWallet() {
+            if (walletConnectProvider) {
+                try { walletConnectProvider.disconnect(); } catch(e) {}
+                walletConnectProvider = null;
+            }
             currentAccount = null;
             presaleContract = null;
             tokenContract = null;
+            web3Instance = null;
             const btn = document.getElementById('connectBtn');
             btn.innerHTML = '<i class="fas fa-wallet"></i> CONNECT WALLET';
             const dbtn = document.querySelector('.disconnect-btn');
             if (dbtn) dbtn.remove();
             document.getElementById('sageDashboard').style.display = 'none';
-            document.getElementById('referralSection').style.display = 'block';
             document.getElementById('refLink').value = 'Connect wallet...';
             showNotification('Wallet disconnected', 'info');
         }
@@ -1367,9 +1467,6 @@
             linkInput.setSelectionRange(0, 99999);
             document.execCommand('copy');
             showNotification("✅ Link copied! Share with your disciples.", "success");
-            if (typeof spawnMagic === 'function') {
-                spawnMagic({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-            }
         }
         
         function generateRefLink(address) {
@@ -1385,15 +1482,6 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
-            const copyBtn = document.getElementById('copyRefBtn');
-            if (copyBtn) copyBtn.onclick = copyRefLink;
-        });
-        
-        window.copyRefLink = copyRefLink;
-        window.generateRefLink = generateRefLink;
-        window.updateReferralLink = updateReferralLink;
-        
         async function buyTokens() {
             if (!presaleContract) { showNotification('Connect wallet first', 'error'); openWalletModal(); return; }
             const eth = parseFloat(document.getElementById('ethAmount').value || 0);
@@ -1408,7 +1496,8 @@
             btn.disabled = true;
             btn.textContent = '⏳ SENDING...';
             try {
-                const web3 = new Web3(window.ethereum);
+                const provider = web3Instance ? web3Instance.currentProvider : window.ethereum;
+                const web3 = new Web3(provider);
                 const wei = web3.utils.toWei(eth.toString(), 'ether');
                 const accounts = await web3.eth.getAccounts();
                 await presaleContract.methods.buyTokens().send({ from: accounts[0], value: wei, gas: 300000 });
@@ -1529,10 +1618,7 @@
             }
         }
         
-        function setSocialLinks() {
-            // Ссылки уже прописаны в HTML
-        }
-        
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         document.getElementById('ethAmount').addEventListener('input', () => {
             const val = parseFloat(document.getElementById('ethAmount').value) || 0;
             document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
@@ -1543,6 +1629,7 @@
         document.getElementById('logoBtn').onclick = openIdeologyModal;
         document.getElementById('addTokenBtn').onclick = addTokenToWallet;
         document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
+        document.getElementById('copyRefBtn').onclick = copyRefLink;
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
@@ -1551,17 +1638,11 @@
         document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
         document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
         
-        document.querySelectorAll('.feature-card').forEach(card => {
-            if (card.innerText.includes('7 Sages')) card.onclick = openSagesModal;
-        });
-        
         createParticles();
         updateTimer();
         setInterval(updateTimer, 1000);
-        setSocialLinks();
         startSimulator();
         
-        if (window.ethereum && window.ethereum.selectedAddress) setTimeout(() => connectWalletDirect(), 500);
         document.querySelectorAll('button').forEach(btn => btn.classList.add('lightning-effect'));
         document.addEventListener('mousedown', (e) => {
             if (e.target.closest('button') || e.target.closest('.feature-card') || e.target.closest('.token-item')) {
@@ -1576,8 +1657,9 @@
         window.closeIdeologyModal = closeIdeologyModal;
         window.openSagesModal = openSagesModal;
         window.closeSagesModal = closeSagesModal;
-        window.connectWalletDirect = connectWalletDirect;
-        window.connectWalletConnect = connectWalletConnect;
+        window.connectMetaMaskWC = connectMetaMaskWC;
+        window.connectTrustWalletWC = connectTrustWalletWC;
+        window.connectCoinbase = connectCoinbase;
     </script>
 </body>
 </html>
