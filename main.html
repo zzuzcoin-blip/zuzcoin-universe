@@ -16,6 +16,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    
+    <!-- WalletConnect Web3Modal для 540+ кошельков -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
+    
+    <!-- QRCode.js -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <style>
@@ -63,7 +69,6 @@
             z-index: 0;
         }
         
-        /* ========== АНИМАЦИИ ========== */
         .magic-dot {
             position: fixed;
             pointer-events: none;
@@ -126,7 +131,6 @@
             width: 100%;
         }
         
-        /* ========== ШАПКА ========== */
         .navbar {
             position: fixed;
             top: -100px;
@@ -232,7 +236,6 @@
         }
         .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
         
-        /* ========== ГЛАВНЫЙ БЛОК ========== */
         .hero { padding: 80px 0 60px; }
         .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
         @media (max-width: 768px) { .hero .container { grid-template-columns: 1fr; gap: 30px; } }
@@ -332,7 +335,6 @@
         }
         .presale-video-large { width: 100%; border-radius: 16px; display: block; }
         
-        /* ========== СЕКЦИИ ========== */
         .features, .tokenomics, .roadmap, .faq-section, .security-section {
             padding: 60px 0;
         }
@@ -442,7 +444,6 @@
             font-size: 13px;
         }
         
-        /* Дашборд мудреца */
         .sage-level-card {
             background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.4));
             border: 1px solid var(--accent-gold);
@@ -466,7 +467,6 @@
             transition: width 0.3s ease;
         }
         
-        /* Лента активности */
         .live-activity-container {
             position: fixed;
             bottom: 20px;
@@ -486,7 +486,6 @@
         .activity-item { font-size: 11px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .activity-item:last-child { border-bottom: none; }
         
-        /* Карта мира */
         .map-wrapper { position: relative; max-width: 1000px; margin: 0 auto; width: 100%; }
         .map-pulse {
             position: absolute;
@@ -661,54 +660,48 @@
             cursor: pointer;
         }
         
-        /* Стили для подключения кошелька (как у Pepeto) */
-        .qr-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .qr-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-        .qr-code {
-            background: white;
-            padding: 15px;
-            border-radius: 16px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .qr-code canvas {
-            width: 160px;
-            height: 160px;
-        }
-        .qr-hint {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-        }
-        
-        .btn-all-wallets {
+        /* Стили для окна подключения */
+        .primary-wallet-btn {
             width: 100%;
-            background: rgba(212,175,55,0.15);
+            background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
             border: 1px solid var(--accent-gold);
-            border-radius: 40px;
-            padding: 12px;
-            color: var(--accent-gold);
-            font-weight: 600;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             transition: all 0.3s;
         }
-        .btn-all-wallets:hover {
-            background: rgba(212,175,55,0.3);
+        .primary-wallet-btn:hover {
+            background: rgba(212,175,55,0.25);
+            transform: scale(1.01);
+        }
+        .primary-wallet-btn i {
+            font-size: 28px;
+            color: var(--accent-gold);
+        }
+        .primary-wallet-btn span {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .wallet-badge {
+            background: var(--accent-gold);
+            color: black;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-left: auto;
         }
         
         .wallet-divider {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin: 16px 0;
+            margin: 20px 0;
             color: var(--text-secondary);
             font-size: 12px;
         }
@@ -720,42 +713,42 @@
             background: var(--border-color);
         }
         
-        .wallet-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .qr-container {
+            text-align: center;
+            margin: 10px 0;
         }
-        .wallet-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-color);
+        .qr-code {
+            background: white;
+            padding: 15px;
             border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: inline-block;
+            margin: 10px auto;
             cursor: pointer;
+        }
+        .qr-code canvas {
+            width: 160px;
+            height: 160px;
+        }
+        .qr-hint {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        
+        .all-wallets-btn {
+            width: 100%;
+            background: rgba(212,175,55,0.1);
+            border: 1px dashed var(--accent-gold);
+            border-radius: 40px;
+            padding: 12px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            cursor: pointer;
+            margin: 15px 0;
             transition: all 0.3s;
         }
-        .wallet-btn:hover {
-            background: rgba(212,175,55,0.15);
-            border-color: var(--accent-gold);
-        }
-        .wallet-btn img {
-            width: 32px;
-            height: 32px;
-        }
-        .wallet-btn span {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        .wallet-badge {
-            background: var(--accent-gold);
-            color: black;
-            font-size: 9px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: auto;
+        .all-wallets-btn:hover {
+            background: rgba(212,175,55,0.2);
         }
         
         .notification {
@@ -1041,7 +1034,7 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <!-- МОДАЛЬНОЕ ОКНО ПОДКЛЮЧЕНИЯ КОШЕЛЬКА (КАК У PEPETO) -->
+    <!-- МОДАЛЬНОЕ ОКНО ПОДКЛЮЧЕНИЯ КОШЕЛЬКА (3 КНОПКИ) -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1049,35 +1042,53 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             
-            <!-- QR-код для мобильных кошельков -->
-            <div class="qr-container">
-                <div class="qr-label">📱 Scan with your mobile wallet</div>
-                <div id="wcQrCode" class="qr-code"></div>
-                <div class="qr-hint">Open your wallet app → Scan QR code → Connect</div>
+            <!-- КНОПКА 1: Wallet Connect (Ton wallet) -->
+            <div class="primary-wallet-btn" id="walletConnectBtn">
+                <i class="fas fa-qrcode"></i>
+                <span>Wallet Connect</span>
+                <div class="wallet-badge">Ton • Trust • Rabby</div>
             </div>
             
-            <!-- Кнопка All wallets (540+ кошельков) -->
-            <button class="btn-all-wallets" id="allWalletsBtn">
+            <!-- КНОПКА 2: MetaMask -->
+            <div class="primary-wallet-btn" id="metaMaskBtn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" style="width: 28px; height: 28px;" alt="MetaMask">
+                <span>MetaMask</span>
+                <div class="wallet-badge">Popular</div>
+            </div>
+            
+            <!-- КНОПКА 3: Coinbase Wallet -->
+            <div class="primary-wallet-btn" id="coinbaseBtn">
+                <i class="fab fa-bitcoin" style="font-size: 28px; color: #0052FF;"></i>
+                <span>Coinbase Wallet</span>
+            </div>
+            
+            <div class="wallet-divider">More options</div>
+            
+            <p style="font-size: 12px; text-align: center; color: var(--text-secondary);">
+                New to crypto? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Get a wallet</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- ВТОРОЕ ОКНО: QR-код Ton wallet + All wallets -->
+    <div id="qrModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Scan with Ton Wallet</h2>
+                <button class="close-modal" onclick="closeQRModal()">&times;</button>
+            </div>
+            
+            <div class="qr-container" id="qrContainer">
+                <div id="tonQrCode" class="qr-code"></div>
+                <div class="qr-hint">Open Ton wallet (Telegram) → Scan QR → Connect</div>
+            </div>
+            
+            <button class="all-wallets-btn" id="allWalletsBtn">
                 <i class="fas fa-th"></i> All wallets (540+)
             </button>
             
-            <div class="wallet-divider">OR</div>
-            
-            <!-- Отдельные кнопки для популярных кошельков -->
-            <div class="wallet-buttons">
-                <div class="wallet-btn" id="metaMaskBtn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                    <span>MetaMask</span>
-                    <div class="wallet-badge">Popular</div>
-                </div>
-                <div class="wallet-btn" id="coinbaseBtn">
-                    <i class="fab fa-bitcoin" style="font-size: 28px; color: #0052FF;"></i>
-                    <span>Coinbase Wallet</span>
-                </div>
-            </div>
-            
-            <p style="font-size: 12px; text-align: center; margin-top: 20px; color: var(--text-secondary);">
-                New to crypto? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Get a wallet</a>
+            <p style="font-size: 11px; text-align: center; color: var(--text-secondary); margin-top: 12px;">
+                Trust Wallet, OKX, Rainbow, and 540+ more
             </p>
         </div>
     </div>
@@ -1099,6 +1110,7 @@
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
         let walletConnectProvider = null;
+        let web3Modal = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1117,10 +1129,7 @@
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
                 "BUY ZUZ": "КУПИТЬ ZUZ",
                 "Mentor's Path Program": "Программа «Путь Наставника»",
-                "Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.": "Приглашайте учеников и получайте 5% от их покупок + ускоренный переход к следующему Мудрецу.",
                 "COPY": "КОПИРОВАТЬ",
-                "Disciples:": "Учеников:",
-                "Earned:": "Заработано:",
                 "Connect wallet...": "Подключите кошелек..."
             }
         };
@@ -1131,9 +1140,8 @@
             try {
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
-                const countryCode = data.country_code;
-                const map = { 'RU': 'ru', 'DE': 'de', 'FR': 'fr', 'IL': 'he', 'AE': 'ar', 'KR': 'ko', 'CN': 'zh', 'JP': 'ja' };
-                return map[countryCode] || 'en';
+                const map = { 'RU': 'ru', 'DE': 'de', 'FR': 'fr', 'IL': 'he' };
+                return map[data.country_code] || 'en';
             } catch(e) { return 'en'; }
         }
         
@@ -1285,10 +1293,8 @@
             }
         }
         
-        // ========== WALLETCONNECT ДЛЯ QR И ALL WALLETS ==========
-        let wcUri = null;
-        
-        async function initWalletConnect() {
+        // ========== WALLETCONNECT ДЛЯ QR И 540+ ==========
+        async function initWalletConnectProvider() {
             if (walletConnectProvider) {
                 try { await walletConnectProvider.disconnect(); } catch(e) {}
                 walletConnectProvider = null;
@@ -1310,22 +1316,21 @@
             });
             
             walletConnectProvider.on("display_uri", (uri) => {
-                wcUri = uri;
                 console.log("WC URI:", uri);
-                // Генерируем QR-код
-                const qrContainer = document.getElementById('wcQrCode');
+                const qrContainer = document.getElementById('tonQrCode');
                 if (qrContainer) {
                     qrContainer.innerHTML = '';
                     new QRCode(qrContainer, {
                         text: uri,
-                        width: 160,
-                        height: 160
+                        width: 180,
+                        height: 180
                     });
                 }
             });
             
             walletConnectProvider.on("connect", () => {
                 console.log("WC connected");
+                closeQRModal();
                 closeWalletModal();
             });
             
@@ -1340,23 +1345,23 @@
             return walletConnectProvider;
         }
         
-        // QR-код подключение (Ton wallet и другие через WalletConnect)
-        async function connectWithQR() {
+        // Кнопка Wallet Connect (Ton wallet)
+        async function connectWalletConnect() {
             closeWalletModal();
-            showNotification("Scan QR with your wallet", "info");
+            showNotification("Opening QR for Ton wallet...", "info");
             
             try {
-                if (walletConnectProvider) {
-                    try { await walletConnectProvider.disconnect(); } catch(e) {}
-                }
-                const provider = await initWalletConnect();
+                const provider = await initWalletConnectProvider();
                 await provider.connect();
+                
+                document.getElementById('qrModal').style.display = 'flex';
                 
                 setTimeout(async () => {
                     try {
                         const accounts = await provider.request({ method: 'eth_accounts' });
                         if (accounts && accounts.length > 0) {
                             await connectWithProvider(accounts, provider);
+                            closeQRModal();
                         }
                     } catch(e) {
                         console.log("Waiting for connection...");
@@ -1369,19 +1374,18 @@
         }
         
         // All wallets (540+ через Web3Modal)
-        let web3Modal = null;
-        
         async function initWeb3Modal() {
             if (web3Modal) return web3Modal;
             
-            const provider = await initWalletConnect();
+            const provider = await initWalletConnectProvider();
             web3Modal = provider;
             return web3Modal;
         }
         
         async function connectAllWallets() {
+            closeQRModal();
             closeWalletModal();
-            showNotification("Opening wallet selector...", "info");
+            showNotification("Opening wallet selector (540+ wallets)...", "info");
             
             try {
                 const modal = await initWeb3Modal();
@@ -1392,7 +1396,7 @@
             }
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ METAMASK (ПРЯМОЕ) ==========
+        // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
         async function connectMetaMask() {
             closeWalletModal();
             
@@ -1426,7 +1430,7 @@
             }
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ COINBASE WALLET ==========
+        // ========== ПОДКЛЮЧЕНИЕ COINBASE ==========
         async function connectCoinbase() {
             closeWalletModal();
             
@@ -1528,7 +1532,7 @@
             } catch(e) { console.error(e); }
         }
         
-        // ========== РЕФЕРАЛЬНАЯ СИСТЕМА ==========
+        // ========== РЕФЕРАЛКА ==========
         function copyRefLink() {
             const linkInput = document.getElementById('refLink');
             if (!linkInput) return;
@@ -1555,6 +1559,7 @@
             }
         }
         
+        // ========== ПОКУПКА ==========
         async function buyTokens() {
             if (!presaleContract) { showNotification('Connect wallet first', 'error'); openWalletModal(); return; }
             const eth = parseFloat(document.getElementById('ethAmount').value || 0);
@@ -1662,12 +1667,9 @@
             }
         }
         
-        function openWalletModal() { 
-            // Генерируем QR при открытии модалки
-            initWalletConnect().catch(console.error);
-            document.getElementById('walletModal').style.display = 'flex'; 
-        }
+        function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+        function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; }
         function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
         function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
         function openSagesModal() {
@@ -1713,18 +1715,17 @@
         document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
         document.getElementById('copyRefBtn').onclick = copyRefLink;
         
-        // Кнопки подключения кошельков
+        // Кнопки подключения
+        document.getElementById('walletConnectBtn').onclick = connectWalletConnect;
         document.getElementById('metaMaskBtn').onclick = connectMetaMask;
         document.getElementById('coinbaseBtn').onclick = connectCoinbase;
         document.getElementById('allWalletsBtn').onclick = connectAllWallets;
-        
-        // Клик по QR-коду для подключения через WalletConnect (Ton wallet и другие)
-        document.getElementById('wcQrCode').addEventListener('click', connectWithQR);
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
         document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
+        document.getElementById('qrModal').addEventListener('click', (e) => { if (e.target === document.getElementById('qrModal')) closeQRModal(); });
         document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
         document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
         
@@ -1733,7 +1734,6 @@
         setInterval(updateTimer, 1000);
         startSimulator();
         
-        // Автоподключение
         if (window.ethereum && window.ethereum.selectedAddress) {
             setTimeout(async () => {
                 try {
@@ -1755,6 +1755,7 @@
         
         window.openWalletModal = openWalletModal;
         window.closeWalletModal = closeWalletModal;
+        window.closeQRModal = closeQRModal;
         window.openIdeologyModal = openIdeologyModal;
         window.closeIdeologyModal = closeIdeologyModal;
         window.openSagesModal = openSagesModal;
