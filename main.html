@@ -17,14 +17,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
-    <!-- WalletConnect Web3Modal для 540+ кошельков -->
+    <!-- WalletConnect и Web3Modal (как у Pepeto) -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
-    
-    <!-- QRCode.js -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <style>
+        /* ========== ВСЕ СТИЛИ ОСТАЛИСЬ ТЕ ЖЕ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -1070,7 +1069,7 @@
         </div>
     </div>
     
-    <!-- ВТОРОЕ ОКНО: QR-код Ton wallet + All wallets -->
+    <!-- ВТОРОЕ ОКНО: QR-код + All wallets -->
     <div id="qrModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1109,8 +1108,6 @@
         let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
-        let walletConnectProvider = null;
-        let web3Modal = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1128,7 +1125,6 @@
             ru: {
                 "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
                 "BUY ZUZ": "КУПИТЬ ZUZ",
-                "Mentor's Path Program": "Программа «Путь Наставника»",
                 "COPY": "КОПИРОВАТЬ",
                 "Connect wallet...": "Подключите кошелек..."
             }
@@ -1293,15 +1289,17 @@
             }
         }
         
-        // ========== WALLETCONNECT ДЛЯ QR И 540+ ==========
-        async function initWalletConnectProvider() {
-            if (walletConnectProvider) {
-                try { await walletConnectProvider.disconnect(); } catch(e) {}
-                walletConnectProvider = null;
-            }
+        // ========== WALLETCONNECT И WEB3MODAL (РАБОТАЕТ КАК У PEPETO) ==========
+        let web3Modal = null;
+        let walletConnectProvider = null;
+        
+        async function initWeb3Modal() {
+            if (web3Modal) return web3Modal;
             
-            walletConnectProvider = await window.EthereumProvider.init({
-                projectId: WC_PROJECT_ID,
+            const projectId = WC_PROJECT_ID;
+            
+            const ethereumProvider = await window.EthereumProvider.init({
+                projectId: projectId,
                 chains: [1],
                 optionalChains: [1],
                 showQrModal: false,
@@ -1314,6 +1312,8 @@
                     icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
                 }
             });
+            
+            walletConnectProvider = ethereumProvider;
             
             walletConnectProvider.on("display_uri", (uri) => {
                 console.log("WC URI:", uri);
@@ -1342,18 +1342,18 @@
                 }
             });
             
-            return walletConnectProvider;
+            web3Modal = ethereumProvider;
+            return web3Modal;
         }
         
-        // Кнопка Wallet Connect (Ton wallet)
+        // Кнопка Wallet Connect (Ton wallet через QR)
         async function connectWalletConnect() {
             closeWalletModal();
-            showNotification("Opening QR for Ton wallet...", "info");
+            showNotification("Preparing QR code...", "info");
             
             try {
-                const provider = await initWalletConnectProvider();
+                const provider = await initWeb3Modal();
                 await provider.connect();
-                
                 document.getElementById('qrModal').style.display = 'flex';
                 
                 setTimeout(async () => {
@@ -1369,27 +1369,19 @@
                 }, 1500);
             } catch(e) {
                 console.error(e);
-                showNotification("Connection error", "error");
+                showNotification("Connection error: " + (e.message || "Unknown"), "error");
             }
         }
         
-        // All wallets (540+ через Web3Modal)
-        async function initWeb3Modal() {
-            if (web3Modal) return web3Modal;
-            
-            const provider = await initWalletConnectProvider();
-            web3Modal = provider;
-            return web3Modal;
-        }
-        
+        // All wallets (540+ через Web3Modal c сеткой кошельков)
         async function connectAllWallets() {
             closeQRModal();
             closeWalletModal();
-            showNotification("Opening wallet selector (540+ wallets)...", "info");
+            showNotification("Opening wallet selector...", "info");
             
             try {
-                const modal = await initWeb3Modal();
-                await modal.connect();
+                const provider = await initWeb3Modal();
+                await provider.connect();
             } catch(e) {
                 console.error(e);
                 showNotification("Connection cancelled", "error");
