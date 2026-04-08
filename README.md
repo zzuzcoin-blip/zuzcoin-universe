@@ -1,75 +1,54 @@
 # 🌟 ZUZ Universe — 7 Sages
 
-**ZUZ** — это крипто-экосистема, объединяющая древнюю мудрость 7 великих мудрецов с технологией блокчейн Ethereum. Проект сочетает философию Талмуда, децентрализованные финансы и геймификацию.
+**Time > Money.**
+
+ZUZ Universe is a philosophical and economic experiment on the Ethereum blockchain.  
+It introduces the concept of *"Time as Currency"* — a digital asset where value is measured by patience, belief, and long-term commitment.
+
+[![Website](https://img.shields.io/badge/website-zuzim--universe.com-gold)](https://zuzim-universe.com)
+[![Twitter](https://img.shields.io/badge/Twitter-@ZuzimUniverse-blue)](https://twitter.com/ZuzimUniverse)
+[![Telegram](https://img.shields.io/badge/Telegram-@zuzimuniverse-blue)](https://t.me/zuzimuniverse)
 
 ---
 
-## 🚀 Пресейл
+## 📄 Key Documents
+- **[Whitepaper (EN)](whitepaper.pdf)** – complete project documentation
+- **[Website Source Code](index.html)** – main entry point
 
-- **Цена:** 1 ZUZ = 0.0001 ETH
-- **Минимальная покупка:** 0.01 ETH
-- **Сеть:** Ethereum Mainnet
-- **Токен:** `0x87D336511760583B11B87866654c6f7253c1cB0D`
-- **Пресейл контракт:** `0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553`
+## 🚀 Presale
+- **Price:** 1 ZUZ = 0.0001 ETH
+- **Min. Purchase:** 0.01 ETH
+- **Network:** Ethereum Mainnet
+- **Token Contract:** `0x87D336511760583B11B87866654c6f7253c1cB0D`
+- **Presale Contract:** `0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553`
 
----
+## 🏛️ 7 Sage Levels & Bonuses
+| Level | ZUZ Required | Staking Bonus |
+|-------|--------------|----------------|
+| Novice | 0 | +0% |
+| Wisdom | 1,000 | +2% |
+| Prosperity | 5,000 | +5% |
+| Protection | 10,000 | +10% |
+| Innovation | 25,000 | +15% |
+| Harmony | 50,000 | +20% |
+| Power | 100,000 | +25% |
+| Immortality | 250,000 | +30% + NFT |
 
-## 🏛️ 7 Уровней Мудрецов
+## 🔒 Security & Transparency
+- ✅ Smart contract verified on Etherscan
+- ✅ Team tokens: 12 months vesting
+- ✅ Liquidity: 30% locked for 365 days
+- ✅ Audit: in progress (Q2 2026)
 
-| Уровень | Требование (ZUZ) | Бонус к стейкингу |
-|---------|------------------|-------------------|
-| Новичок | 0 | 0% |
-| Мудрость | 1,000 | +2% |
-| Процветание | 5,000 | +5% |
-| Защита | 10,000 | +10% |
-| Инновации | 25,000 | +15% |
-| Гармония | 50,000 | +20% |
-| Сила | 100,000 | +25% |
-| Бессмертие | 250,000 | +30% + NFT |
+## 📜 Philosophy
+Based on the Talmud (Sukkah 52a):  
+*“A man captured the Yetzer ha-Ra, locked it in a vessel, and in the morning he opened it — and inside were two coins (zuzim).”*
 
----
+Money is not evil, but a tamed form of life energy. ZUZ is a modern, honest, decentralized vessel for that energy.
 
-## 🔗 Ссылки
-
-- **Сайт:** [zuzim-universe.com](https://zuzim-universe.com)
-- **GitHub:** [zzuzcoin-blip/zuzcoin-universe](https://github.com/zzuzcoin-blip/zuzcoin-universe)
-- **Twitter:** [@ZUZUniverse](https://twitter.com/ZUZUniverse)
-- **Telegram:** [t.me/ZUZUniverse](https://t.me/ZUZUniverse)
-
----
-
-## 📜 Идеология
-
-Основана на учении Талмуда (Сукка 52а):  
-*«Человек поймал Йецер ха-Ра, запер в сосуд, а на утро открыл — и увидел две монеты (зузим)»*
-
-Деньги — не зло, а обузданная форма жизненной энергии. ZUZ — это современный цифровой сосуд для созидания, свободы и благотворительности.
-
----
-
-## 🛡️ Безопасность
-
-- ✅ Контракт верифицирован
-- ✅ Токены команды в вестинге (12 месяцев)
-- ✅ Ликвидность заблокирована на 365 дней
-- ✅ Отказ от владения (передача в DAO)
-
----
-
-## 📱 Установка приложения
-
-Сайт поддерживает PWA — установите как приложение:
-
-- **iPhone:** Safari → Поделиться → На экран «Домой»
-- **Android:** Chrome → Три точки → Установить приложение
-
----
-
-## 📞 Контакты
-
-**Основатель:** 0xc8D67F58EddEA8a3e29d2deF11eD5D2E1D76B07f  
-**WalletConnect Project ID:** `c77ee52ed95eeec4596ca359f4cdb63d`
-
----
-
-*Присоединяйся к Совету. Обрети Мудрость. Стань Бессмертным.*
+## 🤝 Connect
+- **Website:** [zuzim-universe.com](https://zuzim-universe.com)
+- **Twitter:** [@ZuzimUniverse](https://twitter.com/ZuzimUniverse)
+- **Telegram:** [@zuzimuniverse](https://t.me/zuzimuniverse)
+- **Discord:** [Join](https://discord.gg/qqFmmD7m)
+- **YouTube:** [@zuzim-universe](https://www.youtube.com/@zuzim-universe)
