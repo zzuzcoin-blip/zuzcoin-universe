@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>ZUZ Universe — 7 Sages</title>
-    
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,21 +14,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ПОЛИФИЛЛЫ ДЛЯ WALLETCONNECT (РЕШАЮТ ОШИБКУ) -->
+    <!-- ПОЛИФИЛЛЫ (РЕШАЮТ ОШИБКИ process и buffer) -->
     <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/process@0.11.10/browser.js"></script>
     <script>
         window.Buffer = window.Buffer || buffer;
         window.process = window.process || process;
     </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.umd.js"></script>
+
+    <!-- WalletConnect v2 Provider -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
     <style>
-        /* Все твои стили остаются без изменений */
+        /* ========== ВСЕ ВАШИ СТИЛИ ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { overflow-x: hidden; width: 100%; position: relative; }
         body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; overflow-x: hidden; width: 100%; }
@@ -172,12 +170,6 @@
         .wallet-badge { background: var(--accent-gold); color: black; font-size: 10px; font-weight: 800; padding: 2px 10px; border-radius: 20px; margin-left: auto; }
         .wallet-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-secondary); font-size: 12px; }
         .wallet-divider::before, .wallet-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
-        .qr-container { text-align: center; margin: 10px 0; }
-        .qr-code { background: white; padding: 15px; border-radius: 16px; display: inline-block; margin: 10px auto; cursor: pointer; }
-        .qr-code canvas { width: 180px; height: 180px; }
-        .qr-hint { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
-        .all-wallets-btn { width: 100%; background: rgba(212,175,55,0.1); border: 1px dashed var(--accent-gold); border-radius: 40px; padding: 12px; color: var(--accent-gold); font-weight: 600; cursor: pointer; margin: 15px 0; transition: all 0.3s; }
-        .all-wallets-btn:hover { background: rgba(212,175,55,0.2); }
         .notification { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 12px; z-index: 10001; font-size: 13px; font-weight: 500; animation: slideInRight 0.3s ease; max-width: 320px; }
         .notification.success { background: #4caf50; color: white; }
         .notification.error { background: #f44336; color: white; }
@@ -426,6 +418,7 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
+    <!-- МОДАЛЬНОЕ ОКНО ПОДКЛЮЧЕНИЯ -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -433,49 +426,15 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             
-            <div class="primary-wallet-btn" id="walletConnectBtn">
+            <div class="primary-wallet-btn" id="mainConnectBtn">
                 <i class="fas fa-qrcode"></i>
-                <span>Wallet Connect</span>
-                <div class="wallet-badge">Ton • Trust • Rabby</div>
+                <span>Connect Wallet</span>
+                <div class="wallet-badge">MetaMask • Trust • OKX • 540+</div>
             </div>
             
-            <div class="primary-wallet-btn" id="metaMaskBtn">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                <span>MetaMask</span>
-                <div class="wallet-badge">Popular</div>
-            </div>
-            
-            <div class="primary-wallet-btn" id="coinbaseBtn">
-                <i class="fab fa-bitcoin" style="color: #0052FF;"></i>
-                <span>Coinbase Wallet</span>
-            </div>
-            
-            <div class="wallet-divider">More options</div>
-            
+            <div class="wallet-divider">Secure connection via WalletConnect</div>
             <p style="font-size: 12px; text-align: center; color: var(--text-secondary);">
                 New to crypto? <a href="https://metamask.io" target="_blank" style="color: var(--accent-gold);">Get a wallet</a>
-            </p>
-        </div>
-    </div>
-    
-    <div id="qrModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Scan with Ton Wallet</h2>
-                <button class="close-modal" onclick="closeQRModal()">&times;</button>
-            </div>
-            
-            <div class="qr-container">
-                <div id="tonQrCode" class="qr-code"></div>
-                <div class="qr-hint">Open Ton wallet (Telegram) → Scan QR → Connect</div>
-            </div>
-            
-            <button class="all-wallets-btn" id="allWalletsBtn">
-                <i class="fas fa-th"></i> All wallets (540+)
-            </button>
-            
-            <p style="font-size: 11px; text-align: center; color: var(--text-secondary); margin-top: 12px;">
-                Trust Wallet, OKX, Rainbow, and 540+ more
             </p>
         </div>
     </div>
@@ -496,7 +455,7 @@
         let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
-        let web3Modal = null;
+        let walletConnectProvider = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -678,155 +637,79 @@
             }
         }
         
-        // ========== WEB3MODAL ДЛЯ 540+ КОШЕЛЬКОВ (РАБОТАЕТ БЕЗ ОШИБОК) ==========
-        async function initWeb3Modal() {
-            if (web3Modal) return web3Modal;
-            
-            const { EthereumProvider } = window;
-            if (!EthereumProvider) {
-                console.error("EthereumProvider not loaded");
-                return null;
-            }
-            
-            const provider = await EthereumProvider.init({
-                projectId: WC_PROJECT_ID,
-                chains: [1],
-                optionalChains: [1],
-                showQrModal: true,
-                methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
-                events: ["chainChanged", "accountsChanged"],
-                metadata: {
-                    name: "ZUZ Universe",
-                    description: "7 Sages — ZUZ Ecosystem",
-                    url: window.location.origin,
-                    icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
-                }
-            });
-            
-            provider.on("connect", () => {
-                console.log("WC connected");
-                closeWalletModal();
-            });
-            
-            provider.on("accountsChanged", async (accounts) => {
-                if (accounts.length === 0) {
-                    disconnectWallet();
-                } else {
-                    await connectWithProvider(accounts, provider);
-                }
-            });
-            
-            web3Modal = provider;
-            return web3Modal;
-        }
-        
-        async function connectAllWallets() {
+        // ========== ГЛАВНАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ (РАБОТАЕТ КАК У PEPETO) ==========
+        async function connectWallet() {
             closeWalletModal();
-            showNotification("Opening wallet selector...", "info");
+            showNotification("Opening wallet selection...", "info");
             
             try {
-                const modal = await initWeb3Modal();
-                if (!modal) {
-                    showNotification("WalletConnect not available. Please use MetaMask or Coinbase.", "error");
-                    return;
-                }
-                await modal.connect();
-            } catch(e) {
-                console.error(e);
-                showNotification("Connection cancelled or error", "error");
-            }
-        }
-        
-        // ========== ПОКАЗАТЬ QR-ИНСТРУКЦИЮ ДЛЯ TON WALLET ==========
-        function showQRInstruction() {
-            closeWalletModal();
-            
-            const qrContainer = document.getElementById('tonQrCode');
-            if (qrContainer) {
-                qrContainer.innerHTML = '';
-                const tempDiv = document.createElement('div');
-                tempDiv.style.textAlign = 'center';
-                tempDiv.innerHTML = `
-                    <div style="background: #fff; padding: 20px; border-radius: 16px; display: inline-block;">
-                        <i class="fas fa-qrcode" style="font-size: 80px; color: #D4AF37;"></i>
-                    </div>
-                    <p style="margin-top: 15px; font-size: 13px;">1. Open Ton wallet / Trust Wallet</p>
-                    <p style="font-size: 13px;">2. Go to Settings → WalletConnect</p>
-                    <p style="font-size: 13px;">3. Scan QR code from "All wallets" button</p>
-                    <p style="margin-top: 15px; font-size: 11px; color: #888;">💡 Use "All wallets" button → choose your wallet → scan QR</p>
-                `;
-                qrContainer.appendChild(tempDiv);
-            }
-            document.getElementById('qrModal').style.display = 'flex';
-        }
-        
-        // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
-        async function connectMetaMask() {
-            closeWalletModal();
-            
-            if (!window.ethereum) {
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile) {
-                    window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
-                } else {
-                    showNotification("Install MetaMask!", "error");
-                    window.open('https://metamask.io/download/', '_blank');
-                }
-                return;
-            }
-            
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await connectWithProvider(accounts, window.ethereum);
-                
-                window.ethereum.on('accountsChanged', (acc) => {
-                    if (acc.length === 0) disconnectWallet();
-                    else {
-                        currentAccount = acc[0];
-                        updateUI(currentAccount);
-                        updateSageDashboard();
-                        updateReferralLink();
+                // Инициализация провайдера
+                const provider = await window.EthereumProvider.init({
+                    projectId: WC_PROJECT_ID,
+                    chains: [1],
+                    optionalChains: [1, 56, 137],
+                    showQrModal: true,
+                    methods: ['eth_sendTransaction', 'personal_sign', 'eth_signTypedData', 'eth_accounts'],
+                    events: ['chainChanged', 'accountsChanged'],
+                    metadata: {
+                        name: "ZUZ Universe",
+                        description: "7 Sages — ZUZ Ecosystem",
+                        url: window.location.origin,
+                        icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
+                    },
+                    qrModalOptions: {
+                        themeMode: 'dark',
+                        themeVariables: {
+                            '--w3m-accent': '#D4AF37',
+                            '--w3m-background-color': '#0A0A0A',
+                            '--w3m-font-family': 'Inter, sans-serif'
+                        }
                     }
                 });
-            } catch(e) {
-                console.error(e);
-                showNotification("Connection cancelled", "error");
-            }
-        }
-        
-        // ========== ПОДКЛЮЧЕНИЕ COINBASE ==========
-        async function connectCoinbase() {
-            closeWalletModal();
-            
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                window.location.href = 'https://go.cb-w.com/dapp?url=' + encodeURIComponent(window.location.href);
-                setTimeout(() => {
-                    if (!currentAccount) {
-                        showNotification("Open Coinbase Wallet and approve", "info");
+                
+                walletConnectProvider = provider;
+                
+                provider.on('display_uri', (uri) => {
+                    console.log("WalletConnect URI generated");
+                });
+                
+                provider.on('connect', () => {
+                    console.log("WalletConnect connected");
+                });
+                
+                provider.on('accountsChanged', async (accounts) => {
+                    if (accounts.length === 0) {
+                        disconnectWallet();
+                    } else {
+                        await setupWeb3(accounts[0], provider);
                     }
-                }, 2000);
-            } else {
-                if (window.ethereum && window.ethereum.isCoinbaseWallet) {
-                    try {
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        await connectWithProvider(accounts, window.ethereum);
-                    } catch(e) {
-                        showNotification("Connection error", "error");
-                    }
-                } else {
-                    showNotification("Please install Coinbase Wallet extension", "info");
-                    window.open('https://www.coinbase.com/wallet/downloads', '_blank');
+                });
+                
+                provider.on('chainChanged', (chainId) => {
+                    console.log("Chain changed to", chainId);
+                    window.location.reload();
+                });
+                
+                // Запрашиваем подключение (откроется красивое модальное окно с QR и списком кошельков)
+                await provider.connect();
+                
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                if (accounts && accounts.length > 0) {
+                    await setupWeb3(accounts[0], provider);
                 }
+                
+            } catch (error) {
+                console.error("Connection error:", error);
+                let errorMsg = "Connection failed. Please try again.";
+                if (error.message && error.message.includes("User closed modal")) {
+                    errorMsg = "Connection cancelled.";
+                }
+                showNotification(errorMsg, "error");
             }
         }
         
-        // ========== ОБЩАЯ ФУНКЦИЯ ПОДКЛЮЧЕНИЯ ==========
-        async function connectWithProvider(accounts, provider) {
-            if (!accounts || accounts.length === 0) return;
-            
-            currentAccount = accounts[0];
+        async function setupWeb3(account, provider) {
+            currentAccount = account;
             web3Provider = provider;
             const web3 = new Web3(provider);
             presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
@@ -852,9 +735,9 @@
         }
         
         function disconnectWallet() {
-            if (web3Modal) {
-                try { web3Modal.disconnect(); } catch(e) {}
-                web3Modal = null;
+            if (walletConnectProvider) {
+                try { walletConnectProvider.disconnect(); } catch(e) {}
+                walletConnectProvider = null;
             }
             currentAccount = null;
             presaleContract = null;
@@ -1033,7 +916,6 @@
         
         function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
-        function closeQRModal() { document.getElementById('qrModal').style.display = 'none'; }
         function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
         function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
         function openSagesModal() {
@@ -1078,17 +960,12 @@
         document.getElementById('addTokenBtn').onclick = addTokenToWallet;
         document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
         document.getElementById('copyRefBtn').onclick = copyRefLink;
-        
-        document.getElementById('walletConnectBtn').onclick = showQRInstruction;
-        document.getElementById('metaMaskBtn').onclick = connectMetaMask;
-        document.getElementById('coinbaseBtn').onclick = connectCoinbase;
-        document.getElementById('allWalletsBtn').onclick = connectAllWallets;
+        document.getElementById('mainConnectBtn').onclick = connectWallet;
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
         });
         document.getElementById('walletModal').addEventListener('click', (e) => { if (e.target === document.getElementById('walletModal')) closeWalletModal(); });
-        document.getElementById('qrModal').addEventListener('click', (e) => { if (e.target === document.getElementById('qrModal')) closeQRModal(); });
         document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
         document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
         
@@ -1096,17 +973,6 @@
         updateTimer();
         setInterval(updateTimer, 1000);
         startSimulator();
-        
-        if (window.ethereum && window.ethereum.selectedAddress) {
-            setTimeout(async () => {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts && accounts.length > 0) {
-                        await connectWithProvider(accounts, window.ethereum);
-                    }
-                } catch(e) {}
-            }, 500);
-        }
         
         document.querySelectorAll('button').forEach(btn => btn.classList.add('lightning-effect'));
         document.addEventListener('mousedown', (e) => {
@@ -1118,7 +984,6 @@
         
         window.openWalletModal = openWalletModal;
         window.closeWalletModal = closeWalletModal;
-        window.closeQRModal = closeQRModal;
         window.openIdeologyModal = openIdeologyModal;
         window.closeIdeologyModal = closeIdeologyModal;
         window.openSagesModal = openSagesModal;
