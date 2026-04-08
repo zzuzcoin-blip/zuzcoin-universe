@@ -1108,6 +1108,8 @@
         let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
+        let walletConnectProvider = null;
+        let currentWalletConnectUri = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1289,61 +1291,63 @@
             }
         }
         
-        // ========== WALLETCONNECT И WEB3MODAL (РАБОТАЕТ КАК У PEPETO) ==========
-        let web3Modal = null;
-        let walletConnectProvider = null;
-        
-        async function initWeb3Modal() {
-            if (web3Modal) return web3Modal;
+        // ========== WALLETCONNECT (QR ДЛЯ TON WALLET) ==========
+        async function initWalletConnectProvider() {
+            if (walletConnectProvider) {
+                try { await walletConnectProvider.disconnect(); } catch(e) {}
+                walletConnectProvider = null;
+            }
             
-            const projectId = WC_PROJECT_ID;
-            
-            const ethereumProvider = await window.EthereumProvider.init({
-                projectId: projectId,
-                chains: [1],
-                optionalChains: [1],
-                showQrModal: false,
-                methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
-                events: ["chainChanged", "accountsChanged"],
-                metadata: {
-                    name: "ZUZ Universe",
-                    description: "7 Sages — ZUZ Ecosystem",
-                    url: window.location.origin,
-                    icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
-                }
-            });
-            
-            walletConnectProvider = ethereumProvider;
-            
-            walletConnectProvider.on("display_uri", (uri) => {
-                console.log("WC URI:", uri);
-                const qrContainer = document.getElementById('tonQrCode');
-                if (qrContainer) {
-                    qrContainer.innerHTML = '';
-                    new QRCode(qrContainer, {
-                        text: uri,
-                        width: 180,
-                        height: 180
-                    });
-                }
-            });
-            
-            walletConnectProvider.on("connect", () => {
-                console.log("WC connected");
-                closeQRModal();
-                closeWalletModal();
-            });
-            
-            walletConnectProvider.on("accountsChanged", async (accounts) => {
-                if (accounts.length === 0) {
-                    disconnectWallet();
-                } else {
-                    await connectWithProvider(accounts, walletConnectProvider);
-                }
-            });
-            
-            web3Modal = ethereumProvider;
-            return web3Modal;
+            try {
+                walletConnectProvider = await window.EthereumProvider.init({
+                    projectId: WC_PROJECT_ID,
+                    chains: [1],
+                    optionalChains: [1],
+                    showQrModal: false,
+                    methods: ["eth_sendTransaction", "personal_sign", "eth_accounts"],
+                    events: ["chainChanged", "accountsChanged"],
+                    metadata: {
+                        name: "ZUZ Universe",
+                        description: "7 Sages — ZUZ Ecosystem",
+                        url: window.location.origin,
+                        icons: ["https://raw.githubusercontent.com/zzuzcoin-blip/zuzcoin-universe/main/icon-192.png"]
+                    }
+                });
+                
+                walletConnectProvider.on("display_uri", (uri) => {
+                    console.log("WC URI:", uri);
+                    currentWalletConnectUri = uri;
+                    const qrContainer = document.getElementById('tonQrCode');
+                    if (qrContainer) {
+                        qrContainer.innerHTML = '';
+                        new QRCode(qrContainer, {
+                            text: uri,
+                            width: 180,
+                            height: 180
+                        });
+                    }
+                });
+                
+                walletConnectProvider.on("connect", () => {
+                    console.log("WC connected");
+                    closeQRModal();
+                    closeWalletModal();
+                });
+                
+                walletConnectProvider.on("accountsChanged", async (accounts) => {
+                    if (accounts.length === 0) {
+                        disconnectWallet();
+                    } else {
+                        await connectWithProvider(accounts, walletConnectProvider);
+                    }
+                });
+                
+                return walletConnectProvider;
+            } catch(e) {
+                console.error("WalletConnect init error:", e);
+                showNotification("WalletConnect error. Please use MetaMask or Coinbase.", "error");
+                return null;
+            }
         }
         
         // Кнопка Wallet Connect (Ton wallet через QR)
@@ -1352,40 +1356,39 @@
             showNotification("Preparing QR code...", "info");
             
             try {
-                const provider = await initWeb3Modal();
+                const provider = await initWalletConnectProvider();
+                if (!provider) return;
                 await provider.connect();
                 document.getElementById('qrModal').style.display = 'flex';
-                
-                setTimeout(async () => {
-                    try {
-                        const accounts = await provider.request({ method: 'eth_accounts' });
-                        if (accounts && accounts.length > 0) {
-                            await connectWithProvider(accounts, provider);
-                            closeQRModal();
-                        }
-                    } catch(e) {
-                        console.log("Waiting for connection...");
-                    }
-                }, 1500);
             } catch(e) {
                 console.error(e);
-                showNotification("Connection error: " + (e.message || "Unknown"), "error");
+                showNotification("Connection error. Please try again.", "error");
             }
         }
         
-        // All wallets (540+ через Web3Modal c сеткой кошельков)
-        async function connectAllWallets() {
+        // Кнопка All wallets (просто ссылки на популярные кошельки)
+        function connectAllWallets() {
             closeQRModal();
             closeWalletModal();
-            showNotification("Opening wallet selector...", "info");
             
-            try {
-                const provider = await initWeb3Modal();
-                await provider.connect();
-            } catch(e) {
-                console.error(e);
-                showNotification("Connection cancelled", "error");
-            }
+            const walletList = [
+                { name: "MetaMask", url: "https://metamask.io/download/" },
+                { name: "Trust Wallet", url: "https://trustwallet.com/download" },
+                { name: "Coinbase Wallet", url: "https://www.coinbase.com/wallet/downloads" },
+                { name: "OKX Wallet", url: "https://www.okx.com/web3" },
+                { name: "Rainbow", url: "https://rainbow.me/" },
+                { name: "Rabby", url: "https://rabby.io/" },
+                { name: "Tonkeeper", url: "https://tonkeeper.com/" }
+            ];
+            
+            let message = "📱 Popular wallets:\n\n";
+            walletList.forEach(w => {
+                message += `${w.name}: ${w.url}\n`;
+            });
+            message += "\nAfter installing, use 'Wallet Connect' button with QR code.";
+            
+            alert(message);
+            showNotification("Check console for wallet links", "info");
         }
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
