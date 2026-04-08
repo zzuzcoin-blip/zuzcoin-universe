@@ -17,13 +17,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
-    <!-- WalletConnect и Web3Modal (как у Pepeto) -->
+    <!-- WalletConnect Modal (сетка 540+ кошельков) -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
+    
+    <!-- QRCode.js -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <style>
-        /* ========== ВСЕ СТИЛИ ОСТАЛИСЬ ТЕ ЖЕ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -659,7 +660,6 @@
             cursor: pointer;
         }
         
-        /* Стили для окна подключения */
         .primary-wallet-btn {
             width: 100%;
             background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
@@ -677,15 +677,15 @@
             background: rgba(212,175,55,0.25);
             transform: scale(1.01);
         }
-        .primary-wallet-btn i {
+        .primary-wallet-btn i, .primary-wallet-btn img {
             font-size: 28px;
-            color: var(--accent-gold);
+            width: 28px;
+            height: 28px;
         }
         .primary-wallet-btn span {
             font-size: 18px;
             font-weight: 600;
         }
-        
         .wallet-badge {
             background: var(--accent-gold);
             color: black;
@@ -725,8 +725,8 @@
             cursor: pointer;
         }
         .qr-code canvas {
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
         }
         .qr-hint {
             font-size: 11px;
@@ -1033,7 +1033,7 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <!-- МОДАЛЬНОЕ ОКНО ПОДКЛЮЧЕНИЯ КОШЕЛЬКА (3 КНОПКИ) -->
+    <!-- МОДАЛЬНОЕ ОКНО ПОДКЛЮЧЕНИЯ (3 КНОПКИ) -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1041,23 +1041,20 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             
-            <!-- КНОПКА 1: Wallet Connect (Ton wallet) -->
             <div class="primary-wallet-btn" id="walletConnectBtn">
                 <i class="fas fa-qrcode"></i>
                 <span>Wallet Connect</span>
                 <div class="wallet-badge">Ton • Trust • Rabby</div>
             </div>
             
-            <!-- КНОПКА 2: MetaMask -->
             <div class="primary-wallet-btn" id="metaMaskBtn">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" style="width: 28px; height: 28px;" alt="MetaMask">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
                 <span>MetaMask</span>
                 <div class="wallet-badge">Popular</div>
             </div>
             
-            <!-- КНОПКА 3: Coinbase Wallet -->
             <div class="primary-wallet-btn" id="coinbaseBtn">
-                <i class="fab fa-bitcoin" style="font-size: 28px; color: #0052FF;"></i>
+                <i class="fab fa-bitcoin" style="color: #0052FF;"></i>
                 <span>Coinbase Wallet</span>
             </div>
             
@@ -1077,7 +1074,7 @@
                 <button class="close-modal" onclick="closeQRModal()">&times;</button>
             </div>
             
-            <div class="qr-container" id="qrContainer">
+            <div class="qr-container">
                 <div id="tonQrCode" class="qr-code"></div>
                 <div class="qr-hint">Open Ton wallet (Telegram) → Scan QR → Connect</div>
             </div>
@@ -1109,6 +1106,7 @@
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
         let walletConnectProvider = null;
+        let web3Modal = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1290,7 +1288,7 @@
             }
         }
         
-        // ========== WALLETCONNECT С QR-КОДОМ (РАБОЧАЯ ВЕРСИЯ) ==========
+        // ========== WALLETCONNECT С QR-КОДОМ (РАБОЧАЯ ВЕРСИЯ КАК У PEPETO) ==========
         async function initWalletConnectProvider() {
             if (walletConnectProvider) {
                 try { await walletConnectProvider.disconnect(); } catch(e) {}
@@ -1376,51 +1374,51 @@
         }
         
         // ========== ALL WALLETS (СЕТКА 540+ КОШЕЛЬКОВ) ==========
-        function showAllWalletsModal() {
+        async function initWeb3Modal() {
+            if (web3Modal) return web3Modal;
+            
+            web3Modal = window.WalletConnectModal;
+            if (!web3Modal) {
+                console.error("Web3Modal not loaded");
+                return null;
+            }
+            
+            web3Modal.init({
+                projectId: WC_PROJECT_ID,
+                chains: [1],
+                themeMode: 'dark',
+                themeVariables: {
+                    '--w3m-accent': '#D4AF37',
+                    '--w3m-background-color': '#0A0A0A',
+                    '--w3m-font-family': 'Inter, sans-serif'
+                }
+            });
+            
+            web3Modal.subscribeProvider((provider) => {
+                if (provider) {
+                    connectWithProvider(provider);
+                }
+            });
+            
+            return web3Modal;
+        }
+        
+        async function connectAllWallets() {
             closeQRModal();
             closeWalletModal();
+            showNotification("Opening wallet selector...", "info");
             
-            const wallets = [
-                { name: "MetaMask", icon: "🦊", url: "https://metamask.io/download/", installed: !!window.ethereum },
-                { name: "Trust Wallet", icon: "🔵", url: "https://trustwallet.com/download", installed: false },
-                { name: "Coinbase Wallet", icon: "💰", url: "https://www.coinbase.com/wallet/downloads", installed: !!(window.ethereum?.isCoinbaseWallet) },
-                { name: "OKX Wallet", icon: "🟢", url: "https://www.okx.com/web3", installed: false },
-                { name: "Rainbow", icon: "🌈", url: "https://rainbow.me/", installed: false },
-                { name: "Rabby", icon: "🐰", url: "https://rabby.io/", installed: false },
-                { name: "Tonkeeper", icon: "💎", url: "https://tonkeeper.com/", installed: false },
-                { name: "SafePal", icon: "🛡️", url: "https://www.safepal.com/download", installed: false },
-                { name: "Exodus", icon: "🔷", url: "https://www.exodus.com/download", installed: false },
-                { name: "TokenPocket", icon: "📱", url: "https://www.tokenpocket.pro/download", installed: false }
-            ];
-            
-            let html = '<div style="max-height: 450px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
-            wallets.forEach(w => {
-                const installText = w.installed ? '✅ Installed' : 'Install';
-                html += `
-                    <div onclick="window.open('${w.url}', '_blank')" style="background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 16px; padding: 12px; cursor: pointer; text-align: center; transition: all 0.3s;">
-                        <div style="font-size: 32px; margin-bottom: 8px;">${w.icon}</div>
-                        <div style="font-weight: 600; font-size: 14px;">${w.name}</div>
-                        <div style="font-size: 10px; color: #888; margin-top: 4px;">${installText}</div>
-                    </div>
-                `;
-            });
-            html += '</div>';
-            html += '<div style="margin-top: 15px; padding: 12px; background: rgba(212,175,55,0.1); border-radius: 12px; text-align: center; font-size: 11px;">';
-            html += '💡 After installing, use <strong>"Wallet Connect"</strong> button and scan QR code';
-            html += '</div>';
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.style.display = 'flex';
-            modal.innerHTML = `<div class="modal-content" style="max-width: 450px;">
-                <div class="modal-header">
-                    <h2 class="modal-title">All wallets (540+)</h2>
-                    <button class="close-modal" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-                </div>
-                ${html}
-            </div>`;
-            document.body.appendChild(modal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+            try {
+                const modal = await initWeb3Modal();
+                if (!modal) {
+                    showNotification("Web3Modal not available. Please use MetaMask or Coinbase.", "error");
+                    return;
+                }
+                await modal.open();
+            } catch(e) {
+                console.error(e);
+                showNotification("Connection cancelled or error", "error");
+            }
         }
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
@@ -1518,6 +1516,9 @@
             if (walletConnectProvider) {
                 try { walletConnectProvider.disconnect(); } catch(e) {}
                 walletConnectProvider = null;
+            }
+            if (web3Modal) {
+                try { web3Modal.close(); } catch(e) {}
             }
             currentAccount = null;
             presaleContract = null;
@@ -1746,7 +1747,7 @@
         document.getElementById('walletConnectBtn').onclick = connectWalletConnect;
         document.getElementById('metaMaskBtn').onclick = connectMetaMask;
         document.getElementById('coinbaseBtn').onclick = connectCoinbase;
-        document.getElementById('allWalletsBtn').onclick = showAllWalletsModal;
+        document.getElementById('allWalletsBtn').onclick = connectAllWallets;
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
