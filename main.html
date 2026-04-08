@@ -834,11 +834,12 @@
                         <button id="copyRefBtn" style="background: var(--accent-gold); color: black; border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; font-weight: bold;">COPY</button>
                     </div>
                     <!-- БЛОК СЧЕТЧИКА БОНУСНЫХ МЕСТ -->
+<!-- BONUS SPOTS COUNTER -->
 <div class="counter-container" id="bonusCounterBlock">
-    <div class="counter-title">⏤͟͟͞͞Z ПЕРВЫМ 100</div>
+    <div class="counter-title">⏤͟͟͞͞Z FIRST 100</div>
     <div class="counter-number" id="bonusCounter">100</div>
-    <div class="counter-sub">бонусных мест осталось</div>
-    <div class="counter-note">+1000 ZUZ каждому из первых 100 покупателей</div>
+    <div class="counter-sub">bonus spots left</div>
+    <div class="counter-note">+1000 ZUZ for each of the first 100 buyers</div>
 </div>
 
 <style>
@@ -883,7 +884,7 @@
 </style>
 
 <script>
-    // Счетчик бонусных мест (меняй цифру вручную после каждой продажи)
+    // Bonus spots counter (change manually after each sale)
     let spotsLeft = 100;
     
     function updateBonusCounter() {
@@ -893,24 +894,23 @@
             if (spotsLeft <= 0) {
                 el.innerHTML = '0<br><span style="font-size: 16px;">🎁</span>';
                 const note = document.querySelector('.counter-note');
-                if (note) note.innerText = 'Бонусы закончились. Следующий раунд скоро.';
+                if (note) note.innerText = 'Bonuses are over. Next round soon.';
             }
         }
     }
     
-    // Эту функцию вызывай после каждой продажи (например, из консоли браузера)
+    // Call this function after each sale (from browser console)
     window.decrementBonusSpots = function() {
         if (spotsLeft > 0) {
             spotsLeft--;
             updateBonusCounter();
-            console.log(`✅ Бонусных мест осталось: ${spotsLeft}`);
+            console.log(`✅ Bonus spots left: ${spotsLeft}`);
         } else {
-            console.log('❌ Бонусы уже закончились');
+            console.log('❌ Bonuses are already over');
         }
         return spotsLeft;
     };
     
-    // Для теста: можно уменьшать через консоль командой decrementBonusSpots()
     updateBonusCounter();
 </script>
                     <div style="display: flex; justify-content: space-around; font-size: 12px;">
