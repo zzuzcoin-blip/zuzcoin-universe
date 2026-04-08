@@ -8,6 +8,7 @@ It introduces the concept of *"Time as Currency"* — a digital asset where valu
 [![Website](https://img.shields.io/badge/website-zuzim--universe.com-gold)](https://zuzim-universe.com)
 [![Twitter](https://img.shields.io/badge/Twitter-@ZuzimUniverse-blue)](https://twitter.com/ZuzimUniverse)
 [![Telegram](https://img.shields.io/badge/Telegram-@zuzimuniverse-blue)](https://t.me/zuzimuniverse)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2)](https://discord.gg/qqFmmD7m)
 
 ---
 
