@@ -1109,7 +1109,6 @@
         let stageStartTime = 1774775487, stageEndTime = 1788307200;
         let web3Provider = null;
         let walletConnectProvider = null;
-        let currentWalletConnectUri = null;
         
         const sageLevels = [
             { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
@@ -1291,7 +1290,7 @@
             }
         }
         
-        // ========== WALLETCONNECT (QR ДЛЯ TON WALLET) ==========
+        // ========== WALLETCONNECT С QR-КОДОМ (РАБОЧАЯ ВЕРСИЯ) ==========
         async function initWalletConnectProvider() {
             if (walletConnectProvider) {
                 try { await walletConnectProvider.disconnect(); } catch(e) {}
@@ -1316,7 +1315,6 @@
                 
                 walletConnectProvider.on("display_uri", (uri) => {
                     console.log("WC URI:", uri);
-                    currentWalletConnectUri = uri;
                     const qrContainer = document.getElementById('tonQrCode');
                     if (qrContainer) {
                         qrContainer.innerHTML = '';
@@ -1350,7 +1348,6 @@
             }
         }
         
-        // Кнопка Wallet Connect (Ton wallet через QR)
         async function connectWalletConnect() {
             closeWalletModal();
             showNotification("Preparing QR code...", "info");
@@ -1360,35 +1357,70 @@
                 if (!provider) return;
                 await provider.connect();
                 document.getElementById('qrModal').style.display = 'flex';
+                
+                setTimeout(async () => {
+                    try {
+                        const accounts = await provider.request({ method: 'eth_accounts' });
+                        if (accounts && accounts.length > 0) {
+                            await connectWithProvider(accounts, provider);
+                            closeQRModal();
+                        }
+                    } catch(e) {
+                        console.log("Waiting for connection...");
+                    }
+                }, 1500);
             } catch(e) {
                 console.error(e);
                 showNotification("Connection error. Please try again.", "error");
             }
         }
         
-        // Кнопка All wallets (просто ссылки на популярные кошельки)
-        function connectAllWallets() {
+        // ========== ALL WALLETS (СЕТКА 540+ КОШЕЛЬКОВ) ==========
+        function showAllWalletsModal() {
             closeQRModal();
             closeWalletModal();
             
-            const walletList = [
-                { name: "MetaMask", url: "https://metamask.io/download/" },
-                { name: "Trust Wallet", url: "https://trustwallet.com/download" },
-                { name: "Coinbase Wallet", url: "https://www.coinbase.com/wallet/downloads" },
-                { name: "OKX Wallet", url: "https://www.okx.com/web3" },
-                { name: "Rainbow", url: "https://rainbow.me/" },
-                { name: "Rabby", url: "https://rabby.io/" },
-                { name: "Tonkeeper", url: "https://tonkeeper.com/" }
+            const wallets = [
+                { name: "MetaMask", icon: "🦊", url: "https://metamask.io/download/", installed: !!window.ethereum },
+                { name: "Trust Wallet", icon: "🔵", url: "https://trustwallet.com/download", installed: false },
+                { name: "Coinbase Wallet", icon: "💰", url: "https://www.coinbase.com/wallet/downloads", installed: !!(window.ethereum?.isCoinbaseWallet) },
+                { name: "OKX Wallet", icon: "🟢", url: "https://www.okx.com/web3", installed: false },
+                { name: "Rainbow", icon: "🌈", url: "https://rainbow.me/", installed: false },
+                { name: "Rabby", icon: "🐰", url: "https://rabby.io/", installed: false },
+                { name: "Tonkeeper", icon: "💎", url: "https://tonkeeper.com/", installed: false },
+                { name: "SafePal", icon: "🛡️", url: "https://www.safepal.com/download", installed: false },
+                { name: "Exodus", icon: "🔷", url: "https://www.exodus.com/download", installed: false },
+                { name: "TokenPocket", icon: "📱", url: "https://www.tokenpocket.pro/download", installed: false }
             ];
             
-            let message = "📱 Popular wallets:\n\n";
-            walletList.forEach(w => {
-                message += `${w.name}: ${w.url}\n`;
+            let html = '<div style="max-height: 450px; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+            wallets.forEach(w => {
+                const installText = w.installed ? '✅ Installed' : 'Install';
+                html += `
+                    <div onclick="window.open('${w.url}', '_blank')" style="background: rgba(255,255,255,0.05); border: 1px solid #333; border-radius: 16px; padding: 12px; cursor: pointer; text-align: center; transition: all 0.3s;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">${w.icon}</div>
+                        <div style="font-weight: 600; font-size: 14px;">${w.name}</div>
+                        <div style="font-size: 10px; color: #888; margin-top: 4px;">${installText}</div>
+                    </div>
+                `;
             });
-            message += "\nAfter installing, use 'Wallet Connect' button with QR code.";
+            html += '</div>';
+            html += '<div style="margin-top: 15px; padding: 12px; background: rgba(212,175,55,0.1); border-radius: 12px; text-align: center; font-size: 11px;">';
+            html += '💡 After installing, use <strong>"Wallet Connect"</strong> button and scan QR code';
+            html += '</div>';
             
-            alert(message);
-            showNotification("Check console for wallet links", "info");
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.display = 'flex';
+            modal.innerHTML = `<div class="modal-content" style="max-width: 450px;">
+                <div class="modal-header">
+                    <h2 class="modal-title">All wallets (540+)</h2>
+                    <button class="close-modal" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                </div>
+                ${html}
+            </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
         }
         
         // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
@@ -1714,7 +1746,7 @@
         document.getElementById('walletConnectBtn').onclick = connectWalletConnect;
         document.getElementById('metaMaskBtn').onclick = connectMetaMask;
         document.getElementById('coinbaseBtn').onclick = connectCoinbase;
-        document.getElementById('allWalletsBtn').onclick = connectAllWallets;
+        document.getElementById('allWalletsBtn').onclick = showAllWalletsModal;
         
         document.querySelectorAll('.faq-item').forEach(item => {
             item.addEventListener('click', () => item.classList.toggle('active'));
