@@ -833,6 +833,86 @@
                         <input type="text" id="refLink" readonly value="Connect wallet..." style="flex: 1; background: #000; border: 1px solid #333; border-radius: 8px; padding: 10px; color: white;">
                         <button id="copyRefBtn" style="background: var(--accent-gold); color: black; border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; font-weight: bold;">COPY</button>
                     </div>
+                    <!-- БЛОК СЧЕТЧИКА БОНУСНЫХ МЕСТ -->
+<div class="counter-container" id="bonusCounterBlock">
+    <div class="counter-title">⏤͟͟͞͞Z ПЕРВЫМ 100</div>
+    <div class="counter-number" id="bonusCounter">100</div>
+    <div class="counter-sub">бонусных мест осталось</div>
+    <div class="counter-note">+1000 ZUZ каждому из первых 100 покупателей</div>
+</div>
+
+<style>
+.counter-container {
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(0,0,0,0.4));
+    border: 2px solid var(--accent-gold);
+    border-radius: 24px;
+    padding: 20px 16px;
+    text-align: center;
+    margin: 20px 0 20px 0;
+    backdrop-filter: blur(8px);
+}
+.counter-title {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.counter-number {
+    font-size: 72px;
+    font-weight: 800;
+    color: var(--accent-gold);
+    font-family: 'Poppins', monospace;
+    line-height: 1;
+    margin: 10px 0;
+    text-shadow: 0 0 15px rgba(212,175,55,0.3);
+}
+.counter-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+.counter-note {
+    font-size: 10px;
+    color: var(--accent-green);
+    background: rgba(0,209,140,0.1);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 40px;
+}
+</style>
+
+<script>
+    // Счетчик бонусных мест (меняй цифру вручную после каждой продажи)
+    let spotsLeft = 100;
+    
+    function updateBonusCounter() {
+        const el = document.getElementById('bonusCounter');
+        if (el) {
+            el.innerText = spotsLeft;
+            if (spotsLeft <= 0) {
+                el.innerHTML = '0<br><span style="font-size: 16px;">🎁</span>';
+                const note = document.querySelector('.counter-note');
+                if (note) note.innerText = 'Бонусы закончились. Следующий раунд скоро.';
+            }
+        }
+    }
+    
+    // Эту функцию вызывай после каждой продажи (например, из консоли браузера)
+    window.decrementBonusSpots = function() {
+        if (spotsLeft > 0) {
+            spotsLeft--;
+            updateBonusCounter();
+            console.log(`✅ Бонусных мест осталось: ${spotsLeft}`);
+        } else {
+            console.log('❌ Бонусы уже закончились');
+        }
+        return spotsLeft;
+    };
+    
+    // Для теста: можно уменьшать через консоль командой decrementBonusSpots()
+    updateBonusCounter();
+</script>
                     <div style="display: flex; justify-content: space-around; font-size: 12px;">
                         <span>Disciples: <strong id="refCount">0</strong></span>
                         <span>Earned: <strong id="refEarned">0 ZUZ</strong></span>
