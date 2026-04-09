@@ -16,11 +16,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
-    <!-- Web3Modal (актуальная версия 2026) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@web3modal/html@latest/dist/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/viem@latest/dist/viem.umd.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@wagmi/core@latest/dist/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@web3modal/html@latest/dist/index.js"></script>
+    <!-- Web3Modal v3 (актуальная версия 2026) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@web3modal/html@5/dist/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@web3modal/html@5/dist/index.js"></script>
     
     <style>
         /* ========== ВСЕ СТИЛИ (без изменений) ========== */
@@ -679,40 +677,28 @@
             }
         }
         
-        // ========== WEB3MODAL (актуальная версия 2026) ==========
+        // ========== WEB3MODAL V3 (РАБОЧАЯ ВЕРСИЯ) ==========
         let web3Modal = null;
-        let wagmiConfig = null;
         
         async function initWeb3Modal() {
             if (web3Modal) return web3Modal;
             
-            if (!PROJECT_ID) {
-                console.error('❌ Project ID не указан');
+            if (!PROJECT_ID || PROJECT_ID === 'ad01e4465a19e847abe4ac7c4097d10c' && !window.Web3Modal) {
+                console.warn('Web3Modal not loaded yet, waiting...');
                 return null;
             }
             
             try {
-                const { mainnet } = window.viem.chains || { mainnet: { id: 1, name: 'Ethereum' } };
-                const chains = [mainnet];
-                
-                wagmiConfig = window.wagmi.createConfig({
-                    chains,
-                    transports: {
-                        [mainnet.id]: window.viem.http()
-                    }
-                });
-                
-                web3Modal = new window.Web3Modal.Web3Modal({
+                web3Modal = new window.Web3Modal({
                     projectId: PROJECT_ID,
-                    wagmiConfig: wagmiConfig,
+                    chains: [1],
                     themeMode: 'dark',
                     themeVariables: {
                         '--w3m-accent': '#D4AF37',
                         '--w3m-font-family': 'Inter, sans-serif'
                     }
                 });
-                
-                console.log('✅ Web3Modal успешно инициализирован');
+                console.log('✅ Web3Modal v3 инициализирован');
                 return web3Modal;
             } catch (err) {
                 console.error('Ошибка инициализации Web3Modal:', err);
@@ -723,13 +709,25 @@
         window.connectWallet = async function() {
             const modal = await initWeb3Modal();
             if (!modal) {
-                showNotification('Ошибка подключения. Обновите страницу.', 'error');
+                showNotification('Загрузка кошельков... Обновите страницу', 'error');
                 return;
             }
             
             try {
                 await modal.open();
-                setTimeout(() => checkConnection(), 800);
+                setTimeout(async () => {
+                    try {
+                        const provider = modal.getWalletProvider();
+                        if (provider) {
+                            const accounts = await provider.request({ method: 'eth_accounts' });
+                            if (accounts && accounts.length > 0) {
+                                await initContractsAndUI(accounts[0], provider);
+                            }
+                        }
+                    } catch(e) {
+                        console.log('Waiting for connection...');
+                    }
+                }, 1000);
             } catch (error) {
                 console.error('Ошибка открытия модалки:', error);
                 if (!error.message?.includes('User rejected')) {
@@ -738,32 +736,23 @@
             }
         };
         
-        async function checkConnection() {
-            if (!wagmiConfig) return;
-            try {
-                const address = window.wagmi.getAccount(wagmiConfig).address;
-                if (address) {
-                    if (currentAccount !== address) {
-                        currentAccount = address;
-                        await initContractsAndUI(address);
-                    }
-                } else if (currentAccount) {
-                    disconnectWallet();
-                }
-            } catch (e) {}
-        }
-        
-        async function initContractsAndUI(address) {
+        async function initContractsAndUI(address, provider) {
             currentAccount = address;
             
-            const web3 = new Web3(window.ethereum || (await getProvider()));
+            const web3 = new Web3(provider);
             presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
             tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
             
             updateUI(address);
             await updateSageDashboard();
             updateReferralLink();
-            showNotification(`✅ Кошелёк подключён: ${address.substring(0,6)}...`, 'success');
+            showNotification(`✅ Wallet connected: ${address.substring(0,6)}...`, 'success');
+            
+            provider.on('accountsChanged', (accs) => {
+                if (accs.length === 0) disconnectWallet();
+                else initContractsAndUI(accs[0], provider);
+            });
+            provider.on('chainChanged', () => window.location.reload());
         }
         
         function updateUI(address) {
@@ -782,11 +771,10 @@
         }
         
         window.disconnectWallet = async function() {
-            if (confirm('Отключить кошелёк?')) {
-                try {
-                    if (web3Modal) await web3Modal.close();
-                } catch(e) {}
-                
+            if (confirm('Disconnect wallet?')) {
+                if (web3Modal) {
+                    try { await web3Modal.close(); } catch(e) {}
+                }
                 const btn = document.getElementById('connectBtn');
                 if (btn) {
                     btn.innerHTML = '<i class="fas fa-wallet"></i> CONNECT WALLET';
@@ -798,28 +786,18 @@
                 tokenContract = null;
                 document.getElementById('sageDashboard').style.display = 'none';
                 document.getElementById('refLink').value = 'Connect wallet...';
-                showNotification('Кошелёк отключён', 'info');
+                showNotification('Wallet disconnected', 'info');
             }
         };
-        
-        async function getProvider() {
-            const modal = await initWeb3Modal();
-            if (modal && modal.getWalletProvider) {
-                return modal.getWalletProvider();
-            }
-            return window.ethereum;
-        }
         
         setTimeout(() => {
             const btn = document.getElementById('connectBtn');
             if (btn) {
                 btn.onclick = window.connectWallet;
-                console.log('✅ Кнопка Connect Wallet привязана к Web3Modal');
+                console.log('✅ Connect button attached to Web3Modal v3');
             }
-            checkConnection();
-        }, 1500);
-        
-        setInterval(checkConnection, 3000);
+            initWeb3Modal();
+        }, 1000);
         
         // ========== ДАШБОРД МУДРЕЦА ==========
         async function updateSageDashboard() {
