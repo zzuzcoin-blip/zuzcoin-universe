@@ -755,7 +755,15 @@
         const val = parseFloat(document.getElementById('ethAmount').value) || 0;
         document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
     });
-    document.getElementById('connectBtn').onclick = () => { if (currentAccount) disconnectWallet(); else connectMetaMask(); };
+    
+    // Безопасное назначение обработчика кнопки
+    const connectButton = document.getElementById('connectBtn');
+    if (connectButton) {
+        connectButton.onclick = () => { if (currentAccount) disconnectWallet(); else connectMetaMask(); };
+    } else {
+        console.error('Кнопка connectBtn не найдена');
+    }
+    
     document.getElementById('buyBtn').onclick = buyTokens;
     document.getElementById('stakeBtn').onclick = () => showNotification('Staking coming after presale', 'info');
     document.getElementById('logoBtn').onclick = openIdeologyModal;
