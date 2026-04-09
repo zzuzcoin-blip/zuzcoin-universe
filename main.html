@@ -765,7 +765,12 @@
     }
     
     document.getElementById('buyBtn').onclick = buyTokens;
-    document.getElementById('stakeBtn').onclick = () => showNotification('Staking coming after presale', 'info');
+    const stakeBtn = document.getElementById('stakeBtn');
+if (stakeBtn) {
+    stakeBtn.onclick = () => showNotification('Staking coming after presale', 'info');
+} else {
+    console.log('Кнопка стейкинга пока не добавлена на сайт');
+}
     document.getElementById('logoBtn').onclick = openIdeologyModal;
     document.getElementById('addTokenBtn').onclick = addTokenToWallet;
     document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
