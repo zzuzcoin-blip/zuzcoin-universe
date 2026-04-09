@@ -301,190 +301,503 @@
                         }
                     </style>
                     <script>
-                        let spotsLeft = 100;
-                        function updateBonusCounter() {
-                            const el = document.getElementById('bonusCounter');
-                            if (el) {
-                                el.innerText = spotsLeft;
-                                if (spotsLeft <= 0) {
-                                    el.innerHTML = '0<br><span style="font-size: 16px;">🎁</span>';
-                                    const note = document.querySelector('.counter-note');
-                                    if (note) note.innerText = 'Bonuses are over. Next round soon.';
-                                }
-                            }
-                        }
-                        window.decrementBonusSpots = function() {
-                            if (spotsLeft > 0) {
-                                spotsLeft--;
-                                updateBonusCounter();
-                                console.log(`✅ Bonus spots left: ${spotsLeft}`);
-                            }
-                            return spotsLeft;
-                        };
-                        updateBonusCounter();
-                    </script>
-                    <div style="display: flex; justify-content: space-around; font-size: 12px; margin-top: 10px;">
-                        <span>Disciples: <strong id="refCount">0</strong></span>
-                        <span>Earned: <strong id="refEarned">0 ZUZ</strong></span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-right hero-video">
-                <div class="video-sidebar-large">
-                    <video autoplay loop muted playsinline class="presale-video-large">
-                        <source src="zuz.mp4" type="video/mp4">
-                    </video>
-                </div>
-            </div>
-        </div>
-    </div>
+    // ========== КОНФИГУРАЦИЯ ==========
+    const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
+    const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
+    const TOKEN_PRICE_ETH = 0.0001;
     
-    <div class="features" id="features">
-        <div class="container">
-            <h2 class="section-title">Why <span class="gradient-text">ZUZ</span>?</h2>
-            <div class="features-grid">
-                <div class="feature-card" onclick="openSagesModal()"><div class="feature-icon">🏛️</div><h3>7 Sages</h3><p>The power of 7 great civilizations. The more ZUZ you have, the higher your level.</p></div>
-                <div class="feature-card" onclick="openSagesModal()"><div class="feature-icon">💰</div><h3>Staking 25% APY</h3><p>Passive income. Bonuses grow with your sage level up to +30%.</p></div>
-                <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Audit + Security</h3><p>Verified smart contract. Team in vesting.</p></div>
-            </div>
-        </div>
-    </div>
+    const PRESALE_ABI = [{"inputs":[],"name":"buyTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"tokensSold","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"maxTokensToSell","outputs":[{"type":"uint256"}],"stateMutability":"view","type":"function"}];
+    const TOKEN_ABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"}];
     
-    <div class="trusted-section">
-        <div class="container">
-            <div class="trusted-title">⚡ PARTNERS ⚡</div>
-            <div class="trusted-logos">
-                <div class="trusted-logo" onclick="window.open('https://www.coingecko.com', '_blank')">CoinGecko</div>
-                <div class="trusted-logo" onclick="window.open('https://coinmarketcap.com', '_blank')">CoinMarketCap</div>
-                <div class="trusted-logo" onclick="window.open('https://crypto.com', '_blank')">Crypto.com</div>
-                <div class="trusted-logo" onclick="window.open('https://www.binance.com/en/live', '_blank')">Binance Live</div>
-                <div class="trusted-logo" onclick="window.open('https://www.youtube.com', '_blank')">YouTube Crypto</div>
-            </div>
-        </div>
-    </div>
+    let currentAccount = null, presaleContract = null, tokenContract = null, isProcessing = false;
+    let stageStartTime = 1774775487, stageEndTime = 1788307200;
     
-    <div class="tokenomics" id="tokenomics">
-        <div class="container">
-            <h2 class="section-title">Tokenomics <span class="gradient-text">ZUZ</span></h2>
-            <div class="tokenomics-content">
-                <div class="pie-chart"></div>
-                <div class="tokenomics-list">
-                    <div class="token-item"><div class="color-dot presale"></div><span class="token-label">Presale</span><span class="token-percent">40%</span><span class="token-amount">400M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot staking"></div><span class="token-label">Staking & Rewards</span><span class="token-percent">15%</span><span class="token-amount">150M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot marketing"></div><span class="token-label">Marketing</span><span class="token-percent">10%</span><span class="token-amount">100M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot dev"></div><span class="token-label">Team (12m vesting)</span><span class="token-percent">5%</span><span class="token-amount">50M ZUZ</span></div>
-                    <div class="token-item"><div class="color-dot liquidity"></div><span class="token-label">Liquidity (locked)</span><span class="token-percent">30%</span><span class="token-amount">300M ZUZ</span></div>
-                    <div class="sage-level-card" style="margin-top: 20px; background: rgba(0,0,0,0.3);">
-                        <h4 style="color: var(--accent-gold); margin-bottom: 8px;">🔒 Security First</h4>
-                        <ul style="color: var(--text-secondary); font-size: 12px; line-height: 1.6; margin: 0; padding-left: 20px;">
-                            <li>✔️ Smart contract verified on Etherscan</li>
-                            <li>✔️ Audit in progress (Q2 2026)</li>
-                            <li>✔️ Whitepaper & public team — coming soon</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    const sageLevels = [
+        { threshold: 0, name: "Novice", badge: "🌱", bonus: 0, next: 1000 },
+        { threshold: 1000, name: "Wisdom", badge: "📜", bonus: 2, next: 5000 },
+        { threshold: 5000, name: "Prosperity", badge: "🌾", bonus: 5, next: 10000 },
+        { threshold: 10000, name: "Protection", badge: "🛡️", bonus: 10, next: 25000 },
+        { threshold: 25000, name: "Innovation", badge: "⚡", bonus: 15, next: 50000 },
+        { threshold: 50000, name: "Harmony", badge: "☯️", bonus: 20, next: 100000 },
+        { threshold: 100000, name: "Power", badge: "⚔️", bonus: 25, next: 250000 },
+        { threshold: 250000, name: "Immortality", badge: "👑", bonus: 30, next: Infinity }
+    ];
     
-    <div class="staking-card">
-        <div class="staking-title">🏆 ZUZ STAKING</div>
-        <div class="apy-badge">25% APY</div>
-        <p style="color: var(--text-secondary);">Stake your ZUZ and earn passive income. Bonuses up to +30% based on your Sage level.</p>
-        <button class="staking-btn" id="stakeBtn">📈 START STAKING</button>
-    </div>
+    // ========== ПЕРЕВОДЫ ==========
+    const translations = {
+        ru: {
+            "CONNECT WALLET": "ПОДКЛЮЧИТЬ КОШЕЛЕК",
+            "BUY ZUZ": "КУПИТЬ ZUZ",
+            "COPY": "КОПИРОВАТЬ",
+            "Connect wallet...": "Подключите кошелек..."
+        }
+    };
     
-    <section id="manifesto" class="staking-card" style="margin-top: 0; border-style: double;">
-        <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 20px;">ZUZ MANIFESTO</h2>
-        <div style="max-width: 800px; margin: 0 auto; line-height: 1.6; font-style: italic; color: var(--text-secondary);">
-            <p>"The world has changed. Old systems are crumbling, and true value is hidden from those who seek only the momentary. We are those who remember: true wealth requires wisdom, and wisdom requires time."</p>
-            <br>
-            <p>ZUZ is not just a token. It is a digital artifact combining the philosophy of the Seven Sages with the flawless logic of the Ethereum blockchain.</p>
-            <br>
-            <p>Join the Council. Attain Wisdom. Become Immortal. Your ascent begins here.</p>
-        </div>
-        <button class="btn-buy" style="margin-top: 25px; width: auto; padding: 12px 40px; display: inline-block;" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">ACCEPT THE CALL</button>
-    </section>
+    let currentLang = 'en';
     
-    <section id="security" class="features" style="background: linear-gradient(180deg, var(--bg-primary), #0f1115); padding: 60px 0;">
-        <div class="container">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <div style="font-size: 50px; color: var(--accent-gold); margin-bottom: 15px;"><i class="fas fa-shield-halved"></i></div>
-                <h2 class="gradient-text" style="font-size: 32px;">SEAL OF TRUST</h2>
-                <p style="color: var(--text-secondary);">Your assets are protected by the highest logic of the blockchain</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🔍</div><h3>Code Purity</h3><p>Smart contract verified. Mint and Proxy disabled — total supply of 1B ZUZ fixed forever.</p></div>
-                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🔒</div><h3>Liquidity Lock</h3><p>70% of raised ETH locked in Uniswap pool for 365 days via UNCX/PinkLock.</p></div>
-                <div class="feature-card" style="border: 1px solid var(--accent-gold);"><div class="feature-icon">🏛️</div><h3>Renounced Ownership</h3><p>Contract ownership transfers to DAO after listing. Team cannot change rules unilaterally.</p></div>
-            </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="/whitepaper.pdf" target="_blank" style="background: rgba(212,175,55,0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 12px 28px; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s;">📄 Download Whitepaper</a>
-            </div>
-        </div>
-    </section>
+    async function detectLanguageByIP() {
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            const map = { 'RU': 'ru', 'DE': 'de', 'FR': 'fr', 'IL': 'he' };
+            return map[data.country_code] || 'en';
+        } catch(e) { return 'en'; }
+    }
     
-    <section id="worldMap" class="features" style="background: #050505; padding: 60px 0;">
-        <div class="container" style="text-align: center;">
-            <h2 class="gradient-text" style="font-size: 32px;">AWAKENING OF THE UNIVERSE</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 40px;">Watch as the Wisdom of ZUZ covers the planet in real time</p>
-            <div class="map-wrapper">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" style="width: 100%; opacity: 0.15; filter: invert(1) sepia(1) saturate(5) hue-rotate(10deg);" alt="World Map">
-                <div id="mapPulseContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
-            </div>
-        </div>
-    </section>
+    function translatePage(lang) {
+        if (lang === 'en') {
+            const ruDict = translations.ru;
+            const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            const textNodes = [];
+            while (node = walk.nextNode()) {
+                if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) continue;
+                if (node.nodeValue && node.nodeValue.trim().length > 0) textNodes.push(node);
+            }
+            textNodes.forEach(node => {
+                let text = node.nodeValue;
+                for (const [eng, trans] of Object.entries(ruDict)) {
+                    if (text.includes(trans)) {
+                        text = text.replace(new RegExp(trans.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), eng);
+                        node.nodeValue = text;
+                    }
+                }
+            });
+            return;
+        }
+        const dict = translations[lang];
+        if (!dict) return;
+        const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        const textNodes = [];
+        while (node = walk.nextNode()) {
+            if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) continue;
+            if (node.nodeValue && node.nodeValue.trim().length > 0) textNodes.push(node);
+        }
+        textNodes.forEach(node => {
+            let text = node.nodeValue;
+            let changed = false;
+            for (const [eng, trans] of Object.entries(dict)) {
+                if (text.includes(eng)) {
+                    text = text.replace(new RegExp(eng.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), trans);
+                    changed = true;
+                }
+            }
+            if (changed) node.nodeValue = text;
+        });
+        document.querySelectorAll('input, button, select').forEach(el => {
+            if (el.placeholder && dict[el.placeholder]) el.placeholder = dict[el.placeholder];
+            if (el.value && dict[el.value] && el.tagName !== 'SELECT') el.value = dict[el.value];
+        });
+    }
     
-    <div class="roadmap" id="roadmap">
-        <div class="container">
-            <h2 class="section-title">🗺️ PATH OF THE SEVEN SAGES</h2>
-            <div class="roadmap-timeline">
-                <div class="roadmap-phase completed"><div class="phase-marker"></div><div class="phase-content"><h4>🌱 Phase I: Awakening (Q1 2025)</h4><p>Council launch, website & socials, smart contract deployment, presale start.</p></div></div>
-                <div class="roadmap-phase active"><div class="phase-marker"></div><div class="phase-content"><h4>⚔️ Phase II: Gaining Strength (Q2 2025)</h4><p>Uniswap listing, liquidity lock, staking platform launch, CMC/CG listing.</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>🌍 Phase III: Harmony of Worlds (Q3-Q4 2025)</h4><p>DAO voting, NFT collection, cross-chain expansion.</p></div></div>
-                <div class="roadmap-phase"><div class="phase-marker"></div><div class="phase-content"><h4>👑 Phase IV: Immortality (2026+)</h4><p>ZUZ Launchpad, Metaverse integration, full decentralization.</p></div></div>
-            </div>
-        </div>
-    </div>
+    (async function initLanguage() {
+        let lang = localStorage.getItem('user_lang');
+        if (!lang) {
+            lang = await detectLanguageByIP();
+            localStorage.setItem('user_lang', lang);
+        }
+        currentLang = lang;
+        document.getElementById('langSelect').value = lang;
+        if (lang !== 'en') translatePage(lang);
+    })();
     
-    <div class="faq-section" id="faq">
-        <div class="container">
-            <h2 class="section-title">❓ Sacred Scripture (FAQ)</h2>
-            <div class="faq-grid">
-                <div class="faq-item"><div class="faq-question">Where does the presale money go? <span>+</span></div><div class="faq-answer">80% to DEX liquidity, 15% marketing & development, 5% ProofChain. Team tokens vested 12 months.</div></div>
-                <div class="faq-item"><div class="faq-question">When do I receive tokens? <span>+</span></div><div class="faq-answer">Instantly! After transaction confirmation, ZUZ appears in your wallet.</div></div>
-                <div class="faq-item"><div class="faq-question">What are sage bonuses? <span>+</span></div><div class="faq-answer">1k ZUZ → +2%, 5k → +5%, 10k → +10%, 25k → +15%, 50k → +20%, 100k → +25%, 250k → +30% + NFT.</div></div>
-                <div class="faq-item"><div class="faq-question">Is the contract safe? <span>+</span></div><div class="faq-answer">Yes! Audited, code verified, team tokens locked 12 months, liquidity locked 2 years.</div></div>
-                <div class="faq-item"><div class="faq-question">What is ProofChain? <span>+</span></div><div class="faq-answer">Our own L1 blockchain ensuring donation transparency (1% per tx), low fees, full decentralization.</div></div>
-            </div>
-        </div>
-    </div>
+    function changeLanguage(lang) {
+        localStorage.setItem('user_lang', lang);
+        currentLang = lang;
+        if (lang === 'en') translatePage('en');
+        else translatePage(lang);
+    }
     
-    <div class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo"><div class="coin-icon small" style="width: 32px; height: 32px; font-size: 18px;">ZUZ</div><span>ZUZ Universe</span></div>
-                <div class="footer-social">
-                    <a href="https://twitter.com/ZuzimUniverse" id="twitterLink" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://t.me/zuzimuniverse" id="telegramLink" target="_blank"><i class="fab fa-telegram"></i></a>
-                    <a href="https://discord.gg/qqFmmD7m" id="discordLink" target="_blank"><i class="fab fa-discord"></i></a>
-                    <a href="https://www.youtube.com/@zuzim-universe" id="youtubeLink" target="_blank"><i class="fab fa-youtube"></i></a>
-                    <a href="https://github.com/zzuzcoin-blip/zuzim-universe-clean" target="_blank"><i class="fab fa-github"></i></a>
-                </div>
-            </div>
-            <div class="footer-bottom">© 2026 ZUZ Universe. 7 sages lead to truth. Cryptocurrency is a high-risk asset. Invest wisely.</div>
-        </div>
-    </div>
+    // ========== ШАПКА ==========
+    let lastScrollTop = 0;
+    const navbarEl = document.getElementById('navbar');
+    const navTrigger = document.getElementById('navTrigger');
+    let navbarVisible = false;
+    function showNavbar() { navbarEl.classList.add('visible'); navbarVisible = true; }
+    function hideNavbar() { navbarEl.classList.remove('visible'); navbarVisible = false; }
+    navTrigger.addEventListener('click', () => navbarVisible ? hideNavbar() : showNavbar());
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset;
+        if (scrollTop < 100) showNavbar();
+        else if (scrollTop < lastScrollTop) showNavbar();
+        else hideNavbar();
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
     
-    <div id="liveActivity" class="live-activity-container">
-        <div class="live-header"><span class="live-dot"></span> LIVE UNIVERSE ACTIVITY</div>
-        <div id="activityFeed" class="activity-feed"></div>
-    </div>
+    // ========== МАГИЯ ==========
+    function spawnMagic(e) {
+        const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#FF4500'];
+        for (let i = 0; i < 12; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'magic-dot';
+            dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 5 + 2;
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            dot.style.left = `${e.clientX}px`;
+            dot.style.top = `${e.clientY}px`;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = Math.random() * 100 + 50;
+            dot.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
+            dot.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
+            document.body.appendChild(dot);
+            setTimeout(() => dot.remove(), 800);
+        }
+    }
     
-    <div id="ideologyModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">✡️ ZUZ Ideology</div><button class="close-modal" onclick="closeIdeologyModal()">&times;</button></div><div style="text-align:center;"><div class="coin-icon" style="width: 50px; height: 50px; font-size: 24px; margin: 0 auto 15px;">Z</div></div><div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);"><p><strong>📜 From the Talmud (Sukkah 52a):</strong></p><p>The Sages speak of <strong>Yetzer ha-Ra</strong> — the inner fiery force, the driving power of the world. It is not evil, but the energy of creation, passion, aspiration.</p><p>Once a man captured Yetzer ha-Ra, locked it in a vessel and wanted to tame it. But in the morning he opened it — and inside were <strong>two coins (zuzim)</strong>.</p><p>The Sages said: <em>"Here it is — Yetzer ha-Ra, now its power is contained in money."</em></p><p><strong>💎 Meaning:</strong> Money is not evil. It is a <strong>tamed, civilized form</strong> of that same life force. Sin is to be obsessed. Holiness is to direct energy toward creation, family, charity, community.</p><p>🌍 <strong>ZUZ today:</strong> We are entering the digital age. States are creating CBDCs — money under control. We need <strong>an honest, decentralized digital vessel</strong> for our creative energy.</p><p>✨ <strong>ZUZ on the blockchain</strong> — is the modern "zuz". It is freedom, transparency, and the ability to do good without borders.</p><p style="margin-top: 12px; text-align:center;"><strong>"Blind the destructive — and direct the fire toward creation"</strong></p></div></div></div>
-    <div id="sagesModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">🏛️ 7 ZUZ Sages</div><button class="close-modal" onclick="closeSagesModal()">&times;</button></div><div id="sagesContent"></div></div></div>
+    function playMagicSound() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        } catch(e) {}
+    }
     
-    <script>
+    function showNotification(msg, type) {
+        const n = document.createElement('div');
+        n.className = `notification ${type}`;
+        n.textContent = msg;
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), 5000);
+    }
+    
+    function updateTimer() {
+        const now = Math.floor(Date.now() / 1000);
+        const timerSpan = document.getElementById('timer');
+        const statusSpan = document.getElementById('saleStatus');
+        if (now < stageStartTime) {
+            statusSpan.innerHTML = 'SOON';
+            statusSpan.style.background = '#ff9800';
+            const days = Math.floor((stageStartTime - now) / 86400);
+            timerSpan.innerText = `${days}d`;
+        } else if (now >= stageStartTime && now <= stageEndTime) {
+            statusSpan.innerHTML = 'ACTIVE';
+            statusSpan.style.background = '#00D18C';
+            const days = Math.floor((stageEndTime - now) / 86400);
+            timerSpan.innerText = `${days}d`;
+        } else {
+            statusSpan.innerHTML = 'ENDED';
+            statusSpan.style.background = '#f44336';
+            timerSpan.innerText = 'ENDED';
+        }
+    }
+    
+    // ========== ПОДКЛЮЧЕНИЕ METAMASK ==========
+    async function connectMetaMask() {
+        if (!window.ethereum) {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = 'https://metamask.app.link/dapp/' + window.location.host;
+            } else {
+                showNotification("Install MetaMask!", "error");
+                window.open('https://metamask.io/download/', '_blank');
+            }
+            return;
+        }
+        try {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            await connectWithAccounts(accounts, window.ethereum);
+            window.ethereum.on('accountsChanged', (acc) => {
+                if (acc.length === 0) disconnectWallet();
+                else {
+                    currentAccount = acc[0];
+                    updateUI(currentAccount);
+                    updateSageDashboard();
+                    updateReferralLink();
+                }
+            });
+            window.ethereum.on('chainChanged', () => window.location.reload());
+        } catch(e) {
+            console.error(e);
+            showNotification("Connection cancelled or error", "error");
+        }
+    }
+    
+    async function connectWithAccounts(accounts, provider) {
+        if (!accounts || accounts.length === 0) return;
+        currentAccount = accounts[0];
+        const web3 = new Web3(provider);
+        presaleContract = new web3.eth.Contract(PRESALE_ABI, PRESALE_ADDRESS);
+        tokenContract = new web3.eth.Contract(TOKEN_ABI, TOKEN_ADDRESS);
+        updateUI(currentAccount);
+        showNotification(`✅ Wallet connected: ${currentAccount.substring(0,6)}...`, 'success');
+        await updateSageDashboard();
+        updateReferralLink();
+    }
+    
+    function updateUI(address) {
+        const btn = document.getElementById('connectBtn');
+        if (btn) {
+            btn.innerHTML = `<i class="fas fa-wallet"></i> ${address.substring(0,6)}...${address.substring(38)}`;
+            if (!document.querySelector('.disconnect-btn')) {
+                const dbtn = document.createElement('button');
+                dbtn.className = 'disconnect-btn';
+                dbtn.innerHTML = 'DISCONNECT';
+                dbtn.onclick = disconnectWallet;
+                btn.parentNode.appendChild(dbtn);
+            }
+        }
+    }
+    
+    function disconnectWallet() {
+        currentAccount = null;
+        presaleContract = null;
+        tokenContract = null;
+        const btn = document.getElementById('connectBtn');
+        btn.innerHTML = '<i class="fas fa-wallet"></i> CONNECT WALLET';
+        const dbtn = document.querySelector('.disconnect-btn');
+        if (dbtn) dbtn.remove();
+        document.getElementById('sageDashboard').style.display = 'none';
+        document.getElementById('refLink').value = 'Connect wallet...';
+        showNotification('Wallet disconnected', 'info');
+    }
+    
+    async function updateSageDashboard() {
+        if (!currentAccount || !tokenContract) return;
+        try {
+            const balanceWei = await tokenContract.methods.balanceOf(currentAccount).call();
+            const balance = Number(balanceWei) / 1e18;
+            let level = sageLevels[0];
+            for (let i = sageLevels.length - 1; i >= 0; i--) {
+                if (balance >= sageLevels[i].threshold) { level = sageLevels[i]; break; }
+            }
+            document.getElementById('sageDashboard').style.display = 'block';
+            document.getElementById('currentSageBadge').innerHTML = level.badge;
+            document.getElementById('currentLevelName').innerHTML = level.name;
+            document.getElementById('currentBalance').innerHTML = `${balance.toFixed(0)} ZUZ`;
+            document.getElementById('currentBonus').innerHTML = `+${level.bonus}%`;
+            let nextLevel = sageLevels.find(l => l.threshold > balance);
+            if (nextLevel) {
+                const needed = nextLevel.threshold - balance;
+                const percent = (balance / nextLevel.threshold) * 100;
+                document.getElementById('sageProgressFill').style.width = Math.min(percent, 100) + '%';
+                document.getElementById('nextLevelInfo').innerHTML = `To "${nextLevel.name}": ${needed.toFixed(0)} ZUZ`;
+            } else {
+                document.getElementById('sageProgressFill').style.width = '100%';
+                document.getElementById('nextLevelInfo').innerHTML = '🎉 You reached Immortality!';
+            }
+        } catch(e) { console.error(e); }
+    }
+    
+    // ========== РЕФЕРАЛЬНАЯ СИСТЕМА ==========
+    function copyRefLink() {
+        const linkInput = document.getElementById('refLink');
+        if (!linkInput) return;
+        if (linkInput.value === 'Connect wallet...' || linkInput.value === 'Подключите кошелек...') {
+            showNotification("Connect wallet first", "info");
+            return;
+        }
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        showNotification("✅ Link copied!", "success");
+    }
+    
+    function generateRefLink(address) {
+        const baseUrl = window.location.origin + window.location.pathname;
+        return `${baseUrl}?ref=${address}`;
+    }
+    
+    function updateReferralLink() {
+        if (currentAccount) {
+            const refLink = generateRefLink(currentAccount);
+            const refInput = document.getElementById('refLink');
+            if (refInput) refInput.value = refLink;
+        }
+    }
+    
+    // ========== ПОКУПКА ==========
+    async function buyTokens() {
+        if (!presaleContract) { showNotification('Connect wallet first', 'error'); return; }
+        const eth = parseFloat(document.getElementById('ethAmount').value || 0);
+        if (!document.getElementById('acceptTerms').checked) { showNotification('Accept terms', 'error'); return; }
+        if (eth < 0.01) { showNotification('Minimum 0.01 ETH', 'error'); return; }
+        if (isProcessing) return;
+        const now = Math.floor(Date.now() / 1000);
+        if (now < stageStartTime) { showNotification('Sale not started', 'info'); return; }
+        if (now > stageEndTime) { showNotification('Sale ended', 'error'); return; }
+        isProcessing = true;
+        const btn = document.getElementById('buyBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ SENDING...';
+        try {
+            const web3 = new Web3(window.ethereum);
+            const wei = web3.utils.toWei(eth.toString(), 'ether');
+            const accounts = await web3.eth.getAccounts();
+            await presaleContract.methods.buyTokens().send({ from: accounts[0], value: wei, gas: 300000 });
+            showNotification(`✅ Bought ${(eth / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`, 'success');
+            playMagicSound();
+            document.getElementById('ethAmount').value = '';
+            document.getElementById('tokenAmountDisplay').textContent = '0 ZUZ';
+            await updateSageDashboard();
+            addActivity(currentAccount.substring(0,6)+'...', eth, cities[Math.floor(Math.random() * cities.length)]);
+        } catch(e) {
+            let msg = e.message || 'Error';
+            if (msg.includes('user rejected')) msg = 'You canceled';
+            else if (msg.includes('insufficient funds')) msg = 'Insufficient ETH';
+            else if (msg.includes('execution reverted')) msg = 'Contract error';
+            showNotification(msg, 'error');
+        } finally {
+            isProcessing = false;
+            btn.disabled = false;
+            btn.textContent = translations[currentLang]?.["BUY ZUZ"] || 'BUY ZUZ';
+        }
+    }
+    
+    async function addTokenToWallet() {
+        if (!window.ethereum) { showNotification('Connect wallet', 'error'); return; }
+        try {
+            await window.ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'ERC20',
+                    options: {
+                        address: TOKEN_ADDRESS,
+                        symbol: 'ZUZ',
+                        decimals: 18,
+                        image: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="48" fill="%23000"/%3E%3Ctext x="50" y="68" font-size="48" text-anchor="middle" fill="%23D4AF37"%3EZ%3C/text%3E%3C/svg%3E'
+                    }
+                }
+            });
+            showNotification('✅ ZUZ added to wallet!', 'success');
+        } catch(e) { showNotification('Error adding token', 'error'); }
+    }
+    
+    const cities = ["Dubai", "London", "Tokyo", "New York", "Seoul", "Monaco", "Singapore", "Moscow", "Hong Kong", "Zurich", "Berlin", "Paris", "Tel Aviv", "Shanghai", "Sydney", "Toronto"];
+    const amounts = [0.05, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0];
+    
+    function addActivity(address, amount, city) {
+        const feed = document.getElementById('activityFeed');
+        const tokenAmount = (amount / TOKEN_PRICE_ETH).toFixed(0);
+        feed.innerHTML = `<div class="activity-item"><span style="color: var(--accent-gold)">${address}</span> from ${city}<br>bought <span style="color: var(--accent-green)">${tokenAmount} ZUZ</span></div>`;
+    }
+    
+    function startSimulator() {
+        setInterval(() => {
+            const randomAddr = "0x" + Math.random().toString(16).slice(2, 6) + "..." + Math.random().toString(16).slice(2, 6);
+            const randomAmount = amounts[Math.floor(Math.random() * amounts.length)];
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            addActivity(randomAddr, randomAmount, randomCity);
+            triggerMapPulse();
+        }, 3000);
+    }
+    
+    const hotspots = [];
+    for (let i = 0; i < 120; i++) {
+        hotspots.push({ name: cities[i % cities.length] + (i > cities.length ? " " + Math.floor(i/cities.length+1) : ""), x: Math.random() * 85 + 5, y: Math.random() * 70 + 15 });
+    }
+    let activePulses = 0;
+    function triggerMapPulse() {
+        const container = document.getElementById('mapPulseContainer');
+        if (!container) return;
+        const count = Math.floor(Math.random() * 3) + 1;
+        for (let p = 0; p < count; p++) {
+            if (activePulses > 8) break;
+            const spot = hotspots[Math.floor(Math.random() * hotspots.length)];
+            const pulse = document.createElement('div');
+            pulse.className = 'map-pulse';
+            pulse.style.left = spot.x + '%';
+            pulse.style.top = spot.y + '%';
+            const label = document.createElement('div');
+            label.style = "position:absolute; bottom:15px; left:50%; transform:translateX(-50%); color:#fff; font-size:8px; white-space:nowrap; text-shadow:0 0 3px #000;";
+            label.innerText = spot.name + " +ZUZ";
+            pulse.appendChild(label);
+            container.appendChild(pulse);
+            activePulses++;
+            setTimeout(() => { pulse.remove(); activePulses--; }, 4000);
+        }
+    }
+    
+    function openIdeologyModal() { document.getElementById('ideologyModal').style.display = 'flex'; }
+    function closeIdeologyModal() { document.getElementById('ideologyModal').style.display = 'none'; }
+    function openSagesModal() {
+        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+        sageLevels.forEach(level => {
+            html += `<div style="display: flex; align-items: center; gap: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <div style="font-size: 28px;">${level.badge}</div>
+                        <div style="flex:1;"><div style="font-weight: 600;">${level.name}</div><div style="font-size: 11px;">from ${level.threshold.toLocaleString()} ZUZ → +${level.bonus}%</div></div>
+                    </div>`;
+        });
+        html += '</div>';
+        document.getElementById('sagesContent').innerHTML = html;
+        document.getElementById('sagesModal').style.display = 'flex';
+    }
+    function closeSagesModal() { document.getElementById('sagesModal').style.display = 'none'; }
+    
+    function createParticles() {
+        const container = document.getElementById('goldParticles');
+        for (let i = 0; i < 40; i++) {
+            let p = document.createElement('div');
+            p.classList.add('gold-particle');
+            let s = Math.random() * 6 + 2;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            p.style.animationDuration = 8 + Math.random() * 8 + 's';
+            container.appendChild(p);
+        }
+    }
+    
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    document.getElementById('ethAmount').addEventListener('input', () => {
+        const val = parseFloat(document.getElementById('ethAmount').value) || 0;
+        document.getElementById('tokenAmountDisplay').textContent = `${(val / TOKEN_PRICE_ETH).toLocaleString()} ZUZ`;
+    });
+    document.getElementById('connectBtn').onclick = () => { if (currentAccount) disconnectWallet(); else connectMetaMask(); };
+    document.getElementById('buyBtn').onclick = buyTokens;
+    document.getElementById('stakeBtn').onclick = () => showNotification('Staking coming after presale', 'info');
+    document.getElementById('logoBtn').onclick = openIdeologyModal;
+    document.getElementById('addTokenBtn').onclick = addTokenToWallet;
+    document.getElementById('langSelect').onchange = (e) => changeLanguage(e.target.value);
+    document.getElementById('copyRefBtn').onclick = copyRefLink;
+    
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.addEventListener('click', () => item.classList.toggle('active'));
+    });
+    document.getElementById('ideologyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('ideologyModal')) closeIdeologyModal(); });
+    document.getElementById('sagesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('sagesModal')) closeSagesModal(); });
+    
+    createParticles();
+    updateTimer();
+    setInterval(updateTimer, 1000);
+    startSimulator();
+    
+    if (window.ethereum && window.ethereum.selectedAddress) {
+        setTimeout(async () => {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts && accounts.length > 0) {
+                    await connectWithAccounts(accounts, window.ethereum);
+                }
+            } catch(e) {}
+        }, 500);
+    }
+    
+    document.querySelectorAll('button').forEach(btn => btn.classList.add('lightning-effect'));
+    document.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button') || e.target.closest('.feature-card') || e.target.closest('.token-item')) {
+            spawnMagic(e);
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+    });
+    
+    window.openIdeologyModal = openIdeologyModal;
+    window.closeIdeologyModal = closeIdeologyModal;
+    window.openSagesModal = openSagesModal;
+    window.closeSagesModal = closeSagesModal;
+</script>
         // ========== КОНФИГУРАЦИЯ ==========
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
