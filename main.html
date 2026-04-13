@@ -1073,7 +1073,7 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <!-- Wallet Modal with 4 Options -->
+    <!-- Wallet Modal -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1081,14 +1081,12 @@
                 <button class="close-modal" onclick="closeWalletModal()">&times;</button>
             </div>
             <div class="wallet-options">
-                <!-- MetaMask -->
                 <div class="wallet-option-item" onclick="connectMetaMask()">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
                     <span>MetaMask</span>
                     <div class="wallet-badge">Popular</div>
                 </div>
                 
-                <!-- Trust Wallet -->
                 <div class="wallet-option-item" onclick="connectTrustWallet()">
                     <img src="https://trustwallet.com/assets/images/media/assets/trust_logotype.svg" alt="Trust Wallet" 
                          onerror="this.src='https://cryptologos.cc/logos/trust-wallet-token-twt-logo.png'">
@@ -1096,7 +1094,6 @@
                     <div class="wallet-badge">Mobile</div>
                 </div>
                 
-                <!-- Coinbase Wallet -->
                 <div class="wallet-option-item" onclick="connectCoinbaseWallet()">
                     <img src="https://www.coinbase.com/img/wallet-wallet-logo.png" alt="Coinbase"
                          onerror="this.src='https://cryptologos.cc/logos/coinbase-wallet-cbw-logo.png'">
@@ -1104,7 +1101,6 @@
                     <div class="wallet-badge">Secure</div>
                 </div>
                 
-                <!-- WalletConnect -->
                 <div class="wallet-option-item" onclick="connectWalletConnect()">
                     <img src="https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/master/Logo/Blue%20(Default)/Logo.svg" alt="WalletConnect"
                          onerror="this.src='https://cryptologos.cc/logos/wallet-connect-wc-logo.png'">
@@ -1128,8 +1124,8 @@
             const script = document.createElement('script');
             script.src = 'https://unpkg.com/@walletconnect/ethereum-provider@2.10.0/dist/index.umd.js';
             script.onload = function() {
-                console.log('✅ WalletConnect loaded successfully');
-                window.walletConnectLoaded = true;
+                console.log('✅ WalletConnect script loaded');
+                console.log('Available globals:', Object.keys(window).filter(k => k.toLowerCase().includes('wallet') || k.toLowerCase().includes('ethereum')));
             };
             script.onerror = function() {
                 console.error('❌ Failed to load WalletConnect');
@@ -1348,8 +1344,11 @@
         // ========== ОЖИДАНИЕ ЗАГРУЗКИ WALLETCONNECT ==========
         async function waitForWalletConnect(maxAttempts = 50) {
             for (let i = 0; i < maxAttempts; i++) {
-                if (window.walletConnectLoaded && window.EthereumProvider) {
-                    return window.EthereumProvider;
+                // Проверяем оба возможных имени глобальной переменной
+                const Provider = window.WalletConnectEthereumProvider || window.EthereumProvider;
+                if (Provider) {
+                    console.log('✅ WalletConnect provider found:', Provider);
+                    return Provider;
                 }
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
@@ -1426,7 +1425,6 @@
                     }
                 }, 1000);
             } else {
-                // На десктопе используем WalletConnect
                 await connectWalletConnect('trust');
             }
         }
@@ -1469,8 +1467,8 @@
             try {
                 showNotification("Loading WalletConnect...", "info");
                 
-                // Ждем загрузки библиотеки
-                const EthereumProvider = await waitForWalletConnect(30); // 3 секунды максимум
+                const EthereumProvider = await waitForWalletConnect(30);
+                console.log('Initializing WalletConnect with projectId:', WALLET_CONNECT_PROJECT_ID);
                 
                 walletConnectProvider = await EthereumProvider.init({
                     projectId: WALLET_CONNECT_PROJECT_ID,
@@ -1490,7 +1488,9 @@
                     }
                 });
                 
+                console.log('WalletConnect initialized, enabling...');
                 await walletConnectProvider.enable();
+                console.log('WalletConnect enabled');
                 
                 const accounts = walletConnectProvider.accounts;
                 if (accounts && accounts.length > 0) {
