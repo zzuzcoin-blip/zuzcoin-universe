@@ -1342,18 +1342,17 @@
         }
         
         // ========== ОЖИДАНИЕ ЗАГРУЗКИ WALLETCONNECT ==========
-        async function waitForWalletConnect(maxAttempts = 50) {
-            for (let i = 0; i < maxAttempts; i++) {
-                // Проверяем оба возможных имени глобальной переменной
-                const Provider = window.WalletConnectEthereumProvider || window.EthereumProvider;
-                if (Provider) {
-                    console.log('✅ WalletConnect provider found:', Provider);
-                    return Provider;
-                }
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            throw new Error('WalletConnect not loaded');
+async function waitForWalletConnect(maxAttempts = 50) {
+    for (let i = 0; i < maxAttempts; i++) {
+        const Provider = window['@walletconnect/ethereum-provider']?.EthereumProvider;
+        if (Provider) {
+            console.log('✅ WalletConnect provider found');
+            return Provider;
         }
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    throw new Error('WalletConnect not loaded');
+}
         
         // ========== META MASK ==========
         async function connectMetaMask() {
@@ -1460,77 +1459,7 @@
             }
         }
         
-        // ========== WALLET CONNECT ==========
-        async function connectWalletConnect(preferredWallet = null) {
-            closeWalletModal();
-            
-            try {
-                showNotification("Loading WalletConnect...", "info");
-                
-                const EthereumProvider = await waitForWalletConnect(30);
-                console.log('Initializing WalletConnect with projectId:', WALLET_CONNECT_PROJECT_ID);
-                
-                walletConnectProvider = await EthereumProvider.init({
-                    projectId: WALLET_CONNECT_PROJECT_ID,
-                    chains: [1],
-                    showQrModal: true,
-                    methods: ['eth_sendTransaction', 'eth_sign', 'personal_sign', 'eth_accounts'],
-                    events: ['chainChanged', 'accountsChanged'],
-                    qrModalOptions: {
-                        themeMode: 'dark',
-                        explorerRecommendedWalletIds: preferredWallet ? [getWalletId(preferredWallet)] : undefined,
-                        enableExplorer: true,
-                        themeVariables: {
-                            '--wcm-z-index': '9999',
-                            '--wcm-accent-color': '#D4AF37',
-                            '--wcm-background-color': '#0A0A0A'
-                        }
-                    }
-                });
-                
-                console.log('WalletConnect initialized, enabling...');
-                await walletConnectProvider.enable();
-                console.log('WalletConnect enabled');
-                
-                const accounts = walletConnectProvider.accounts;
-                if (accounts && accounts.length > 0) {
-                    currentProvider = 'walletconnect';
-                    await connectWithAccounts(accounts, walletConnectProvider);
-                    
-                    walletConnectProvider.on('disconnect', () => {
-                        disconnectWallet();
-                    });
-                    
-                    walletConnectProvider.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) disconnectWallet();
-                        else {
-                            currentAccount = accounts[0];
-                            updateUI(currentAccount);
-                            updateSageDashboard();
-                            updateReferralLink();
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('WalletConnect error:', error);
-                if (error.message === 'WalletConnect not loaded') {
-                    showNotification("WalletConnect is loading, please try again in a moment", "error");
-                } else if (error.message?.includes('user rejected') || error.code === 5000) {
-                    showNotification("Connection cancelled", "info");
-                } else {
-                    showNotification("WalletConnect failed: " + (error.message || "Unknown error"), "error");
-                }
-            }
-        }
-        
-        function getWalletId(walletName) {
-            const ids = {
-                'trust': '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
-                'metamask': 'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-                'coinbase': 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa'
-            };
-            return ids[walletName] || null;
-        }
+ WALLET CONNECT 
         
         // ========== ОБЩИЕ ФУНКЦИИ ==========
         async function connectWithAccounts(accounts, provider) {
