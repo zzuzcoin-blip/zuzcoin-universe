@@ -194,6 +194,87 @@
         .counter-note { font-size: 10px; color: var(--accent-green); background: rgba(0,209,140,0.1); display: inline-block; padding: 4px 12px; border-radius: 40px; }
         @media (orientation: landscape) { .hero .container { grid-template-columns: 1fr 1fr; gap: 30px; } .hero-title { font-size: 36px; } .presale-card { padding: 20px; } .presale-details { gap: 10px; padding: 12px; } .detail-value { font-size: 12px; } .video-sidebar-large { max-height: 300px; overflow: hidden; } .presale-video-large { max-height: 280px; object-fit: cover; } .live-activity-container { width: 240px; right: 10px; bottom: 10px; } }
         @media (orientation: portrait) { .hero .container { grid-template-columns: 1fr; } }
+        /* ========== ЦЕНТРИРОВАНИЕ И РАСШИРЕНИЕ БЛОКОВ (ТОЛЬКО ДЛЯ ВЕБ-ВЕРСИИ) ========== */
+@media (min-width: 769px) {
+    /* Центрирование содержимого в hero-left */
+    .hero-left {
+        text-align: center;
+    }
+    
+    /* Центрирование hype-banner */
+    .hype-banner {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Расширение presale-card в 2 раза */
+    .presale-card {
+        max-width: 100%;
+        padding: 32px 40px;
+    }
+    
+    /* Расширение presale-details */
+    .presale-details {
+        max-width: 100%;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    /* Центрирование и расширение referralSection */
+    #referralSection {
+        text-align: center;
+        max-width: 100%;
+        padding: 30px 40px;
+    }
+    
+    /* Кнопка COPY и поле ввода на одной строке по центру */
+    #referralSection > div:first-of-type {
+        justify-content: center;
+    }
+    
+    #refLink {
+        max-width: 400px;
+    }
+    
+    /* Счётчик бонусов */
+    .counter-container {
+        max-width: 100%;
+        padding: 30px 20px;
+    }
+    
+    .counter-number {
+        font-size: 88px;
+    }
+    
+    /* Кнопка BUY NOW */
+    #referralSection a[onclick*="buyBtn"] {
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 22px;
+        padding: 16px;
+    }
+    
+    /* Блок Disciples / Earned */
+    #referralSection > div:last-of-type {
+        justify-content: center;
+        gap: 40px;
+    }
+    
+    /* Дашборд мудреца */
+    .sage-level-card {
+        text-align: center;
+        padding: 25px 30px;
+    }
+    
+    /* Прогресс-бар */
+    .sage-progress {
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
     </style>
 </head>
 <body>
