@@ -234,6 +234,8 @@
                 align-items: stretch;
             }
             /* Верхняя часть на всю ширину */
+/* ========== HERO СЕКЦИЯ (исправленная сетка) ========== */
+
 .hero-fullwidth {
     grid-column: span 2;
     text-align: center;
@@ -242,14 +244,31 @@
 
 .hero-two-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;  /* Две строгие колонки 50/50 */
     gap: 40px;
     align-items: start;
 }
 
+/* Левый и правый контейнеры — просто контейнеры, без лишних свойств */
+.hero-left, .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Все блоки внутри левой и правой колонок */
+.hero-left .presale-card,
+.hero-left #referralSection,
+.hero-right .video-sidebar-large,
+.hero-right #sageDashboard {
+    width: 100%;
+}
+
+/* Адаптация для мобильных */
 @media (max-width: 768px) {
     .hero-two-columns {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr;  /* На мобильных — одна колонка */
         gap: 30px;
     }
     .hero-fullwidth {
