@@ -233,8 +233,32 @@
             .hero .container {
                 align-items: stretch;
             }
-        }
-    </style>
+            /* Верхняя часть на всю ширину */
+.hero-fullwidth {
+    grid-column: span 2;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Контейнер для двух колонок */
+.hero-two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .hero-two-columns {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .hero-fullwidth {
+        grid-column: span 1;
+    }
+}
+        </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
@@ -277,15 +301,20 @@
     </div>
     
     <div class="hero">
-        <div class="container">
+    <div class="container">
+        <!-- ВЕРХНЯЯ ЧАСТЬ НА ВСЮ ШИРИНУ -->
+        <div class="hero-fullwidth">
+            <div class="hype-banner" id="hypeBanner">
+                <i class="fas fa-fire"></i> ONLY <span id="spotsLeft">842</span> SPOTS LEFT FOR "GUARDIAN" STATUS <i class="fas fa-fire"></i>
+            </div>
+            <h1 class="hero-title">Wisdom of <span class="gradient-text">7 eras</span><br>in one coin</h1>
+            <p class="hero-subtitle">ZUZ — the power passed down by 7 great sages. Join the elite of the crypto world.</p>
+        </div>
+        
+        <!-- ДВЕ КОЛОНКИ -->
+        <div class="hero-two-columns">
             <!-- ЛЕВАЯ КОЛОНКА: Пресейл + Рефералка -->
             <div class="hero-left">
-                <div class="hype-banner" id="hypeBanner">
-                    <i class="fas fa-fire"></i> ONLY <span id="spotsLeft">842</span> SPOTS LEFT FOR "GUARDIAN" STATUS <i class="fas fa-fire"></i>
-                </div>
-                <h1 class="hero-title">Wisdom of <span class="gradient-text">7 eras</span><br>in one coin</h1>
-                <p class="hero-subtitle">ZUZ — the power passed down by 7 great sages. Join the elite of the crypto world.</p>
-                
                 <!-- Пресейл-карточка -->
                 <div class="presale-card">
                     <div class="presale-header"><div class="presale-title">🚀 ZUZ PRESALE</div><div class="presale-badge" id="saleStatus">ACTIVE</div></div>
@@ -353,6 +382,7 @@
             </div>
         </div>
     </div>
+</div>
     
     <!-- ОСТАЛЬНЫЕ БЛОКИ (без изменений) -->
     <div class="features" id="features">
