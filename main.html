@@ -240,7 +240,6 @@
     margin-bottom: 30px;
 }
 
-/* Контейнер для двух колонок */
 .hero-two-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -248,7 +247,6 @@
     align-items: start;
 }
 
-/* Адаптация для мобильных */
 @media (max-width: 768px) {
     .hero-two-columns {
         grid-template-columns: 1fr;
@@ -313,9 +311,8 @@
         
         <!-- ДВЕ КОЛОНКИ -->
         <div class="hero-two-columns">
-            <!-- ЛЕВАЯ КОЛОНКА: Пресейл + Рефералка -->
+            <!-- ЛЕВАЯ КОЛОНКА: только Пресейл + Рефералка -->
             <div class="hero-left">
-                <!-- Пресейл-карточка -->
                 <div class="presale-card">
                     <div class="presale-header"><div class="presale-title">🚀 ZUZ PRESALE</div><div class="presale-badge" id="saleStatus">ACTIVE</div></div>
                     <div class="presale-details">
@@ -334,7 +331,6 @@
                     </div>
                 </div>
                 
-                <!-- Реферальная программа -->
                 <div id="referralSection" class="sage-level-card" style="border: 1px dashed var(--accent-gold); background: rgba(212,175,55,0.05); padding: 20px; border-radius: 20px;">
                     <h4 style="color: var(--accent-gold); margin-bottom: 10px;"><i class="fas fa-users"></i> Mentor's Path Program</h4>
                     <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">Invite disciples and get 5% of their purchases + accelerated progression to the next Sage.</p>
@@ -355,7 +351,7 @@
                 </div>
             </div>
             
-            <!-- ПРАВАЯ КОЛОНКА: Видео + Дашборд мудреца -->
+            <!-- ПРАВАЯ КОЛОНКА: только Видео + Дашборд мудреца -->
             <div class="hero-right hero-video">
                 <div class="video-sidebar-large">
                     <video autoplay loop muted playsinline class="presale-video-large">
