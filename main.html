@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
-    <!-- Динамическая загрузка WalletConnect -->
     <script>
         (function() {
             const script = document.createElement('script');
@@ -67,7 +66,11 @@
         .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 40px; padding: 6px 14px; color: #ff6464; cursor: pointer; font-size: 11px; margin-left: 10px; transition: all 0.3s; }
         .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
         
-        /* ========== HERO СЕКЦИЯ (ИСПРАВЛЕННАЯ СЕТКА) ========== */
+        /* ========== БАННЕР ВНУТРИ ШАПКИ ========== */
+        .navbar-banner { background: linear-gradient(90deg, #D4AF37, #b8860b); color: #000; padding: 8px 15px; border-radius: 40px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-right: 5px; }
+        .navbar-banner i { color: #000; }
+        
+        /* ========== HERO СЕКЦИЯ (БЕЗ БАННЕРА СВЕРХУ) ========== */
         .hero { padding: 80px 0 60px; }
         @media (max-width: 768px) { .hero { padding: 70px 0 40px; } }
         
@@ -199,7 +202,6 @@
         .map-pulse { position: absolute; width: 10px; height: 10px; background: var(--accent-gold); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px var(--accent-gold); pointer-events: none; }
         .map-pulse::after { content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; border: 2px solid var(--accent-gold); border-radius: 50%; transform: translate(-50%, -50%); animation: map-ripple 2s ease-out infinite; }
         @keyframes map-ripple { 0% { width: 10px; height: 10px; opacity: 1; } 100% { width: 60px; height: 60px; opacity: 0; } }
-        .hype-banner { background: linear-gradient(90deg, #D4AF37, #b8860b); color: #000; padding: 10px; text-align: center; font-weight: 800; font-size: 12px; border-radius: 40px; margin-bottom: 20px; width: 100%; }
         
         .roadmap-timeline { position: relative; max-width: 900px; margin: 0 auto; }
         .roadmap-timeline::before { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 2px; height: 100%; background: linear-gradient(to bottom, var(--accent-gold), transparent); }
@@ -274,6 +276,9 @@
                     <div class="logo-sub">7 Sages • 7 Civilizations</div>
                 </div>
             </div>
+            <div class="navbar-banner" id="navbarBanner">
+                <i class="fas fa-fire"></i> ONLY <span id="bannerSpotsLeft">68</span> SPOTS LEFT FOR "GUARDIAN" STATUS <i class="fas fa-fire"></i>
+            </div>
             <div class="nav-links">
                 <a href="#features">About</a>
                 <a href="#tokenomics">Tokenomics</a>
@@ -299,11 +304,8 @@
     
     <div class="hero">
         <div class="container">
-            <!-- ВЕРХНЯЯ ЧАСТЬ НА ВСЮ ШИРИНУ -->
+            <!-- ВЕРХНЯЯ ЧАСТЬ НА ВСЮ ШИРИНУ (БАННЕР УБРАН) -->
             <div class="hero-fullwidth">
-                <div class="hype-banner" id="hypeBanner">
-                    <i class="fas fa-fire"></i> ONLY <span id="spotsLeft">842</span> SPOTS LEFT FOR "GUARDIAN" STATUS <i class="fas fa-fire"></i>
-                </div>
                 <h1 class="hero-title">Wisdom of <span class="gradient-text">7 eras</span><br>in one coin</h1>
                 <p class="hero-subtitle">ZUZ — the power passed down by 7 great sages. Join the elite of the crypto world.</p>
             </div>
@@ -339,7 +341,7 @@
                         </div>
                         <div class="counter-container" id="bonusCounterBlock">
                             <div class="counter-title">⏤͟͟͞͞Z FIRST 100</div>
-                            <div class="counter-number" id="bonusCounter">100</div>
+                            <div class="counter-number" id="bonusCounter">68</div>
                             <div class="counter-sub">bonus spots left</div>
                             <div class="counter-note">+1000 ZUZ for each of the first 100 buyers</div>
                         </div>
@@ -667,7 +669,7 @@
             else translatePage(lang);
         }
         
-        // ========== ШАПКА ==========
+        // ========== ШАПКА (ТОЛЬКО ПО КНОПКЕ) ==========
         let lastScrollTop = 0;
         const navbarEl = document.getElementById('navbar');
         const navTrigger = document.getElementById('navTrigger');
@@ -1203,15 +1205,14 @@
             if (spotsLeft > 0) {
                 spotsLeft--;
                 const counterEl = document.getElementById('bonusCounter');
-                if (counterEl) {
-                    counterEl.innerText = spotsLeft;
-                    if (spotsLeft <= 0) {
-                        counterEl.innerHTML = '0<br><span style="font-size: 16px;">🎁</span>';
-                        const note = document.querySelector('.counter-note');
-                        if (note) note.innerText = 'Bonuses are over. Next round soon.';
-                    }
+                const bannerSpots = document.getElementById('bannerSpotsLeft');
+                if (counterEl) counterEl.innerText = spotsLeft;
+                if (bannerSpots) bannerSpots.innerText = spotsLeft;
+                if (spotsLeft <= 0) {
+                    if (counterEl) counterEl.innerHTML = '0<br><span style="font-size: 16px;">🎁</span>';
+                    const note = document.querySelector('.counter-note');
+                    if (note) note.innerText = 'Bonuses are over. Next round soon.';
                 }
-                console.log(`✅ Bonus spots left: ${spotsLeft}`);
             }
             return spotsLeft;
         }
@@ -1286,6 +1287,9 @@
         window.connectWalletConnect = connectWalletConnect;
         window.disconnectWallet = disconnectWallet;
         window.decrementBonusSpots = decrementBonusSpots;
+        
+        // Синхронизация баннера в шапке
+        document.getElementById('bannerSpotsLeft').innerText = spotsLeft;
     </script>
 </body>
 </html>
