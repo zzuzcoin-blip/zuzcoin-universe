@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     
+    <!-- Скрипт для WalletConnect (асинхронная загрузка) -->
     <script>
         (function() {
             const script = document.createElement('script');
@@ -46,8 +47,21 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%; }
         
         /* ========== ШАПКА (ТОЛЬКО ПО КНОПКЕ) ========== */
-        .navbar { position: fixed; top: -100px; left: 0; width: 100%; background: rgba(10,10,10,0.98); border-bottom: 1px solid var(--border-color); padding: 12px 0; z-index: 1000; backdrop-filter: blur(12px); transition: top 0.3s ease-in-out; }
-        .navbar.visible { top: 0; }
+        .navbar { 
+            position: fixed; 
+            top: -100%; /* Скрыта за экраном */
+            left: 0; 
+            width: 100%; 
+            background: rgba(10,10,10,0.98); 
+            border-bottom: 1px solid var(--border-color); 
+            padding: 12px 0; 
+            z-index: 1000; 
+            backdrop-filter: blur(12px); 
+            transition: top 0.3s ease-in-out; 
+        }
+        .navbar.visible { 
+            top: 0; /* Показываем */
+        }
         .navbar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         @media (max-width: 768px) { .navbar .container { padding: 0 16px; } }
         .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; flex-shrink: 0; }
@@ -61,16 +75,44 @@
         .lang-selector select option { background: var(--bg-primary); }
         .btn-connect { background: linear-gradient(135deg, var(--accent-gold), #FFD700); border: none; color: black; font-weight: 700; padding: 8px 18px; border-radius: 40px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: all 0.3s; white-space: nowrap; }
         .btn-connect:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
-        .nav-trigger { position: fixed; top: 16px; right: 16px; z-index: 1001; background: rgba(212,175,55,0.2); border: 1px solid var(--accent-gold); border-radius: 40px; padding: 8px 14px; cursor: pointer; font-size: 18px; color: var(--accent-gold); backdrop-filter: blur(5px); transition: all 0.3s; }
+        .nav-trigger { 
+            position: fixed; 
+            top: 16px; 
+            right: 16px; 
+            z-index: 1001; 
+            background: rgba(212,175,55,0.2); 
+            border: 1px solid var(--accent-gold); 
+            border-radius: 40px; 
+            padding: 8px 14px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            color: var(--accent-gold); 
+            backdrop-filter: blur(5px); 
+            transition: all 0.3s; 
+        }
         .nav-trigger:hover { background: rgba(212,175,55,0.4); transform: scale(1.05); }
         .disconnect-btn { background: rgba(255,100,100,0.2); border: 1px solid #ff6464; border-radius: 40px; padding: 6px 14px; color: #ff6464; cursor: pointer; font-size: 11px; margin-left: 10px; transition: all 0.3s; }
         .disconnect-btn:hover { background: rgba(255,100,100,0.4); }
         
         /* ========== БАННЕР ВНУТРИ ШАПКИ ========== */
-        .navbar-banner { background: linear-gradient(90deg, #D4AF37, #b8860b); color: #000; padding: 8px 15px; border-radius: 40px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; margin-right: 5px; }
+        .navbar-banner { 
+            background: linear-gradient(90deg, #D4AF37, #b8860b); 
+            color: #000; 
+            padding: 8px 15px; 
+            border-radius: 40px; 
+            font-weight: 800; 
+            font-size: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            white-space: nowrap; 
+            margin-right: 5px; 
+            flex-shrink: 1;
+            overflow-x: auto;
+        }
         .navbar-banner i { color: #000; }
         
-        /* ========== HERO СЕКЦИЯ (БЕЗ БАННЕРА СВЕРХУ) ========== */
+        /* ========== HERO СЕКЦИЯ (БЕЗ БАННЕРА) ========== */
         .hero { padding: 80px 0 60px; }
         @media (max-width: 768px) { .hero { padding: 70px 0 40px; } }
         
@@ -255,18 +297,31 @@
         img, video, iframe, .map-wrapper img { max-width: 100%; height: auto; }
         .map-wrapper { width: 100%; overflow: hidden; }
         
-        @media (orientation: landscape) { .hero .container { grid-template-columns: 1fr 1fr; gap: 30px; } .hero-title { font-size: 36px; } .presale-card { padding: 20px; } .presale-details { gap: 10px; padding: 12px; } .detail-value { font-size: 12px; } .video-sidebar-large { max-height: 300px; overflow: hidden; } .presale-video-large { max-height: 280px; object-fit: cover; } .live-activity-container { width: 240px; right: 10px; bottom: 10px; } }
-        @media (orientation: portrait) { .hero .container { grid-template-columns: 1fr; } }
+        @media (orientation: landscape) { 
+            .hero .container { grid-template-columns: 1fr; gap: 30px; } 
+            .hero-title { font-size: 36px; } 
+            .presale-card { padding: 20px; } 
+            .presale-details { gap: 10px; padding: 12px; } 
+            .detail-value { font-size: 12px; } 
+            .video-sidebar-large { max-height: 300px; overflow: hidden; } 
+            .presale-video-large { max-height: 280px; object-fit: cover; } 
+            .live-activity-container { width: 240px; right: 10px; bottom: 10px; } 
+        }
+        @media (orientation: portrait) { 
+            .hero .container { grid-template-columns: 1fr; } 
+        }
     </style>
 </head>
 <body>
     <div class="gold-particles" id="goldParticles"></div>
     <div class="mist-container"></div>
     
+    <!-- БУРГЕР-КНОПКА (всегда видна) -->
     <div class="nav-trigger" id="navTrigger">
         <i class="fas fa-bars"></i>
     </div>
     
+    <!-- ВЫДВИЖНАЯ ШАПКА -->
     <div class="navbar" id="navbar">
         <div class="container">
             <div class="logo" id="logoBtn">
@@ -276,6 +331,7 @@
                     <div class="logo-sub">7 Sages • 7 Civilizations</div>
                 </div>
             </div>
+            <!-- Баннер ПЕРЕНЕСЁН ВНУТРЬ ШАПКИ -->
             <div class="navbar-banner" id="navbarBanner">
                 <i class="fas fa-fire"></i> ONLY <span id="bannerSpotsLeft">68</span> SPOTS LEFT FOR "GUARDIAN" STATUS <i class="fas fa-fire"></i>
             </div>
@@ -302,17 +358,16 @@
         </div>
     </div>
     
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div class="hero">
         <div class="container">
-            <!-- ВЕРХНЯЯ ЧАСТЬ НА ВСЮ ШИРИНУ (БАННЕР УБРАН) -->
             <div class="hero-fullwidth">
                 <h1 class="hero-title">Wisdom of <span class="gradient-text">7 eras</span><br>in one coin</h1>
                 <p class="hero-subtitle">ZUZ — the power passed down by 7 great sages. Join the elite of the crypto world.</p>
             </div>
             
-            <!-- ДВЕ КОЛОНКИ -->
             <div class="hero-two-columns">
-                <!-- ЛЕВАЯ КОЛОНКА: Пресейл + Рефералка -->
+                <!-- ЛЕВАЯ КОЛОНКА -->
                 <div class="hero-left">
                     <div class="presale-card">
                         <div class="presale-header"><div class="presale-title">🚀 ZUZ PRESALE</div><div class="presale-badge" id="saleStatus">ACTIVE</div></div>
@@ -352,7 +407,7 @@
                     </div>
                 </div>
                 
-                <!-- ПРАВАЯ КОЛОНКА: Видео + Дашборд мудреца -->
+                <!-- ПРАВАЯ КОЛОНКА -->
                 <div class="hero-right hero-video">
                     <div class="video-sidebar-large">
                         <video autoplay loop muted playsinline class="presale-video-large">
@@ -381,7 +436,7 @@
         </div>
     </div>
     
-    <!-- ОСТАЛЬНЫЕ БЛОКИ (без изменений) -->
+    <!-- ОСТАЛЬНЫЕ БЛОКИ САЙТА БЕЗ ИЗМЕНЕНИЙ -->
     <div class="features" id="features">
         <div class="container">
             <h2 class="section-title">Why <span class="gradient-text">ZUZ</span>?</h2>
@@ -516,7 +571,7 @@
         <div id="activityFeed" class="activity-feed"></div>
     </div>
     
-    <!-- Wallet Modal -->
+    <!-- Wallet Modal и другие модалки -->
     <div id="walletModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -558,7 +613,7 @@
     <div id="sagesModal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><div class="modal-title">🏛️ 7 ZUZ Sages</div><button class="close-modal" onclick="closeSagesModal()">&times;</button></div><div id="sagesContent"></div></div></div>
     
     <script>
-        // ========== КОНФИГУРАЦИЯ ==========
+        // ========== КОНФИГУРАЦИЯ (ВАШИ ДАННЫЕ) ==========
         const TOKEN_ADDRESS = '0x87D336511760583B11B87866654c6f7253c1cB0D';
         const PRESALE_ADDRESS = '0x8CdeBa5Db0a4046D8BBC655244173750c7DFd553';
         const TOKEN_PRICE_ETH = 0.0001;
@@ -669,39 +724,39 @@
             else translatePage(lang);
         }
         
-        // ========== ШАПКА (ТОЛЬКО ПО КНОПКЕ) ==========
-        // ========== УПРАВЛЕНИЕ ШАПКОЙ (ТОЛЬКО ПО КНОПКЕ) ==========
-const navbar = document.getElementById('navbar');
-const navTrigger = document.getElementById('navTrigger');
-let navbarVisible = false;
-
-function showNavbar() {
-    navbar.classList.add('visible');
-    navbarVisible = true;
-}
-
-function hideNavbar() {
-    navbar.classList.remove('visible');
-    navbarVisible = false;
-}
-
-// Открытие/закрытие по кнопке ☰
-navTrigger.addEventListener('click', () => {
-    if (navbarVisible) {
-        hideNavbar();
-    } else {
-        showNavbar();
-    }
-});
-
-// Закрытие шапки при клике вне её области (удобно для мобильных)
-document.addEventListener('click', (event) => {
-    if (navbarVisible && !navbar.contains(event.target) && !navTrigger.contains(event.target)) {
-        hideNavbar();
-    }
-});
+        // ========== УПРАВЛЕНИЕ ШАПКОЙ (ТОЛЬКО ПО БУРГЕР-КНОПКЕ) ==========
+        const navbar = document.getElementById('navbar');
+        const navTrigger = document.getElementById('navTrigger');
+        let navbarVisible = false;
         
-        // ========== МАГИЯ ==========
+        function showNavbar() {
+            navbar.classList.add('visible');
+            navbarVisible = true;
+        }
+        
+        function hideNavbar() {
+            navbar.classList.remove('visible');
+            navbarVisible = false;
+        }
+        
+        // Открытие/закрытие по бургер-кнопке (БЕЗ СКРОЛЛА!)
+        navTrigger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if (navbarVisible) {
+                hideNavbar();
+            } else {
+                showNavbar();
+            }
+        });
+        
+        // Закрытие шапки при клике вне её
+        document.addEventListener('click', (event) => {
+            if (navbarVisible && !navbar.contains(event.target) && !navTrigger.contains(event.target)) {
+                hideNavbar();
+            }
+        });
+        
+        // ========== ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ (БЕЗ ИЗМЕНЕНИЙ) ==========
         function spawnMagic(e) {
             const colors = ['#D4AF37', '#FFD700', '#FFFFFF', '#FF4500'];
             for (let i = 0; i < 12; i++) {
@@ -768,7 +823,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== УТИЛИТЫ ==========
         function isMobile() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
@@ -799,7 +853,7 @@ document.addEventListener('click', (event) => {
             });
         }
         
-        // ========== ПОДКЛЮЧЕНИЕ КОШЕЛЬКОВ ==========
+        // Подключение кошельков (без изменений)
         async function connectMetaMask() {
             closeWalletModal();
             
@@ -919,7 +973,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== ОБЩИЕ ФУНКЦИИ ==========
         async function connectWithAccounts(accounts, provider) {
             if (!accounts || accounts.length === 0) return;
             currentAccount = accounts[0];
@@ -1007,7 +1060,6 @@ document.addEventListener('click', (event) => {
             } catch(e) { console.error(e); }
         }
         
-        // ========== РЕФЕРАЛКА ==========
         async function copyRefLink() {
             const linkInput = document.getElementById('refLink');
             if (!linkInput || linkInput.value.includes('Connect wallet')) {
@@ -1037,7 +1089,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== ПОКУПКА ==========
         async function buyTokens() {
             if (!presaleContract) { 
                 showNotification('Connect wallet first', 'error'); 
@@ -1124,7 +1175,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== СИМУЛЯТОР ==========
         const cities = ["Dubai", "London", "Tokyo", "New York", "Seoul", "Monaco", "Singapore", "Moscow", "Hong Kong", "Zurich", "Berlin", "Paris", "Tel Aviv", "Shanghai", "Sydney", "Toronto"];
         const amounts = [0.05, 0.1, 0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0];
         
@@ -1141,7 +1191,7 @@ document.addEventListener('click', (event) => {
                 const randomCity = cities[Math.floor(Math.random() * cities.length)];
                 addActivity(randomAddr, randomAmount, randomCity);
                 triggerMapPulse();
-            }, 3000);
+            }, 5000); // ИЗМЕНЕНО НА 5 СЕКУНД
         }
         
         const hotspots = [];
@@ -1170,7 +1220,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== МОДАЛКИ ==========
         function openWalletModal() { 
             document.getElementById('walletModal').style.display = 'flex'; 
         }
@@ -1215,7 +1264,6 @@ document.addEventListener('click', (event) => {
             }
         }
         
-        // ========== СЧЁТЧИК БОНУСОВ ==========
         let spotsLeft = 68;
         function decrementBonusSpots() {
             if (spotsLeft > 0) {
@@ -1304,7 +1352,6 @@ document.addEventListener('click', (event) => {
         window.disconnectWallet = disconnectWallet;
         window.decrementBonusSpots = decrementBonusSpots;
         
-        // Синхронизация баннера в шапке
         document.getElementById('bannerSpotsLeft').innerText = spotsLeft;
     </script>
 </body>
