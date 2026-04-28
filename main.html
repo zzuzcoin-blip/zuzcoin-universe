@@ -670,20 +670,36 @@
         }
         
         // ========== ШАПКА (ТОЛЬКО ПО КНОПКЕ) ==========
-        let lastScrollTop = 0;
-        const navbarEl = document.getElementById('navbar');
-        const navTrigger = document.getElementById('navTrigger');
-        let navbarVisible = false;
-        function showNavbar() { navbarEl.classList.add('visible'); navbarVisible = true; }
-        function hideNavbar() { navbarEl.classList.remove('visible'); navbarVisible = false; }
-        navTrigger.addEventListener('click', () => navbarVisible ? hideNavbar() : showNavbar());
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset;
-            if (scrollTop < 100) showNavbar();
-            else if (scrollTop < lastScrollTop) showNavbar();
-            else hideNavbar();
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        });
+        // ========== УПРАВЛЕНИЕ ШАПКОЙ (ТОЛЬКО ПО КНОПКЕ) ==========
+const navbar = document.getElementById('navbar');
+const navTrigger = document.getElementById('navTrigger');
+let navbarVisible = false;
+
+function showNavbar() {
+    navbar.classList.add('visible');
+    navbarVisible = true;
+}
+
+function hideNavbar() {
+    navbar.classList.remove('visible');
+    navbarVisible = false;
+}
+
+// Открытие/закрытие по кнопке ☰
+navTrigger.addEventListener('click', () => {
+    if (navbarVisible) {
+        hideNavbar();
+    } else {
+        showNavbar();
+    }
+});
+
+// Закрытие шапки при клике вне её области (удобно для мобильных)
+document.addEventListener('click', (event) => {
+    if (navbarVisible && !navbar.contains(event.target) && !navTrigger.contains(event.target)) {
+        hideNavbar();
+    }
+});
         
         // ========== МАГИЯ ==========
         function spawnMagic(e) {
