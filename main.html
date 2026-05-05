@@ -1101,10 +1101,10 @@
                 showNotification('Accept terms', 'error'); 
                 return; 
             }
-            if (eth < 0.01) { 
-                showNotification('Minimum 0.01 ETH', 'error'); 
-                return; 
-            }
+            if (eth < 0.0015) { 
+    showNotification('Minimum 0.0015 ETH (~$5)', 'error'); 
+    return; 
+}
             if (isProcessing) return;
             const now = Math.floor(Date.now() / 1000);
             if (now < stageStartTime) { 
